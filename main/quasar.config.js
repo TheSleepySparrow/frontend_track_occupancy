@@ -11,7 +11,9 @@ export default defineConfig((/* ctx */) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: [],
+    boot: [
+      'i18n',
+    ],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.scss'],
@@ -92,8 +94,14 @@ export default defineConfig((/* ctx */) => {
 
       // Quasar plugins
       plugins: [],
+      lang: 'en-US'
     },
 
+    i18n: {
+      defaultLocale: 'en-US',
+      locales: ['en-US', 'ru-RU'],
+      fallbackLocale: 'en-US'
+    },
     // animations: 'all', // --- includes all animations
     // https://v2.quasar.dev/options/animations
     animations: [],
