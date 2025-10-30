@@ -1,21 +1,46 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
+  <q-layout view="hHh Lpr lFf">
     <q-header elevated>
-      <q-toolbar>
-        <q-btn flat dense round icon="menu" aria-label="Menu" @click="toggleLeftDrawer" />
+      <q-toolbar class="bg-primary text-white">
+        <q-btn flat dense round
+        color="secondary"
+        icon="arrow_back"
+        aria-label="Menu"/>
+        <q-toolbar-title>{{ $t('headerName') }}</q-toolbar-title>
 
-        <q-toolbar-title> Quasar App </q-toolbar-title>
+        <q-space/>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div class="q-gutter-sm row items-center no-wrap">
+          <q-btn-dropdown push flat dense
+          color="accent"
+          :label="$t('settings')"
+          padding="xs md"
+          content-style="background-color: accent">
+            <SettingsList/>
+          </q-btn-dropdown>
+          <q-btn flat dense
+          icon-right="logout"
+          :label="$t('logout')"
+          @click="logout" padding="xs md"/>
+        </div>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-list>
-        <q-item-label header> Essential Links </q-item-label>
-
-        <EssentialLink v-for="link in linksList" :key="link.title" v-bind="link" />
-      </q-list>
+    <q-drawer class="bg-secondary" v-model="leftDrawerOpen" show-if-above bordered>
+      <div class="q-gutter-y-md text-center" style="padding: 25% 7%">
+        <p class="text-h4 text-white">{{ $t('leftToggleName') }}</p>
+        <q-separator spaced size="3px" color="accent"/>
+        <q-list v-if="hasBuildings">
+          <q-item v-for="building in buildingsList" :key="building.id" clickable>
+            <q-item-section>
+              <q-item-label lines="1" class="text-h6 text-white">
+                {{ building[locale === 'en-US' ? 'en_US' : 'ru_RU'].title }}
+              </q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+        <q-skeleton v-else type="list" />
+      </div>
     </q-drawer>
 
     <q-page-container>
@@ -25,57 +50,18 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
+import { ref, computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+import SettingsList from 'src/components/SettingsList.vue'
+import { getBuildingsInfo } from 'src/composables/GetMainInfo.js'
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev',
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework',
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev',
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev',
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev',
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev',
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev',
-  },
-]
+const buildingsList = ref([])
+const leftDrawerOpen = ref(true)
+const { locale } = useI18n()
+const hasBuildings = computed(() => buildingsList.value.length > 0)
+buildingsList.value = getBuildingsInfo()
 
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value
+function logout() {
+  console.log('logout')
 }
 </script>
