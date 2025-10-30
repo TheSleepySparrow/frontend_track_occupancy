@@ -5,4 +5,5 @@ export default {
     headerName: 'Загруженность',
     logout: 'Выход',
     leftToggleName: 'Корпус',
+    searchButton: 'Поиск',
 }

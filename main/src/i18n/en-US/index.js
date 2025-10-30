@@ -5,4 +5,5 @@ export default {
     headerName: 'Occupation',
     logout: 'Logout',
     leftToggleName: 'Building',
+    searchButton: 'Search',
 }
