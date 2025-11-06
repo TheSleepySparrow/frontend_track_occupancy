@@ -1,19 +1,25 @@
 <template>
     <q-list bordered separator color="secondary">
-        <q-item id="lang">
-            <q-item-section>
-                <q-item-label>{{ $t('header.language') }}</q-item-label>
+        <q-item id="lang"
+        class="row">
+            <q-item-section class="col-3">{{ $t('header.language') }}</q-item-section>
+            <q-item-section
+            side
+            class="col">
+                <q-select
+                emit-value
+                borderless
+                v-model="$i18n.locale"
+                :options="localLanguageOptions">
+                </q-select>
             </q-item-section>
-            <q-select outlined
-            emit-value
-            v-model="$i18n.locale"
-            :options="localLanguageOptions"/>
         </q-item>
-        <q-item id="theme">
-            <q-item-section>
-                <q-item-label>{{ $t('header.theme') }}</q-item-label>
-            </q-item-section>
-            <q-item-section section side>
+        <q-item id="theme"
+        class="row">
+            <q-item-section class="col-3">{{ $t('header.theme') }}</q-item-section>
+            <q-item-section
+            side
+            class="col">
                 <q-btn-toggle v-model="theme"
                 flat
                 toggle-color="primary"
