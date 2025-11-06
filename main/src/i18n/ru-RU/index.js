@@ -8,6 +8,7 @@ export default {
     },
     'occupationPage': {
         'leftToggleName': 'Корпус',
-        'searchButton': 'Поиск'
+        'searchButton': 'Поиск',
+        'noRooms': 'Нет необходимых аудиторий',
     },
 }

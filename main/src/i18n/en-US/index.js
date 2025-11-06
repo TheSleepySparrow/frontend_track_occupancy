@@ -9,5 +9,6 @@ export default {
     'occupationPage': {
         'leftToggleName': 'Building',
         'searchButton': 'Search',
+        'noRooms': 'No necessary rooms',
     }
 }
