@@ -2,16 +2,16 @@
     <q-list bordered separator color="secondary">
         <q-item id="lang">
             <q-item-section>
-                <q-item-label>{{ $t('language') }}</q-item-label>
+                <q-item-label>{{ $t('header.language') }}</q-item-label>
             </q-item-section>
             <q-select outlined
             emit-value
-            v-model="languageModel"
+            v-model="$i18n.locale"
             :options="localLanguageOptions"/>
         </q-item>
         <q-item id="theme">
             <q-item-section>
-                <q-item-label>{{ $t('theme') }}</q-item-label>
+                <q-item-label>{{ $t('header.theme') }}</q-item-label>
             </q-item-section>
             <q-item-section section side>
                 <q-btn-toggle v-model="themeModel"
@@ -28,13 +28,9 @@
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n'
-import { ref, watch } from 'vue'
-
-const { locale } = useI18n()
+import { ref } from 'vue'
 
 const themeModel = ref('lightTheme')
-const languageModel = ref('en-US')
 
 const localLanguageOptions = [{
         label: 'English',
@@ -43,10 +39,4 @@ const localLanguageOptions = [{
         label: 'Русский',
         value: 'ru-RU'
 }]
-
-watch(languageModel, () => {
-    console.log('languageModel', locale)
-    locale.value = languageModel.value
-    localStorage.setItem('locale', languageModel.value)
-}, { immediate: true })
 </script>

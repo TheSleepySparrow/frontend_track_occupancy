@@ -1,9 +1,13 @@
 export default {
-    settings: 'Settings',
-    language: 'Language',
-    theme: 'Theme',
-    headerName: 'Occupation',
-    logout: 'Logout',
-    leftToggleName: 'Building',
-    searchButton: 'Search',
+    'header': {
+        'settings': 'Settings',
+        'language': 'Language',
+        'theme': 'Theme',
+        'headerName': 'Occupation',
+        'logout': 'Logout',
+    },
+    'occupationPage': {
+        'leftToggleName': 'Building',
+        'searchButton': 'Search',
+    }
 }

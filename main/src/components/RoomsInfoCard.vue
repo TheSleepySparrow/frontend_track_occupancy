@@ -5,10 +5,10 @@
                 src="https://cdn.quasar.dev/img/parallax2.jpg"
             />
             <q-card-section>
-                <div class="text-overline text-primary">{{ props.item[locale].overline }}</div>
-                <div class="text-h5 q-mt-sm q-mb-xs">{{ props.item[locale].title }}</div>
+                <div class="text-overline text-primary">{{ props.item[$i18n.locale].overline }}</div>
+                <div class="text-h5 q-mt-sm q-mb-xs">{{ props.item[$i18n.locale].title }}</div>
                 <div class="text-caption text-grey">
-                {{ props.item[locale].description }}
+                {{ props.item[$i18n.locale].description }}
                 </div>
             </q-card-section>
         </q-card>
@@ -16,8 +16,5 @@
 </template>
 
 <script setup>
-import { useI18n } from 'vue-i18n'
-
 const props = defineProps(['item'])
-const { locale } = useI18n()
 </script>

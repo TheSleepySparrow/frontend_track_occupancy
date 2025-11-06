@@ -1,9 +1,13 @@
 export default {
-    settings: 'Настройки',
-    language: 'Язык',
-    theme: 'Тема',
-    headerName: 'Загруженность',
-    logout: 'Выход',
-    leftToggleName: 'Корпус',
-    searchButton: 'Поиск',
+    'header': {
+        'settings': 'Настройки',
+        'language': 'Язык',
+        'theme': 'Тема',
+        'headerName': 'Загруженность',
+        'logout': 'Выход'
+    },
+    'occupationPage': {
+        'leftToggleName': 'Корпус',
+        'searchButton': 'Поиск'
+    },
 }

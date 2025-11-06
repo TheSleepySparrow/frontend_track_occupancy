@@ -5,13 +5,13 @@ import messages from 'src/i18n'
 export default defineBoot(({ app }) => {
   const i18n = createI18n({
     locale: 'en-US',
-    globalInjection: true,
-    messages
-  },
-  {
-    locale: 'ru-RU',
-    globalInjection: true,
-    messages
+    fallbackLocale: 'ru-RU',
+    messages,
+    missing(locale, key) {
+      console.warn(`Missing translation for key "${key}" in locale "${locale}"`)
+      return key
+    }
   })
+  
   app.use(i18n)
 })

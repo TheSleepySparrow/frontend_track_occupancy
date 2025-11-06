@@ -9,7 +9,7 @@
             <q-icon name="search" />
             </template>
         </q-input>
-        <q-btn type="submit" color="primary" filled :size="'lg'">{{ $t('searchButton') }}</q-btn>
+        <q-btn type="submit" color="primary" filled :size="'lg'">{{ $t('occupationPage.searchButton') }}</q-btn>
     </div>
     
 </template>
