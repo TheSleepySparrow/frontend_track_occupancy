@@ -2,7 +2,7 @@
     <q-list bordered separator color="secondary">
         <q-item id="lang"
         class="row">
-            <q-item-section class="col-3">{{ $t('header.language') }}</q-item-section>
+            <q-item-section class="col-3">{{ props.languageName }}</q-item-section>
             <q-item-section
             side
             class="col">
@@ -16,7 +16,7 @@
         </q-item>
         <q-item id="theme"
         class="row">
-            <q-item-section class="col-3">{{ $t('header.theme') }}</q-item-section>
+            <q-item-section class="col-3">{{ props.themeName }}</q-item-section>
             <q-item-section
             side
             class="col">
@@ -39,6 +39,11 @@ import { useQuasar } from 'quasar'
 
 const $q = useQuasar()
 const theme = ref($q.dark.isActive)
+
+const props = defineProps([
+    'languageName',
+    'themeName'
+])
 
 const localLanguageOptions = [{
         label: 'English',
