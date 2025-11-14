@@ -5,8 +5,9 @@
             color="secondary"
             icon="arrow_back"
             aria-label="Menu"
+            @click="$router.push({ name: 'viewMenu' })"
         />
-        <q-toolbar-title>{{ $t(headerText.headerName) }}</q-toolbar-title>
+        <q-toolbar-title>{{ $t(props.HeaderName) }}</q-toolbar-title>
 
         <q-space/>
 
@@ -39,14 +40,14 @@ import SettingsList from 'src/components/SettingsList.vue'
 import { computed } from 'vue'
 
 const props = defineProps(['HeaderName'])
+const text = 'settings'
 
 const headerText = computed(() => {
     return {
-        headerName: props.HeaderName + '.headerName',
-        settings: props.HeaderName + '.settings',
-        language: props.HeaderName + '.language',
-        theme: props.HeaderName + '.theme',
-        logout: props.HeaderName + '.logout'
+        settings: text + '.settings',
+        language: text + '.language',
+        theme: text + '.theme',
+        logout: text + '.logout'
     }
 })
 

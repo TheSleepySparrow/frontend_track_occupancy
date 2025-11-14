@@ -40,7 +40,6 @@ const roomsInfo = ref([])
 roomsInfo.value = getRoomsInfo()
 const roomsOccupancy = ref([])
 roomsOccupancy.value = getOccupancyForAuditories(roomsInfo.value.map(item => item.id))
-console.log(roomsOccupancy.value)
 
 const filters = ref({
   search: ref(''),

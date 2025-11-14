@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh Lpr lFf">
-    <TheHeader HeaderName="header"/>
+    <TheHeader HeaderName="mainMenu.occupancy"/>
     <q-drawer class="bg-secondary" v-model="leftDrawerOpen" show-if-above bordered>
       <div class="q-gutter-y-md text-center" style="padding: 25% 7%">
         <p class="text-h4 text-white">{{ $t('occupationPage.leftToggleName') }}</p>

@@ -1,10 +1,19 @@
 export default {
-    'header': {
+    'settings': {
         'settings': 'Settings',
         'language': 'Language',
         'theme': 'Theme',
-        'headerName': 'Occupation',
-        'logout': 'Logout',
+        'logout': 'Logout',        
+    },
+    'menu': {
+        'headerName': 'Main menu',
+    },
+    'mainMenu': {
+        'occupancy': 'Occupancy',
+        'statistics': 'Statistics',
+        'attendance': 'Attendance',
+        'users': 'Users',
+        'settings': 'Edit settings'
     },
     'occupationPage': {
         'leftToggleName': 'Building',
@@ -12,5 +21,5 @@ export default {
         'noRooms': 'No necessary rooms',
         'floor': 'Floor',
         'typeOfRoom': 'Type of room'
-    }
+    },
 }
