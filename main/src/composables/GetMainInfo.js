@@ -34,46 +34,89 @@ export function getRoomsInfo() {
         {
             id: 1,
             'ru-RU': {
-                locale: 'ru-RU',
                 title: 'Комната 1',
-                overline: 'Лекционная',
-                description: '1 этаж / кабинет 10'
+                type: 'Лекционная',
+                description: 'кабинет 10'
             },
             'en-US': {
-                locale: 'en-US',
                 title: 'Room 1',
-                overline: 'Lecture room',
-                description: '1 floor / cabinet 10'
-            }
+                type: 'Lecture room',
+                description: 'cabinet 10'
+            },
+            floor: 1,
+            capacity: 20,
+            image_url: ''
         }, {
             id: 2,
             'ru-RU': {
-                locale: 'ru-RU',
                 title: 'Комната 2',
-                overline: 'Лекционная',
-                description: '2 этаж / кабинет 20'
+                type: 'Лекционная',
+                description: 'кабинет 20'
             },
             'en-US': {
-                locale: 'en-US',
                 title: 'Room 2',
-                overline: 'Lecture room',
-                description: '2 floor / cabinet 20'
-            }
+                type: 'Lecture room',
+                description: 'cabinet 20'
+            },
+            floor: 2,
+            capacity: 10,
+            image_url: ''
         }, {
             id: 3,
             'ru-RU': {
-                locale: 'ru-RU',
                 title: 'Комната 3',
-                overline: 'Коворкинг',
-                description: '1 этаж / кабинет 11'
+                type: 'Коворкинг',
+                description: 'кабинет 11'
             },
             'en-US': {
-                locale: 'en-US',
                 title: 'Room 3',
-                overline: 'Coworking',
-                description: '1 floor / cabinet 11'
-            }
+                type: 'Coworking',
+                description: 'cabinet 11'
+            },
+            floor: 1,
+            capacity: 25,
+            image_url: ''
         }
     ]
     return rooms
+}
+
+export function getRoomTypesInfo() {
+    const roomTypes = {
+        'ru-RU': [
+            {
+                label: 'Лекционная',
+                value: 'lecture room'
+            }, {
+                label: 'Коворкинг',
+                value: 'coworking'
+            }
+        ],
+        'en-US': [
+            {
+                label: 'Lecture room',
+                value: 'lecture room'
+            }, {
+                label: 'Coworking',
+                value: 'coworking'
+            }
+        ]
+    }
+    return roomTypes
+}
+
+export function getNumberOfFloorsInfo(){
+    const number = [
+        { label: '1', value: '1' },
+        { label: '2', value: '2' },
+        { label: '3', value: '3' },
+        { label: '4', value: '4' },
+        { label: '5', value: '5' },
+        { label: '6', value: '6' },
+        { label: '7', value: '7' },
+        { label: '8', value: '8' },
+        { label: '9', value: '9' },
+        { label: '10', value: '10' },
+    ]
+    return number
 }

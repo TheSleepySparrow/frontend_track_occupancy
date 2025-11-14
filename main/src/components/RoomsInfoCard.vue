@@ -5,10 +5,11 @@
                 src="https://cdn.quasar.dev/img/parallax2.jpg"
             />
             <q-card-section>
-                <div class="text-overline text-primary">{{ props.item[$i18n.locale].overline }}</div>
+                <div class="text-overline text-primary">{{ props.item[$i18n.locale].type }}</div>
                 <div class="text-h5 q-mt-sm q-mb-xs">{{ props.item[$i18n.locale].title }}</div>
                 <div class="text-caption text-grey">
-                {{ props.item[$i18n.locale].description }}
+                {{ $t('occupationPage.floor') }} {{ props.item.floor }}
+                / {{ props.item[$i18n.locale].description }}
                 </div>
             </q-card-section>
         </q-card>

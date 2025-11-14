@@ -10,5 +10,7 @@ export default {
         'leftToggleName': 'Building',
         'searchButton': 'Search',
         'noRooms': 'No necessary rooms',
+        'floor': 'Floor',
+        'typeOfRoom': 'Type of room'
     }
 }

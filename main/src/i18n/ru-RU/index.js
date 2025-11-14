@@ -10,5 +10,7 @@ export default {
         'leftToggleName': 'Корпус',
         'searchButton': 'Поиск',
         'noRooms': 'Нет необходимых аудиторий',
+        'floor': 'Этаж',
+        'typeOfRoom': 'Тип аудитории'
     },
 }
