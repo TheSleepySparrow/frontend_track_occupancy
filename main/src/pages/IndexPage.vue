@@ -11,7 +11,10 @@
           <div v-for="item in filteredRooms"
             :key="item.id"
             class="col-12 col-sm-6">
-            <RoomsInfoCard :item="item" />
+            <RoomsInfoCard
+              :item="item"
+              :occupancy="roomsOccupancy.find(room => room.id === item.id)"
+            />
           </div>
         </div>
         <div v-else class="q-pa-md" style="padding: 15%">
@@ -27,7 +30,7 @@
 <script setup>
 import RoomsFilter from 'src/components/RoomsFilter.vue'
 import RoomsInfoCard from 'src/components/RoomsInfoCard.vue'
-import { getRoomsInfo } from 'src/composables/GetMainInfo'
+import { getRoomsInfo, getOccupancyForAuditories } from 'src/composables/GetMainInfo'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -35,6 +38,9 @@ const { locale } = useI18n()
 
 const roomsInfo = ref([])
 roomsInfo.value = getRoomsInfo()
+const roomsOccupancy = ref([])
+roomsOccupancy.value = getOccupancyForAuditories(roomsInfo.value.map(item => item.id))
+console.log(roomsOccupancy.value)
 
 const filters = ref({
   search: ref(''),

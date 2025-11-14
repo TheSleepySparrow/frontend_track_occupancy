@@ -120,3 +120,21 @@ export function getNumberOfFloorsInfo(){
     ]
     return number
 }
+
+export function getOccupancyForAuditories(auditoryIdList) {
+    const occupancy = [
+        {
+            id: auditoryIdList[0],
+            numberOfPeople: 1
+        },
+        {
+            id: auditoryIdList[1],
+            numberOfPeople: 10
+        },
+        {
+            id: auditoryIdList[2],
+            numberOfPeople: 5
+        }
+    ]
+    return occupancy
+}
