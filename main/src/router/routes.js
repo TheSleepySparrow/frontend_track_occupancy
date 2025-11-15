@@ -1,7 +1,9 @@
+import { useCitiesStore } from 'src/stores/cities'
 const routes = [
   {
     path: '/',
     name: "mainMenu",
+    alias: ['/mainMenu', '/home', '/index'],
     component: () => import('layouts/AppMenu.vue'),
     children: [{
       path: '',
@@ -10,15 +12,60 @@ const routes = [
     }],
   },
   {
-    path: '/occupancy',
+    path: '/occupancy/:cityId(\\d+)/:slug?',
     name: 'showOccupancy',
     component: () => import('layouts/ShowOccupancy.vue'),
+    props: route => ({
+      cityId: parseInt(route.params.cityId),
+      slug: route.params.slug || ''
+    }),
+    async beforeEnter (to, from, next) {
+      const citiesStore = useCitiesStore()
+
+      if (!citiesStore.loaded) {
+        try {
+          await citiesStore.fetchCities()
+        } catch (err) {
+          console.error('Cities load failed in route guard', err)
+          next({ name: 'Error' })
+          return
+        }
+      }
+
+      const city = citiesStore.findCityById(to.params.cityId)
+
+      if (!city) {
+        next( { name: 'Error' } )
+        return
+      }
+
+      const expectedSlug = citiesStore.getSlugByCityId(city.id)
+
+      if (to.params.slug !== expectedSlug) {
+        next({
+          name: 'showOccupancy',
+          params: { cityId: parseInt(city.id), slug: expectedSlug },
+          query: to.query
+        })
+      } else {
+        next()
+      }
+    },
     children: [
-    {
-      path: '',
-      name: 'viewOccupancy',
-      component: () => import('pages/ViewOccupancy.vue')
-    }
+      {
+        path: '',
+        name: 'NoOccupancySelected',
+        component: () => import('pages/NoOccupancySelected.vue')
+      },
+      {
+        path: ':buildingId(\\d+)',
+        name: 'viewOccupancy',
+        component: () => import('pages/ViewOccupancy.vue'),
+        props: route => ({
+          cityId: parseInt(route.params.cityId),
+          slug: route.params.slug || '',
+          buildingId: route.params.buildingId })
+      }
     ],
   },
   {
@@ -64,6 +111,7 @@ const routes = [
   },
   {
     path: '/:catchAll(.*)*',
+    name: 'Error',
     component: () => import('pages/ErrorNotFound.vue'),
   },
 ]

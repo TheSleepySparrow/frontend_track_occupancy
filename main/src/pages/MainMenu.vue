@@ -9,7 +9,7 @@
                         :key="item.id"
                         clickable
                         v-ripple
-                        @click="$router.push({ name: item.link })"
+                        @click="item.whatToDo"
                         class="menu-item"
                     >
                         <q-item-section>
@@ -18,37 +18,98 @@
                     </q-item>
                 </q-list>
             </q-card>
+            <q-dialog v-model="chooseCityDialog" persistent>
+                <q-card class="menu-card q-pa-md">
+                    <q-card-section>
+                        <div v-if="loading">
+                            {{ $t('menu.loading') }}
+                        </div>
+                        <div v-else-if="error" class="q-pa-md text-center">
+                            {{ $t('menu.error') }}
+                        </div>
+                        <q-list v-else-if="citiesStore.cities.length > 0">
+                            <q-item
+                            v-for="city in citiesStore.cities"
+                            :key="city.id"
+                            clickable
+                            class="menu-item"
+                            @click="pushRoute('showOccupancy', { cityId: parseInt(city.id) })">
+                                <q-item-section>
+                                    {{ city[`name_${$i18n.locale}`] }}
+                                </q-item-section>
+                            </q-item>
+                        </q-list>
+                        <div v-else>
+                            {{ $t('menu.noCities') }}
+                        </div>
+                    </q-card-section>
+                    <q-card-actions align="center">
+                        <q-btn flat :label="$t('popUps.cancel')" color="primary" v-close-popup />
+                    </q-card-actions>
+                </q-card>
+            </q-dialog>
         </div>
     </q-page>
 </template>
 
 <script setup>
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useCitiesStore } from 'src/stores/cities'
+
+const router = useRouter()
+const chooseCityDialog = ref(false)
+const loading = ref(false)
+const error = ref(false)
+const citiesStore = useCitiesStore()
+
+function pushRoute(routeName, parameters) {
+    router.push({ name: routeName, params: parameters })
+}
+
+async function chooseCity() {
+    chooseCityDialog.value = true
+    await loadCities()
+}
+
+async function loadCities() {
+    loading.value = true
+    try {
+        await citiesStore.fetchCities()
+    } catch (err) {
+        console.error('Cities load failed in route guard', err)
+        error.value = true
+    } finally {
+        loading.value = false
+    }
+}
+
 const text = 'mainMenu'
 const menuList = {
     occupancy: {
         id: 1,
         text: text + '.occupancy',
-        link: 'viewOccupancy'
+        whatToDo: chooseCity
     },
     statistics: {
         id: 2,
         text: text + '.statistics',
-        link: 'viewStatistics'
+        whatToDo: () => pushRoute('viewStatistics', {})
     },
     attendance: {
         id: 3,
         text: text + '.attendance',
-        link: 'viewAttendance'
+        whatToDo: () => pushRoute('viewAttendance', {})
     },
     users: {
         id: 4,
         text: text + '.users',
-        link: 'viewUsers'
+        whatToDo: () => pushRoute('viewUsers', {})
     },
     settings: {
         id: 5,
         text: text + '.settings',
-        link: 'viewSettings'
+        whatToDo: () => pushRoute('viewSettings', {}),
     }
 }
 </script>

@@ -7,6 +7,15 @@ export default {
     },
     'menu': {
         'headerName': 'Основное меню',
+        'noCities': 'Нет городов',
+        'loading': 'Загрузка городов...',
+        'error': 'Ошибка при загрузке городов'
+    },
+    'popUps': {
+        'close': 'Закрыть',
+        'save': 'Сохранить',
+        'cancel': 'Отменить',
+        'ok': 'Ок'
     },
     'mainMenu': {
         'occupancy': 'Загруженность',
@@ -20,6 +29,7 @@ export default {
         'searchButton': 'Поиск',
         'noRooms': 'Нет необходимых аудиторий',
         'floor': 'Этаж',
-        'typeOfRoom': 'Тип аудитории'
+        'typeOfRoom': 'Тип аудитории',
+        'noBuildingsChosen': 'Корпус не выбран. Пожалуйста, выберите что-то из списка...',
     },
 }

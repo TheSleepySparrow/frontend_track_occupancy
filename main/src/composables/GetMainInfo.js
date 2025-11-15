@@ -1,4 +1,6 @@
-export function getBuildingsInfo() {
+export function getBuildingsInfo(cityId) {
+    if (cityId !== 1) return []
+    
     const buildings = [
         {
             id: 1,
@@ -29,7 +31,8 @@ export function getBuildingsInfo() {
     return buildings
 }
 
-export function getRoomsInfo() {
+export function getRoomsInfo(buildingId) {
+    if (buildingId !== 1) return []
     const rooms = [
         {
             id: 1,

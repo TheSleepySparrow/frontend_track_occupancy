@@ -7,6 +7,15 @@ export default {
     },
     'menu': {
         'headerName': 'Main menu',
+        'noCities': 'No cities',
+        'loading': 'Loading cities...',
+        'error': 'Error while loading cities'
+    },
+    'popUps': {
+        'close': 'Close',
+        'save': 'Save',
+        'cancel': 'Cancel',
+        'ok': 'Ok'
     },
     'mainMenu': {
         'occupancy': 'Occupancy',
@@ -20,6 +29,7 @@ export default {
         'searchButton': 'Search',
         'noRooms': 'No necessary rooms',
         'floor': 'Floor',
-        'typeOfRoom': 'Type of room'
+        'typeOfRoom': 'Type of room',
+        'noBuildingsChosen': 'No buildings chosen. Please select something...',
     },
 }
