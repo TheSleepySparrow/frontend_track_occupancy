@@ -29,13 +29,14 @@
                         </div>
                         <q-list v-else-if="citiesStore.cities.length > 0">
                             <q-item
-                            v-for="city in citiesStore.cities"
-                            :key="city.id"
-                            clickable
-                            class="menu-item"
-                            @click="pushRoute('showOccupancy', { cityId: parseInt(city.id) })">
+                                v-for="city in citiesStore.cities"
+                                :key="city.id"
+                                clickable
+                                class="menu-item"
+                                @click="handleCitySelect(city.id)"
+                            >
                                 <q-item-section>
-                                    {{ city[`name_${$i18n.locale}`] }}
+                                {{ city[`name_${$i18n.locale}`] }}
                                 </q-item-section>
                             </q-item>
                         </q-list>
@@ -62,14 +63,21 @@ const chooseCityDialog = ref(false)
 const loading = ref(false)
 const error = ref(false)
 const citiesStore = useCitiesStore()
+const targetRouteName = ref('')
 
 function pushRoute(routeName, parameters) {
     router.push({ name: routeName, params: parameters })
 }
 
-async function chooseCity() {
+async function chooseCity(routeName) {
+    targetRouteName.value = routeName
     chooseCityDialog.value = true
     await loadCities()
+}
+
+function handleCitySelect(cityId) {
+  chooseCityDialog.value = false
+  pushRoute(targetRouteName.value, { cityId: parseInt(cityId) })
 }
 
 async function loadCities() {
@@ -89,12 +97,12 @@ const menuList = {
     occupancy: {
         id: 1,
         text: text + '.occupancy',
-        whatToDo: chooseCity
+        whatToDo: () => chooseCity('showOccupancy')
     },
     statistics: {
         id: 2,
         text: text + '.statistics',
-        whatToDo: () => pushRoute('viewStatistics', {})
+        whatToDo: () => chooseCity('viewStatistics')
     },
     attendance: {
         id: 3,
