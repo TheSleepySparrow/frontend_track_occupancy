@@ -6,8 +6,11 @@
       @update-floors="(value) => filters.floor = value"
       @update-room="(value) => filters.type = value"/>
       <div class="col" style="width: 100%;">
+        <div v-if="loading">
+          <q-spinner color="primary" size="3em" />
+        </div>
         <div class="row q-col-gutter-md"
-        v-if="filteredRooms.length > 0">
+        v-else-if="filteredRooms.length > 0">
           <div v-for="item in filteredRooms"
             :key="item.id"
             class="col-12 col-sm-6">
@@ -31,16 +34,42 @@
 import RoomsFilter from 'src/components/RoomsFilter.vue'
 import RoomsInfoCard from 'src/components/RoomsInfoCard.vue'
 import { getRoomsInfo, getOccupancyForAuditories } from 'src/composables/GetMainInfo'
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 const { locale } = useI18n()
+const props = defineProps({
+  cityId: { type: Number, required: true },
+  slug: { type: String, default: '' },
+  buildingId: { type: String, required: true }
+})
 
 const roomsInfo = ref([])
-roomsInfo.value = getRoomsInfo()
 const roomsOccupancy = ref([])
-roomsOccupancy.value = getOccupancyForAuditories(roomsInfo.value.map(item => item.id))
-console.log(roomsOccupancy.value)
+const loading = ref(false)
+
+async function loadOccupancyPercent(roomsInfo) {
+  const roomIds = roomsInfo.value.map(room => room.id)
+  const occupancy = getOccupancyForAuditories(roomIds)
+  return occupancy
+} 
+
+async function loadOccupancyData() {
+  const bId = parseInt(props.buildingId)
+  if (!bId) return
+  loading.value = true
+  try {
+    const rooms = await getRoomsInfo(bId)
+    roomsInfo.value = rooms
+    roomsOccupancy.value = await loadOccupancyPercent(roomsInfo)
+  } catch (err) {
+    console.error('Failed to load occupancy data', err)
+    roomsInfo.value = []
+    roomsOccupancy.value = []
+  } finally {
+    loading.value = false
+  }
+}
 
 const filters = ref({
   search: ref(''),
@@ -64,4 +93,7 @@ const filteredRooms = computed(() => {
   )
 })
 
+watch(() => [props.buildingId, props.cityId], () => {
+  loadOccupancyData()
+}, { immediate: true })
 </script>
