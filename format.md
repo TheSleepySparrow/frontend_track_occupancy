@@ -74,7 +74,8 @@ TYPE: POST
 [
     {
         auditory_id: Number,
-        number_of_people: Number 
+        number_of_people: Number,
+        timestamp: TimeStampWithUTC
     }
 ]
 ```
