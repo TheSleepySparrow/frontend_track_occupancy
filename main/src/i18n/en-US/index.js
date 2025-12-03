@@ -31,5 +31,6 @@ export default {
         'floor': 'Floor',
         'typeOfRoom': 'Type of room',
         'noBuildingsChosen': 'No buildings chosen. Please select something...',
+        'noBuildings': 'No buildings found',
     },
 }

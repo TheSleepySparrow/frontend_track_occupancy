@@ -22,6 +22,9 @@
             </q-item-section>
           </q-item>
         </q-list>
+        <div v-else-if="noBuildings">
+          <p class="text-h6 text-white">{{ $t('occupationPage.noBuildings') }}</p>
+        </div>
         <q-skeleton v-else type="list" />
       </div>
     </q-drawer>
@@ -33,9 +36,9 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import TheHeader from '../components/TheHeader.vue'
-import { getBuildingsInfo } from 'src/composables/GetMainInfo.js'
+import { useBuildingsInfo } from 'src/composables/useGetBuildingsInfo'
 import { useCitiesStore } from 'src/stores/cities'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -43,18 +46,28 @@ const route = useRoute()
 const router = useRouter()
 const citiesStore = useCitiesStore()
 const chosenBuilding = ref(null)
+const cityId = parseInt(route.params.cityId)
 
 const city = computed(() => 
-  citiesStore.findCityById(parseInt(route.params.cityId))
+  citiesStore.findCityById(cityId)
 )
 
-const buildingsList = ref([])
+const buildingsList = useBuildingsInfo(
+  cityId,
+  'api/cities',
+  {
+    optionalUrl: 'buildings',
+    loading: true,
+    notify: true
+  }
+)
+
 const leftDrawerOpen = ref(true)
 const hasBuildings = computed(() => buildingsList.value.length > 0)
+const noBuildings = computed(() => buildingsList.value.length == 0)
 
-function loadBuildings() {
-  buildingsList.value = getBuildingsInfo(parseInt(route.params.cityId))
-}
+console.log('buildingsList.value', buildingsList.value)
+
 
 function clickBuilding(buildingId) {
   chosenBuilding.value = buildingId
@@ -64,9 +77,5 @@ function clickBuilding(buildingId) {
     buildingId: buildingId }
   })
 }
-
-watch(() => city.value, () => {
-  loadBuildings()
-}, { immediate: true })
 
 </script>
