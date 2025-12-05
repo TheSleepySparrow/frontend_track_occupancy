@@ -1,14 +1,18 @@
 export async function getResponse(apiUrl) {
     try {
-        const response = await fetch(apiUrl);
+        const response = await fetch(apiUrl)
         if (!response.ok) {
-            throw new Error(response.statusText);
+            const error = new Error(response.statusText)
+            error.statusCode = response.status
+            throw error
         }
-        const data = await response.json();
-        return data;
+        const data = await response.json()
+        return data
     } catch (error) {
-        console.error("Ошибка при получении данных:", error);
-        throw new Error(error);
+        console.error("Ошибка при получении данных:", error)
+        const err = new Error(error.message)
+        err.statusCode = error.statusCode
+        throw err
     }
 }
 

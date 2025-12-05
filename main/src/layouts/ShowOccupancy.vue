@@ -5,6 +5,7 @@
       <div class="q-gutter-y-md text-center" style="padding: 25% 7%">
         <p class="text-h4 text-white">{{ $t('occupationPage.leftToggleName') }}</p>
         <q-separator spaced size="3px" color="accent"/>
+        <!-- Вывод списка зданий -->
         <q-list v-if="hasBuildings">
           <q-item v-for="building in buildingsList"
             :key="building.id"
@@ -26,6 +27,11 @@
           <p class="text-h6 text-white">{{ $t('occupationPage.noBuildings') }}</p>
         </div>
         <q-skeleton v-else type="list" />
+        <!-- Обработка ошибки -->
+        <TheErrorPopUp :err="err"
+          :errorPage="'viewOccupancyError'"
+          :routeParams="route.params"
+        />
       </div>
     </q-drawer>
 
@@ -38,7 +44,8 @@
 <script setup>
 import { ref, computed } from 'vue'
 import TheHeader from '../components/TheHeader.vue'
-import { useBuildingsInfo } from 'src/composables/useGetBuildingsInfo'
+import { useBuildingsInfo } from 'src/composables/useGetBuildingsInfo.js'
+import TheErrorPopUp from 'src/components/TheErrorPopUp.vue'
 import { useCitiesStore } from 'src/stores/cities'
 import { useRoute, useRouter } from 'vue-router'
 
@@ -52,9 +59,9 @@ const city = computed(() =>
   citiesStore.findCityById(cityId)
 )
 
-const buildingsList = useBuildingsInfo(
-  cityId,
-  'api/cities',
+const { buildingsInfo: buildingsList, error: err } = useBuildingsInfo(
+  { id: cityId },
+  '/api/v1/cities',
   {
     optionalUrl: 'buildings',
     loading: true,
@@ -65,9 +72,6 @@ const buildingsList = useBuildingsInfo(
 const leftDrawerOpen = ref(true)
 const hasBuildings = computed(() => buildingsList.value.length > 0)
 const noBuildings = computed(() => buildingsList.value.length == 0)
-
-console.log('buildingsList.value', buildingsList.value)
-
 
 function clickBuilding(buildingId) {
   chosenBuilding.value = buildingId

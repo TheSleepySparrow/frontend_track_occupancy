@@ -25,14 +25,14 @@ export function useFetchList(props, baseUrl, options = { optionalUrl: null, load
             const result  = await getResponse(url.value)
             data.value = result
         } catch (err) {
-            error.value = err.message
+            error.value = err
             if (options.notify) {
                 Notify.create({
-                    message: `Ошибка получения данных (${error.value})`,
+                    message: `Ошибка получения данных (${error.value.message})`,
                     color: 'primary'
                 })
             }
-            console.log('catch',error.value)
+            console.log('catch',error.value.statusCode)
         } finally {
             if (options.loading) { 
                 Loading.hide()

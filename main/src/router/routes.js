@@ -20,9 +20,6 @@ async function checkCityId (to, from, next) {
   }
 
   const expectedSlug = citiesStore.getSlugByCityId(city.id)
-  console.log('expectedSlug', expectedSlug)
-  console.log('city', city)
-  console.log('to', to.name)
   if (to.params.slug !== expectedSlug) {
     next({
       name: to.name,
@@ -69,6 +66,11 @@ const routes = [
           cityId: parseInt(route.params.cityId),
           slug: route.params.slug || '',
           buildingId: route.params.buildingId })
+      },
+      {
+        path: 'error',
+        name: 'viewOccupancyError',
+        component: () => import('pages/ViewOccupancyError.vue')
       }
     ],
   },
