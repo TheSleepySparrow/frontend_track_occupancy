@@ -46,7 +46,7 @@ import { ref, computed } from 'vue'
 import TheHeader from '../components/TheHeader.vue'
 import { useBuildingsInfo } from 'src/composables/useGetBuildingsInfo.js'
 import TheErrorPopUp from 'src/components/TheErrorPopUp.vue'
-import { useCitiesStore } from 'src/stores/cities'
+import { useCitiesStore } from 'src/stores/cities.store'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()

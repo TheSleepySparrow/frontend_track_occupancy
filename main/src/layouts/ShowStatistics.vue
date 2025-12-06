@@ -10,7 +10,7 @@
 <script setup>
 import TheHeader from 'src/components/TheHeader.vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useCitiesStore } from 'src/stores/cities'
+import { useCitiesStore } from 'src/stores/cities.store'
 import { onMounted } from 'vue'
 
 const citiesStore = useCitiesStore()

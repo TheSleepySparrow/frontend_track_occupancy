@@ -16,8 +16,7 @@
             class="col-12 col-sm-6">
             <RoomsInfoCard
               :item="item"
-              :occupancy="roomsOccupancy.find(room => room.id === item.id)"
-            />
+            /> <!-- :occupancy="roomsOccupancy.find(room => room.id === item.id)" -->
           </div>
         </div>
         <div v-else class="q-pa-md" style="padding: 15%">
@@ -25,6 +24,10 @@
               {{ $t('occupationPage.noRooms') }}
             </p>
         </div>
+        <TheErrorPopUp :err="err"
+          :errorPage="'viewOccupancyError'"
+          :routeParams="props"
+        />
       </div>
     </div>
   </q-page>
@@ -33,7 +36,9 @@
 <script setup>
 import RoomsFilter from 'src/components/RoomsFilter.vue'
 import RoomsInfoCard from 'src/components/RoomsInfoCard.vue'
-import { getRoomsInfo, getOccupancyForAuditories } from 'src/composables/GetMainInfo'
+import TheErrorPopUp from 'src/components/TheErrorPopUp.vue'
+import { useAuditoriesInfo } from 'src/composables/useGetAuditoriesInfo'
+import { getOccupancyForAuditories } from 'src/composables/GetMainInfo'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
@@ -44,27 +49,33 @@ const props = defineProps({
   buildingId: { type: String, required: true }
 })
 
-const roomsInfo = ref([])
+const { auditoriesInfo: roomsInfo, error: err } = useAuditoriesInfo(
+  { id: props.buildingId },
+  '/api/v1/cities/' + props.cityId + '/buildings',
+  {
+    optionalUrl: 'auditories',
+    loading: true,
+    notify: true
+  }
+)
+
 const roomsOccupancy = ref([])
 const loading = ref(false)
 
 async function loadOccupancyPercent(roomsInfo) {
-  const roomIds = roomsInfo.value.map(room => room.id)
+  const roomIds = roomsInfo.map(room => room.id)
   const occupancy = getOccupancyForAuditories(roomIds)
   return occupancy
 } 
 
 async function loadOccupancyData() {
-  const bId = parseInt(props.buildingId)
-  if (!bId) return
+  const id = parseInt(props.buildingId)
+  if (!id) return
   loading.value = true
   try {
-    const rooms = await getRoomsInfo(bId)
-    roomsInfo.value = rooms
-    roomsOccupancy.value = await loadOccupancyPercent(roomsInfo)
+    roomsOccupancy.value = loadOccupancyPercent(roomsInfo.value)
   } catch (err) {
     console.error('Failed to load occupancy data', err)
-    roomsInfo.value = []
     roomsOccupancy.value = []
   } finally {
     loading.value = false

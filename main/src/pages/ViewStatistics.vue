@@ -59,7 +59,7 @@ import StatisticsChart from 'src/components/StatisticsChart.vue'
 import StatisticsFilters from 'src/components/StatisticsFilters.vue'
 import { getBuildingsInfo } from 'src/composables/GetMainInfo.js'
 import { getReportTypes } from 'src/services/getStatisticsInfo.js'
-import { useCitiesStore } from 'src/stores/cities'
+import { useCitiesStore } from 'src/stores/cities.store'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 

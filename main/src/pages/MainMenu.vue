@@ -1,8 +1,8 @@
 <template>
-    <q-page>
-        <div class="q-pa-md bg-secondary column items-center"
-        style="padding: 10% 20%; min-width: 100%; min-height: 100%;">
-            <q-card class="menu-card q-pa-md">
+    <q-page class="column">
+        <div class="full-width full-height bg-secondary col items-center"
+        style="padding: 10% 20%;">
+            <q-card class="q-pa-xl" bordered style="border-radius: 2rem;">
                 <q-list separator>
                     <q-item
                         v-for="item in menuList"
@@ -19,7 +19,7 @@
                 </q-list>
             </q-card>
             <q-dialog v-model="chooseCityDialog" persistent>
-                <q-card class="menu-card q-pa-md">
+                <q-card class="menu-card q-pa-xl">
                     <q-card-section>
                         <div v-if="loading">
                             {{ $t('menu.loading') }}
@@ -45,7 +45,12 @@
                         </div>
                     </q-card-section>
                     <q-card-actions align="center">
-                        <q-btn flat :label="$t('popUps.cancel')" color="primary" v-close-popup />
+                        <q-btn flat :label="$t('popUps.cancel')"
+                            color="primary"
+                            v-close-popup
+                            size="lg"
+                            class="full-width"
+                            />
                     </q-card-actions>
                 </q-card>
             </q-dialog>
@@ -56,7 +61,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useCitiesStore } from 'src/stores/cities'
+import { useCitiesStore } from 'src/stores/cities.store'
 
 const router = useRouter()
 const chooseCityDialog = ref(false)
@@ -127,8 +132,7 @@ const menuList = {
   border-radius: 2rem;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   background: #fff;
-  min-width: 100%;
-  padding: 5% 10%;
+  min-width: 60%;
 }
 
 .menu-item {

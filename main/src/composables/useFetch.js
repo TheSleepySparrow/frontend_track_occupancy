@@ -1,88 +1,82 @@
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { getResponse } from 'src/services/api.js'
 import { Notify } from 'quasar'
 import { Loading } from 'quasar'
 
 
+async function loadById(id, baseUrl, options = {}) {
+    const {
+        optionalUrl = null,
+        loading = true,
+        notify = true
+    } = options
+
+    let url = `${baseUrl}/${id}`
+    if (optionalUrl) {
+        url = `${url}/${optionalUrl}`
+    }
+
+    try {
+        if (loading) {
+            Loading.show()
+        }
+        const result = await getResponse(url)
+        return result
+    } catch (err) {
+        if (notify) {
+            Notify.create({
+                message: `Ошибка получения данных (${err.message || 'неизвестная ошибка'})`,
+                color: 'primary'
+            })
+        }
+        console.error('Fetch error:', err)
+        const error = new Error(err.message)
+        error.statusCode = err.statusCode
+        throw error
+    } finally {
+        if (loading) {
+            Loading.hide()
+        }
+    }
+}
+
 export function useFetchList(props, baseUrl, options = { optionalUrl: null, loading: null, notify: null }) {
     const data = ref([])
     const error = ref(null)
-    const url = ref('')
 
     const load = async (id) => {
-        data.value = []
-        error.value = null
-        url.value = `${baseUrl}/${id}`
-
-        if (options.optionalUrl) {
-            url.value = `${url.value}/${options.optionalUrl}`
-        }
-
+        if (!id) return
         try {
-            if (options.loading) {
-                Loading.show()
-            }
-            const result  = await getResponse(url.value)
-            data.value = result
+            error.value = null
+            const result = await loadById(id, baseUrl, options)
+            data.value = Array.isArray(result) ? result : []
         } catch (err) {
             error.value = err
-            if (options.notify) {
-                Notify.create({
-                    message: `Ошибка получения данных (${error.value.message})`,
-                    color: 'primary'
-                })
-            }
-            console.log('catch',error.value.statusCode)
-        } finally {
-            if (options.loading) { 
-                Loading.hide()
-            }
+            data.value = []
         }
     }
 
-    //onMounted(load)
-    watch(() => props.id, async (id) => {
-        if (!id) return
-        await load(id)
-    }, { immediate: true })
+    watch(() => props.id, load, { immediate: true })
 
     return { data, error }
 }
 
-export function useFetchInfo(props, baseUrl, options = { loading: null, notify: null }) {
+export function useFetchListOnMounted(baseUrl, options = { loading: null, notify: null }) {
     const data = ref(null)
     const error = ref(null)
 
-    const load = async (id) => {
-        data.value = null
-        error.value = null
-
+    const load = async () => {
         try {
-            if (options.loading && 'show' in options.loading) {
-                options.loading.show();
-            }
-            const result = await getResponse(`${baseUrl}/${id}`)
-            data.value = result
-           
+            error.value = null
+            const result = await loadById('', baseUrl, options)
+            data.value = Array.isArray(result) ? result : []
         } catch (err) {
-            error.value = err.message;
-            if (options.notify) {
-                options.notify({
-                    message: `Ошибка получения данных: ${error.value}`,
-                    color: 'primary'
-                });
-            }
-        } finally {
-            if (options.loading && 'hide' in options.loading) {
-                options.loading.hide()
-            }
+            error.value = err
+            data.value = []
         }
     }
 
-    watch(() => props.id, async (id) => {
-        if (!id) return
-        await load(id)
-    }, { immediate: true })
+    onMounted(() => load())
 
     return { data, error }
 }

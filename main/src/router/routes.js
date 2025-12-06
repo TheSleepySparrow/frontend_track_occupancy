@@ -1,4 +1,4 @@
-import { useCitiesStore } from 'src/stores/cities'
+import { useCitiesStore } from 'src/stores/cities.store'
 
 async function checkCityId (to, from, next) {
   const citiesStore = useCitiesStore()

@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import { useFetchListOnMounted } from 'src/composables/useFetch'
 import { getCitiesList } from 'src/services/getCities'
 
 export const useCitiesStore = defineStore('cities', {
@@ -33,6 +34,8 @@ export const useCitiesStore = defineStore('cities', {
       if (this.loaded) return
 
       try {
+        const data = useFetchListOnMounted('/api/v1/cities', { optionalUrl: null, loading: true, notify: true })
+        console.log(data)
         this.cities = await getCitiesList()
         this.loaded = true
       } catch (err) {
