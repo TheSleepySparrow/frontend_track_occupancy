@@ -132,11 +132,11 @@ export function getOccupancyForAuditories(auditoryIdList) {
         },
         {
             id: auditoryIdList[1],
-            numberOfPeople: 10
+            numberOfPeople: 1
         },
         {
             id: auditoryIdList[2],
-            numberOfPeople: 5
+            numberOfPeople: 1
         }
     ]
     return occupancy

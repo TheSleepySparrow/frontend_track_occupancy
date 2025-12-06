@@ -40,6 +40,36 @@ async function loadById(id, baseUrl, options = {}) {
     }
 }
 
+export async function loadFromUrl(url, options = {}) {
+    const {
+        loading = true,
+        notify = true
+    } = options
+
+    try {
+        if (loading) {
+            Loading.show()
+        }
+        const result = await getResponse(url)
+        return result
+    } catch (err) {
+        if (notify) {
+            Notify.create({
+                message: `Ошибка загрузки данных (${err.message || 'неизвестная ошибка'})`,
+                color: 'primary'
+            })
+        }
+        console.error('Load from URL error:', err)
+        const error = new Error(err.message)
+        error.statusCode = err.statusCode
+        throw error
+    } finally {
+        if (loading) {
+            Loading.hide()
+        }
+    }
+}
+
 export function useFetchList(props, baseUrl, options = { optionalUrl: null, loading: null, notify: null }) {
     const data = ref([])
     const error = ref(null)
@@ -61,22 +91,23 @@ export function useFetchList(props, baseUrl, options = { optionalUrl: null, load
     return { data, error }
 }
 
-export function useFetchListOnMounted(baseUrl, options = { loading: null, notify: null }) {
-    const data = ref(null)
+export function useFetchListOnMounted(url, options = { loading: null, notify: null }) {
+    const data = ref([])
     const error = ref(null)
 
     const load = async () => {
         try {
             error.value = null
-            const result = await loadById('', baseUrl, options)
+            const result = await loadFromUrl(url, options)
             data.value = Array.isArray(result) ? result : []
+            console.log(data.value)
         } catch (err) {
             error.value = err
             data.value = []
         }
     }
 
-    onMounted(() => load())
+    onMounted(load)
 
-    return { data, error }
+    return { data, error, reload: load }
 }

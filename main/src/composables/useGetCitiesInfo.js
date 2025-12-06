@@ -1,9 +1,9 @@
-import { useFetchList } from './useFetch.js'
+import { useFetchListOnMounted } from './useFetch.js'
 import { computed } from 'vue'
 
 
-export function useCitiesInfo(props, baseUrl, options = { optionalUrl: null, loading: null, notify: null }) {
-    const { data, error } = useFetchList(props, baseUrl, options)
+export function useCitiesInfo(baseUrl, options = { loading: null, notify: null }) {
+    const { data, error, reload } = useFetchListOnMounted(baseUrl, options)
 
     const citiesInfo = computed(() => {
         if (error.value) {
@@ -18,5 +18,6 @@ export function useCitiesInfo(props, baseUrl, options = { optionalUrl: null, loa
             'name_en-US': item.name.en
         }))
     })
-    return { citiesInfo, error }
+    console.log('citiesInfo', citiesInfo.value)
+    return { citiesInfo, error, reload }
 }
