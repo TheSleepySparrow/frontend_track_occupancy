@@ -2,6 +2,7 @@
   <q-page>
     <div class="q-pa-md column items-center" style="padding: 5% 5%">
       <RoomsFilter class="col-3"
+      :numberOfFloorsOptions="numberOfFloorsOptions"
       @search="(value) => filters.search = value"
       @update-floors="(value) => filters.floor = value"
       @update-room="(value) => filters.type = value"/>
@@ -94,6 +95,20 @@ const filters = ref({
   type: ref([])
 })
 
+const numberOfFloorsOptions = computed(() => {
+  if (!roomsInfo.value || roomsInfo.value.length === 0) {
+    return []
+  }
+  const uniqueFloors = [...new Set(roomsInfo.value.map(room => room.floor))]
+    .filter(floor => floor != null)
+    .sort((a, b) => a - b)
+  
+  return uniqueFloors.map(floor => ({
+    label: String(floor),
+    value: String(floor)
+  }))
+})
+
 const filteredRooms = computed(() => {
   return roomsInfo.value
   .filter(room =>{
@@ -102,12 +117,12 @@ const filteredRooms = computed(() => {
   })
   .filter(room => {
     // 2. Фильтрация по этажу
-    return !filters.value.floor || !filters.value.floor.length || filters.value.floor.map(item => item.value).includes(String(room.floor))
+    return !filters.value.floor || !filters.value.floor.length || (Array.isArray(filters.value.floor) && filters.value.floor.map(item => item.value).includes(String(room.floor)))
   })
-  .filter(room => 
+  .filter(room => {
     // 3. Фильтрация по типу
-    !filters.value.type || !filters.value.type.length || filters.value.type.map(item => item.label).includes(room[locale.value].type)
-  )
+    return !filters.value.type || !filters.value.type.length || (Array.isArray(filters.value.type) && filters.value.type.map(item => item.value).includes(room.type))
+  })
 })
 
 watch(() => [buildingId, cityId], () => {

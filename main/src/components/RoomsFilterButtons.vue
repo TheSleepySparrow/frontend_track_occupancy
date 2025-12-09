@@ -9,7 +9,7 @@
     :label="props.label"
     :options="props.options"
     style="min-width: 17%"
-    @clear="sendEmitToParent(null)"
+    @clear="sendEmitToParent([])"
   />
 </template>
 
@@ -25,10 +25,10 @@ const whatIsChosen = ref([])
 const emit = defineEmits(['updateFilter'])
 
 function sendEmitToParent(value) {
-  emit('updateFilter', value)
+  emit('updateFilter', value || [])
 }
 
-watch(whatIsChosen, () => {
-  sendEmitToParent(whatIsChosen.value)
+watch(whatIsChosen, (newValue) => {
+  sendEmitToParent(newValue || [])
 })
 </script>

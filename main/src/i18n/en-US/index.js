@@ -40,7 +40,6 @@ export default {
         '404': 'Data not found',
         '401': 'You`re unauthorized',
         '403': 'You`re forbidden to access data',
-        '500': 'There`s en error on server side',
         'else': 'Something went wrong... Please contact tech support'
     }
 }

@@ -13,14 +13,14 @@ export function useBuildingsInfo(props, baseUrl, options = { optionalUrl: null, 
             return []
         }
         return data.value?.map(item => ({
-            id: item.id,
+            id: parseInt(item.id),
             'ru-RU': {
                 title: item.address.ru,
             },
             'en-US': {
                 title: item.address.en,
             },
-            floorNumber: item.floors_count
+            floorNumber: parseInt(item.floors_count)
         }))
     })
     return { buildingsInfo, error }

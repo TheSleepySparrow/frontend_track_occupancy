@@ -1,5 +1,6 @@
 import { useFetchList } from './useFetch.js'
 import { computed } from 'vue'
+import { getLocalizedTypeLabel } from './GetMainInfo.js'
 
 
 export function useAuditoriesInfo(props, baseUrl, options = { optionalUrl: null, loading: null, notify: null }) {
@@ -12,22 +13,26 @@ export function useAuditoriesInfo(props, baseUrl, options = { optionalUrl: null,
         if (!data.value) {
             return []
         }
-        return data.value?.map(item => ({
-            id: item.id,
-            'ru-RU': {
-                title: item.auditorium_number,
-                type: item.type.ru,
-                description: ''
-            },
-            'en-US': {
-                title: item.auditorium_number,
+        console.log(data.value)
+        return data.value?.map(item => {
+            return {
+                id: parseInt(item.id),
                 type: item.type.en,
-                description: ''
-            },
-            floor: item.floor_number,
-            capacity: item.capacity,
-            img_url: item.image_url
-        }))
+                'ru-RU': {
+                    title: item.auditorium_number,
+                    type: getLocalizedTypeLabel(item.type.en, 'ru-RU'),
+                    description: ''
+                },
+                'en-US': {
+                    title: item.auditorium_number,
+                    type: getLocalizedTypeLabel(item.type.en, 'en-US'),
+                    description: ''
+                },
+                floor: parseInt(item.floor_number),
+                capacity: parseInt(item.capacity),
+                img_url: item.image_url
+            }
+        })
     })
     return { auditoriesInfo, error }
 }
