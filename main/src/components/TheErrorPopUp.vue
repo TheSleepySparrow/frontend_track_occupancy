@@ -9,7 +9,7 @@
       </q-card-section>
       <q-card-section class="q-pt-none">
         {{ $t('errorOccured.meaning') }}
-        {{ $t('errorOccured.' + props.err?.statusCode || 'errorOccured.else') }}
+        {{ $t(errorMessageKey) }}
       </q-card-section>
 
       <q-card-actions align="right">
@@ -25,12 +25,22 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps(['err', 'errorPage', 'routeParams'])
 const dialogOpen = ref(false)
 const router = useRouter()
+const { te } = useI18n()
+
+const errorMessageKey = computed(() => {
+  if (!props.err?.statusCode) {
+    return 'errorOccured.else'
+  }
+  const key = 'errorOccured.' + props.err.statusCode
+  return te(key) ? key : 'errorOccured.else'
+})
 
 const errorPageOpen = () => {
   dialogOpen.value = false
