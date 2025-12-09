@@ -2,7 +2,17 @@
   <q-layout view="hHh Lpr lFf">
     <TheHeader HeaderName="mainMenu.occupancy"/>
     <q-drawer class="bg-secondary" v-model="leftDrawerOpen" show-if-above bordered>
-      <div class="q-gutter-y-md text-center" style="padding: 25% 7%">
+      <div class="q-gutter-y-md text-center" style="padding: 25% 7%; position: relative;">
+        <q-btn
+          flat
+          round
+          dense
+          icon="close"
+          color="white"
+          size="md"
+          @click="toggleDrawer"
+          style="position: absolute; top: 3%; right: 3%;"
+        />
         <p class="text-h4 text-white">{{ $t('occupationPage.leftToggleName') }}</p>
         <q-separator spaced size="3px" color="accent"/>
         <!-- Вывод списка зданий -->
@@ -37,8 +47,17 @@
 
     <q-page-container>
       <router-view />
+
     </q-page-container>
-  </q-layout>
+    <q-page-sticky position="top-left" :offset="[15, 15]" v-if="!leftDrawerOpen">
+      <q-btn
+        fab-mini
+        icon="menu"
+        color="primary"
+        @click="toggleDrawer"
+      />
+    </q-page-sticky>
+</q-layout>
 </template>
 
 <script setup>
@@ -80,6 +99,10 @@ function clickBuilding(buildingId) {
     slug: citiesStore.getSlugByCityId(city.value.id),
     buildingId: buildingId }
   })
+}
+
+function toggleDrawer() {
+  leftDrawerOpen.value = !leftDrawerOpen.value
 }
 
 </script>

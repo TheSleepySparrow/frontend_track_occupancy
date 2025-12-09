@@ -46,7 +46,7 @@ const routes = [
   {
     path: '/occupancy/:cityId(\\d+)/:slug?',
     name: 'showOccupancy',
-    component: () => import('layouts/ShowOccupancy.vue'),
+    component: () => import('src/layouts/OccupancyLayout.vue'),
     props: route => ({
       cityId: parseInt(route.params.cityId),
       slug: route.params.slug || ''
@@ -65,7 +65,7 @@ const routes = [
         props: route => ({
           cityId: parseInt(route.params.cityId),
           slug: route.params.slug || '',
-          buildingId: route.params.buildingId })
+          buildingId: parseInt(route.params.buildingId) })
       },
       {
         path: 'error',
@@ -77,7 +77,7 @@ const routes = [
   {
     path: '/statistics/:cityId(\\d+)/:slug?',
     name: 'showStatistics',
-    component: () => import('layouts/ShowStatistics.vue'),
+    component: () => import('src/layouts/StatisticsLayout.vue'),
     props: route => ({
       cityId: parseInt(route.params.cityId),
       slug: route.params.slug || ''
@@ -98,7 +98,7 @@ const routes = [
   {
     path: '/attendance',
     name: 'showAttendance',
-    component: () => import('layouts/ShowAttendance.vue'),
+    component: () => import('src/layouts/AttendanceLayout.vue'),
     children: [{
       path: '',
       name: 'viewAttendance',
@@ -108,7 +108,7 @@ const routes = [
   {
     path: '/users',
     name: 'showUsers',
-    component: () => import('src/layouts/ShowUsers.vue'),
+    component: () => import('src/layouts/UsersLayout.vue'),
     children: [{
       path: '',
       name: 'viewUsers',
@@ -118,7 +118,7 @@ const routes = [
   {
     path: '/settings',
     name: 'showSettings',
-    component: () => import('src/layouts/ShowSettings.vue'),
+    component: () => import('src/layouts/SettingsLayout.vue'),
     children: [{
       path: '',
       name: 'viewSettings',
