@@ -26,7 +26,7 @@
         </div>
         <TheErrorPopUp :err="err"
           :errorPage="'viewOccupancyError'"
-          :routeParams="props"
+          :routeParams="route.params"
         />
       </div>
     </div>
@@ -41,17 +41,23 @@ import { useAuditoriesInfo } from 'src/composables/useGetAuditoriesInfo'
 import { getOccupancyForAuditories } from 'src/composables/GetMainInfo'
 import { computed, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 
 const { locale } = useI18n()
-const props = defineProps({
-  cityId: { type: Number, required: true },
-  slug: { type: String, default: '' },
-  buildingId: { type: String, required: true }
+const route = useRoute()
+const cityId = computed(() => parseInt(route.params.cityId))
+const buildingId = computed(() => parseInt(route.params.buildingId))
+
+const buildingIdRef = computed(() => {
+  return { id: buildingId.value }
+})
+const url = computed(() => {
+  return '/api/v1/cities/' + cityId.value + '/buildings'
 })
 
 const { auditoriesInfo: roomsInfo, error: err } = useAuditoriesInfo(
-  { id: props.buildingId },
-  '/api/v1/cities/' + props.cityId + '/buildings',
+  buildingIdRef,
+  url,
   {
     optionalUrl: 'auditories',
     loading: true,
@@ -69,7 +75,7 @@ async function loadOccupancyPercent(roomsInfo) {
 } 
 
 async function loadOccupancyData() {
-  const id = parseInt(props.buildingId)
+  const id = parseInt(buildingId)
   if (!id) return
   loading.value = true
   try {
@@ -104,7 +110,7 @@ const filteredRooms = computed(() => {
   )
 })
 
-watch(() => [props.buildingId, props.cityId], () => {
+watch(() => [buildingId, cityId], () => {
   loadOccupancyData()
 }, { immediate: true })
 </script>

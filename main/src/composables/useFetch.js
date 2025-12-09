@@ -74,11 +74,13 @@ export function useFetchList(props, baseUrl, options = { optionalUrl: null, load
     const data = ref([])
     const error = ref(null)
 
-    const load = async (id) => {
+    const load = async () => {
+        const id = typeof props === 'object' && 'value' in props ? props.value?.id : props?.id
         if (!id) return
         try {
             error.value = null
-            const result = await loadById(id, baseUrl, options)
+            const url = typeof baseUrl === 'object' && 'value' in baseUrl ? baseUrl.value : baseUrl
+            const result = await loadById(id, url, options)
             data.value = Array.isArray(result) ? result : []
         } catch (err) {
             error.value = err
@@ -86,7 +88,14 @@ export function useFetchList(props, baseUrl, options = { optionalUrl: null, load
         }
     }
 
-    watch(() => props.id, load, { immediate: true })
+    watch(props, () => {
+        const id = typeof props === 'object' && 'value' in props ? props.value?.id : props?.id
+        if (id) load()
+    }, { immediate: true, deep: true })
+    
+    if (typeof baseUrl === 'object' && 'value' in baseUrl) {
+        watch(baseUrl, load, { immediate: false })
+    }
 
     return { data, error }
 }
