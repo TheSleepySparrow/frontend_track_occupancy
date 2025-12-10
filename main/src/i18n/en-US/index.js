@@ -33,6 +33,7 @@ export default {
         'noBuildingsChosen': 'No buildings chosen. Please select something...',
         'noBuildings': 'No buildings found',
         'error': 'Error while loading buildings. Please contact tech support: {address}',
+        'noOccupationWarning': 'Data is not valid'
     },
     'errorOccured': {
         'name': 'Error occured',

@@ -35,3 +35,31 @@ export function useAuditoriesInfo(props, baseUrl, options = { optionalUrl: null,
     })
     return { auditoriesInfo, error }
 }
+
+export function useAuditoriesOccupancyInfo(props, baseUrl, options = { optionalUrl: null, loading: null, notify: null }) {
+    const str = { timestamp: new Date().toISOString() }
+    const params = new URLSearchParams(str).toString()
+    const url = options.optionalUrl ? `${options.optionalUrl}?${params}` : params
+    //const url = options.optionalUrl ? `${options.optionalUrl}?timestamp=2025-12-10T13:00:15.123Z` : params
+    const { data, error } = useFetchList(props, baseUrl, { optionalUrl: url, loading: options.loading, notify: options.notify})
+
+    const auditoriesOccupancyInfo = computed(() => {
+        if (error.value) {
+            return []
+        }
+        if (!data.value) {
+            return []
+        }
+        return data.value?.map(item => {
+            return {
+                id: parseInt(item.auditorium_id),
+                count: parseInt(item.person_count),
+                timestamp: item.actual_timestamp,
+                isValid: item.is_fresh,
+                differenceIntime: item.time_diff_minutes,
+                warning: item.warning ? item.warning : null
+            }
+        })
+    })
+    return { auditoriesOccupancyInfo, error }
+}
