@@ -50,6 +50,11 @@
           />
         </div>
       </div>
+      <!-- Обработка ошибки -->
+      <TheErrorPopUp :err="err"
+        :errorPage="'viewOccupancyError'"
+        :routeParams="route.params"
+      />
   </q-page>
 </template>
 
@@ -57,27 +62,35 @@
 import { computed, ref, watch } from 'vue'
 import StatisticsChart from 'src/components/StatisticsChart.vue'
 import StatisticsFilters from 'src/components/StatisticsFilters.vue'
-import { getBuildingsInfo } from 'src/composables/GetMainInfo.js'
+import TheErrorPopUp from 'src/components/TheErrorPopUp.vue'
+import { useBuildingsInfo } from 'src/composables/useGetBuildingsInfo.js'
 import { getReportTypes } from 'src/services/getStatisticsInfo.js'
 import { useCitiesStore } from 'src/stores/cities.store'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 
 const { locale } = useI18n()
 const router = useRouter()
-const props = defineProps({
-  cityId: { type: Number, required: true },
-  slug: { type: String, default: '' }
-})
+const route = useRoute()
 
-const cityId = computed(() => props.cityId)
+const cityId = computed(() => parseInt(route.params.cityId))
 const citiesStore = useCitiesStore()
 const cities = citiesStore.cities.map(city => { return { label: city[`name_${locale.value}`], value: city.id } })
 const chosenCity = ref(null)
+const buildingsProps = computed(() => ({ id: cityId.value }))
+
+const { buildingsInfo: buildingsList, error: err } = useBuildingsInfo(
+  buildingsProps,
+  '/api/v1/cities',
+  {
+    optionalUrl: 'buildings',
+    loading: true,
+    notify: true
+  }
+)
 
 const chosenBuildingId = ref(null)
 const buildings = computed(() => {
-  const buildingsList = computed(() => getBuildingsInfo(parseInt(props.cityId)))
   return buildingsList.value.map(building => {
     return { label: building[locale.value].title, value: building.id }
   })

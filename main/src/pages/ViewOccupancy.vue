@@ -1,31 +1,41 @@
 <template>
-  <q-page>
-    <div class="q-pa-md column items-center" style="padding: 5% 5%">
-      <RoomsFilter class="col-3"
-      :numberOfFloorsOptions="numberOfFloorsOptions"
-      @search="(value) => filters.search = value"
-      @update-floors="(value) => filters.floor = value"
-      @update-room="(value) => filters.type = value"/>
-      <div class="col" style="width: 100%;">
-        <div v-if="loading">
+  <q-page class="q-pa-lg">
+    <div class="column q-col-gutter-lg">
+      <!-- Filter Section -->
+      <div class="col-12 col-md-3">
+        <q-card class="q-pa-md" flat>
+          <RoomsFilter
+            :numberOfFloorsOptions="numberOfFloorsOptions"
+            @search="(value) => filters.search = value"
+            @update-floors="(value) => filters.floor = value"
+            @update-room="(value) => filters.type = value"
+          />
+        </q-card>
+      </div>
+
+      <!-- Content Section -->
+      <div class="col-12 col-md-9">
+        <div v-if="loading" class="row q-col-qutter-md">
           <q-spinner color="primary" size="3em" />
         </div>
-        <div class="row q-col-gutter-md"
-        v-else-if="filteredRooms.length > 0">
-          <div v-for="item in filteredRooms"
+        <div v-else-if="filteredRooms.length > 0" class="row q-col-gutter-md">
+          <div
+            v-for="item in filteredRooms"
             :key="item.id"
-            class="col-12 col-sm-6">
-            <RoomsInfoCard
-              :item="item"
-            /> <!-- :occupancy="roomsOccupancy.find(room => room.id === item.id)" -->
+            class="col-12 col-sm-6 col-md-4"
+          >
+            <RoomsInfoCard :item="item" />
           </div>
         </div>
-        <div v-else class="q-pa-md" style="padding: 15%">
-            <p class="text-h6 text-grey-8 text-center">
+        <div v-else class="q-pa-md column">
+          <q-card flat class="text-center q-pa-xl">
+            <p class="text-h6 text-grey-8">
               {{ $t('occupationPage.noRooms') }}
             </p>
+          </q-card>
         </div>
-        <TheErrorPopUp :err="err"
+        <TheErrorPopUp
+          :err="err"
           :errorPage="'viewOccupancyError'"
           :routeParams="route.params"
         />

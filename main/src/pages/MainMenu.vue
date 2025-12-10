@@ -7,7 +7,7 @@
                     <q-item
                         v-for="item in menuList"
                         :key="item.id"
-                        clickable
+                        :clickable="item.isClickable"
                         v-ripple
                         @click="item.whatToDo"
                         class="menu-item"
@@ -18,42 +18,10 @@
                     </q-item>
                 </q-list>
             </q-card>
-            <q-dialog v-model="chooseCityDialog" persistent>
-                <q-card class="menu-card q-pa-xl">
-                    <q-card-section>
-                        <div v-if="loading">
-                            {{ $t('menu.loading') }}
-                        </div>
-                        <div v-else-if="error" class="q-pa-md text-center">
-                            {{ $t('menu.error') }}
-                        </div>
-                        <q-list v-else-if="citiesStore.cities.length > 0">
-                            <q-item
-                                v-for="city in citiesStore.cities"
-                                :key="city.id"
-                                clickable
-                                class="menu-item"
-                                @click="handleCitySelect(city.id)"
-                            >
-                                <q-item-section>
-                                {{ city[`name_${$i18n.locale}`] }}
-                                </q-item-section>
-                            </q-item>
-                        </q-list>
-                        <div v-else>
-                            {{ $t('menu.noCities') }}
-                        </div>
-                    </q-card-section>
-                    <q-card-actions align="center">
-                        <q-btn flat :label="$t('popUps.cancel')"
-                            color="primary"
-                            v-close-popup
-                            size="lg"
-                            class="full-width"
-                            />
-                    </q-card-actions>
-                </q-card>
-            </q-dialog>
+            <TheCitySelectDialog
+                v-model="chooseCityDialog"
+                @citySelected="handleCitySelect"
+            />
         </div>
     </q-page>
 </template>
@@ -61,40 +29,23 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useCitiesStore } from 'src/stores/cities.store'
+import TheCitySelectDialog from 'src/components/TheCitySelectDialog.vue'
 
 const router = useRouter()
 const chooseCityDialog = ref(false)
-const loading = ref(false)
-const error = ref(false)
-const citiesStore = useCitiesStore()
 const targetRouteName = ref('')
 
 function pushRoute(routeName, parameters) {
     router.push({ name: routeName, params: parameters })
 }
 
-async function chooseCity(routeName) {
+function chooseCity(routeName) {
     targetRouteName.value = routeName
     chooseCityDialog.value = true
-    await loadCities()
 }
 
 function handleCitySelect(cityId) {
-  chooseCityDialog.value = false
-  pushRoute(targetRouteName.value, { cityId: parseInt(cityId) })
-}
-
-async function loadCities() {
-    loading.value = true
-    try {
-        await citiesStore.fetchCities()
-    } catch (err) {
-        console.error('Cities load failed in route guard', err)
-        error.value = true
-    } finally {
-        loading.value = false
-    }
+    pushRoute(targetRouteName.value, { cityId: cityId })
 }
 
 const text = 'mainMenu'
@@ -102,39 +53,37 @@ const menuList = {
     occupancy: {
         id: 1,
         text: text + '.occupancy',
-        whatToDo: () => chooseCity('showOccupancy')
+        whatToDo: () => chooseCity('showOccupancy'),
+        isClickable: true
     },
     statistics: {
         id: 2,
         text: text + '.statistics',
-        whatToDo: () => chooseCity('viewStatistics')
+        whatToDo: () => chooseCity('viewStatistics'),
+        isClickable: true
     },
     attendance: {
         id: 3,
         text: text + '.attendance',
-        whatToDo: () => pushRoute('viewAttendance', {})
+        whatToDo: () => pushRoute('viewAttendance', {}),
+        isClickable: false
     },
     users: {
         id: 4,
         text: text + '.users',
-        whatToDo: () => pushRoute('viewUsers', {})
+        whatToDo: () => pushRoute('viewUsers', {}),
+        isClickable: false
     },
     settings: {
         id: 5,
         text: text + '.settings',
         whatToDo: () => pushRoute('viewSettings', {}),
+        isClickable: false
     }
 }
 </script>
 
 <style scoped>
-.menu-card {
-  border-radius: 2rem;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  background: #fff;
-  min-width: 60%;
-}
-
 .menu-item {
   border-radius: 1rem;
   background: #e3e9f5;

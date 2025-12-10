@@ -1,6 +1,9 @@
 <template>
     <q-layout view="hHh Lpr lFf">
-        <TheHeader HeaderName="mainMenu.statistics" />
+        <TheHeader HeaderName="mainMenu.statistics"
+        :showBreadcrumbs="false"
+        :city="null"
+        :buildingName="null" />
         <q-page-container>
             <router-view />
         </q-page-container>

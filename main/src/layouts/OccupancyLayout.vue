@@ -1,6 +1,11 @@
 <template>
   <q-layout view="hHh Lpr lFf">
-    <TheHeader HeaderName="mainMenu.occupancy"/>
+    <TheHeader 
+      HeaderName="mainMenu.occupancy"
+      :showBreadcrumbs="true"
+      :city="city"
+      :buildingName="currentBuildingName"
+    />
     <q-drawer class="bg-secondary" v-model="leftDrawerOpen" show-if-above bordered>
       <div class="q-gutter-y-md text-center" style="padding: 25% 7%; position: relative;">
         <q-btn
@@ -61,25 +66,29 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import TheHeader from '../components/TheHeader.vue'
 import { useBuildingsInfo } from 'src/composables/useGetBuildingsInfo.js'
 import TheErrorPopUp from 'src/components/TheErrorPopUp.vue'
 import { useCitiesStore } from 'src/stores/cities.store'
 import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+
+const { locale } = useI18n()
 
 const route = useRoute()
 const router = useRouter()
 const citiesStore = useCitiesStore()
 const chosenBuilding = ref(null)
-const cityId = parseInt(route.params.cityId)
 
+const cityId = computed(() => parseInt(route.params.cityId))
 const city = computed(() => 
-  citiesStore.findCityById(cityId)
+  citiesStore.findCityById(cityId.value)
 )
+const buildingsProps = computed(() => ({ id: cityId.value }))
 
 const { buildingsInfo: buildingsList, error: err } = useBuildingsInfo(
-  { id: cityId },
+  buildingsProps,
   '/api/v1/cities',
   {
     optionalUrl: 'buildings',
@@ -91,6 +100,21 @@ const { buildingsInfo: buildingsList, error: err } = useBuildingsInfo(
 const leftDrawerOpen = ref(true)
 const hasBuildings = computed(() => buildingsList.value.length > 0)
 const noBuildings = computed(() => buildingsList.value.length == 0)
+
+const currentBuildingName = computed(() => {
+  if (!chosenBuilding.value) return ''
+  const building = buildingsList.value.find(b => b.id === chosenBuilding.value)
+  if (!building) return ''
+  return building[locale.value]?.title || ''
+})
+
+watch(() => route.params.buildingId, (newBuildingId) => {
+  if (newBuildingId) {
+    chosenBuilding.value = parseInt(newBuildingId)
+  } else {
+    chosenBuilding.value = null
+  }
+}, { immediate: true })
 
 function clickBuilding(buildingId) {
   chosenBuilding.value = buildingId
