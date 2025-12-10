@@ -13,7 +13,6 @@ export function useAuditoriesInfo(props, baseUrl, options = { optionalUrl: null,
         if (!data.value) {
             return []
         }
-        console.log(data.value)
         return data.value?.map(item => {
             return {
                 id: parseInt(item.id),

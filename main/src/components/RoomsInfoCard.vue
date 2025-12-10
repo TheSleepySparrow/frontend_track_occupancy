@@ -35,7 +35,7 @@
 
 <script setup>
 import { computed } from 'vue'
-const props = defineProps(['item', 'occupancy'])
+const props = defineProps(['item'])
 
 const occupancyPercent = computed(() => {
     //const number = Math.ceil(props.occupancy.numberOfPeople / props.item.capacity * 100)

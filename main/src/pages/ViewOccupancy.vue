@@ -15,10 +15,7 @@
 
       <!-- Content Section -->
       <div class="col-12 col-md-9">
-        <div v-if="loading" class="row q-col-qutter-md">
-          <q-spinner color="primary" size="3em" />
-        </div>
-        <div v-else-if="filteredRooms.length > 0" class="row q-col-gutter-md">
+        <div v-if="filteredRooms.length > 0" class="row q-col-gutter-md">
           <div
             v-for="item in filteredRooms"
             :key="item.id"
@@ -49,8 +46,7 @@ import RoomsFilter from 'src/components/RoomsFilter.vue'
 import RoomsInfoCard from 'src/components/RoomsInfoCard.vue'
 import TheErrorPopUp from 'src/components/TheErrorPopUp.vue'
 import { useAuditoriesInfo } from 'src/composables/useGetAuditoriesInfo'
-import { getOccupancyForAuditories } from 'src/composables/GetMainInfo'
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 
@@ -75,29 +71,6 @@ const { auditoriesInfo: roomsInfo, error: err } = useAuditoriesInfo(
     notify: true
   }
 )
-
-const roomsOccupancy = ref([])
-const loading = ref(false)
-
-async function loadOccupancyPercent(roomsInfo) {
-  const roomIds = roomsInfo.map(room => room.id)
-  const occupancy = getOccupancyForAuditories(roomIds)
-  return occupancy
-} 
-
-async function loadOccupancyData() {
-  const id = parseInt(buildingId)
-  if (!id) return
-  loading.value = true
-  try {
-    roomsOccupancy.value = loadOccupancyPercent(roomsInfo.value)
-  } catch (err) {
-    console.error('Failed to load occupancy data', err)
-    roomsOccupancy.value = []
-  } finally {
-    loading.value = false
-  }
-}
 
 const filters = ref({
   search: ref(''),
@@ -134,8 +107,4 @@ const filteredRooms = computed(() => {
     return !filters.value.type || !filters.value.type.length || (Array.isArray(filters.value.type) && filters.value.type.map(item => item.value).includes(room.type))
   })
 })
-
-watch(() => [buildingId, cityId], () => {
-  loadOccupancyData()
-}, { immediate: true })
 </script>
