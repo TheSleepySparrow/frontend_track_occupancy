@@ -21,7 +21,7 @@
             :key="item.id"
             class="col-12 col-sm-6 col-md-4"
           >
-            <RoomsInfoCard :item="item" />
+            <RoomsInfoCard :item="item" :occupancy="auditoriesOccupancyInfo.find(occupancy => occupancy.id === item.id)" />
           </div>
         </div>
         <div v-else class="q-pa-md column">
@@ -32,7 +32,7 @@
           </q-card>
         </div>
         <TheErrorPopUp
-          :err="err"
+          :err="err || errOccupancy"
           :errorPage="'viewOccupancyError'"
           :routeParams="route.params"
         />
@@ -45,7 +45,7 @@
 import RoomsFilter from 'src/components/RoomsFilter.vue'
 import RoomsInfoCard from 'src/components/RoomsInfoCard.vue'
 import TheErrorPopUp from 'src/components/TheErrorPopUp.vue'
-import { useAuditoriesInfo } from 'src/composables/useGetAuditoriesInfo'
+import { useAuditoriesInfo, useAuditoriesOccupancyInfo } from 'src/composables/useGetAuditoriesInfo'
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -67,6 +67,16 @@ const { auditoriesInfo: roomsInfo, error: err } = useAuditoriesInfo(
   url,
   {
     optionalUrl: 'auditories',
+    loading: true,
+    notify: true
+  }
+)
+
+const { auditoriesOccupancyInfo: auditoriesOccupancyInfo, error: errOccupancy } = useAuditoriesOccupancyInfo(
+  buildingIdRef,
+  url,
+  {
+    optionalUrl: 'auditories/occupancy',
     loading: true,
     notify: true
   }
