@@ -23,7 +23,7 @@
         </div>
         <div class="q-gutter-md row justify-start">
             <RoomsFilterButtons :label="$t('occupationPage.floor')"
-            :options="numberOfFloorsOptions"
+            :options="props.numberOfFloorsOptions"
             @update-filter="onUpdateFloor"/>
             <RoomsFilterButtons :label="$t('occupationPage.typeOfRoom')"
             :options="typeOfRoomsOptions[$i18n.locale]"
@@ -35,11 +35,17 @@
 <script setup>
 import { ref } from 'vue'
 import RoomsFilterButtons from './RoomsFilterButtons.vue'
-import { getRoomTypesInfo, getNumberOfFloorsInfo } from 'src/composables/GetMainInfo'
+import { getRoomTypesInfo } from 'src/composables/GetMainInfo'
+
+const props = defineProps({
+  numberOfFloorsOptions: {
+    type: Array,
+    default: () => []
+  }
+})
 
 const search = ref('')
 const typeOfRoomsOptions = getRoomTypesInfo()
-const numberOfFloorsOptions = getNumberOfFloorsInfo()
 const emit = defineEmits(['updateFloors', 'updateRoom', 'search'])
 
 function onUpdateFloor(floors) {
