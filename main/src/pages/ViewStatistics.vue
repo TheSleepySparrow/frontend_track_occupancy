@@ -106,7 +106,7 @@ const buildingsProps = computed(() => ({ id: cityId.value }))
 
 const { buildingsInfo: buildingsList, error: err } = useBuildingsInfo(
   buildingsProps,
-  '/api/v1/cities',
+  '/v1/cities',
   {
     optionalUrl: 'buildings',
     loading: true,
