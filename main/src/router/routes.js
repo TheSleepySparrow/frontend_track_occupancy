@@ -1,4 +1,36 @@
-import { useCitiesStore } from 'src/stores/cities'
+import { useCitiesStore } from 'src/stores/cities.store'
+
+async function checkCityId (to, from, next) {
+  const citiesStore = useCitiesStore()
+  if (!citiesStore.loaded) {
+    try {
+      await citiesStore.fetchCities()
+    } catch (err) {
+      console.error('Cities load failed in route guard', err)
+      next({ name: 'Error' })
+      return
+    }
+  }
+
+  const city = citiesStore.findCityById(to.params.cityId)
+
+  if (!city) {
+    next( { name: 'Error' } )
+    return
+  }
+
+  const expectedSlug = citiesStore.getSlugByCityId(city.id)
+  if (to.params.slug !== expectedSlug) {
+    next({
+      name: to.name,
+      params: { cityId: parseInt(city.id), slug: expectedSlug },
+      query: to.query
+    })
+  } else {
+    next()
+  }
+}
+
 const routes = [
   {
     path: '/',
@@ -14,43 +46,12 @@ const routes = [
   {
     path: '/occupancy/:cityId(\\d+)/:slug?',
     name: 'showOccupancy',
-    component: () => import('layouts/ShowOccupancy.vue'),
+    component: () => import('src/layouts/OccupancyLayout.vue'),
     props: route => ({
       cityId: parseInt(route.params.cityId),
       slug: route.params.slug || ''
     }),
-    async beforeEnter (to, from, next) {
-      const citiesStore = useCitiesStore()
-
-      if (!citiesStore.loaded) {
-        try {
-          await citiesStore.fetchCities()
-        } catch (err) {
-          console.error('Cities load failed in route guard', err)
-          next({ name: 'Error' })
-          return
-        }
-      }
-
-      const city = citiesStore.findCityById(to.params.cityId)
-
-      if (!city) {
-        next( { name: 'Error' } )
-        return
-      }
-
-      const expectedSlug = citiesStore.getSlugByCityId(city.id)
-
-      if (to.params.slug !== expectedSlug) {
-        next({
-          name: 'showOccupancy',
-          params: { cityId: parseInt(city.id), slug: expectedSlug },
-          query: to.query
-        })
-      } else {
-        next()
-      }
-    },
+    beforeEnter : [checkCityId],
     children: [
       {
         path: '',
@@ -64,25 +65,40 @@ const routes = [
         props: route => ({
           cityId: parseInt(route.params.cityId),
           slug: route.params.slug || '',
-          buildingId: route.params.buildingId })
+          buildingId: parseInt(route.params.buildingId) })
+      },
+      {
+        path: 'error',
+        name: 'viewOccupancyError',
+        component: () => import('pages/ViewOccupancyError.vue')
       }
     ],
   },
   {
-    path: '/statistics',
+    path: '/statistics/:cityId(\\d+)/:slug?',
     name: 'showStatistics',
-    component: () => import('layouts/ShowStatistics.vue'),
-    children:
-    [{
-      path: '',
-      name: 'viewStatistics',
-      component: () => import('src/pages/ViewStatistics.vue')
-    }],
+    component: () => import('src/layouts/StatisticsLayout.vue'),
+    props: route => ({
+      cityId: parseInt(route.params.cityId),
+      slug: route.params.slug || ''
+    }),
+    beforeEnter : [checkCityId],
+    children: [
+      {
+        path: '',
+        name: 'viewStatistics',
+        component: () => import('pages/ViewStatistics.vue'),
+        props: route => ({
+          cityId: parseInt(route.params.cityId),
+          slug: route.params.slug || ''
+        })
+      }
+    ],
   },
   {
     path: '/attendance',
     name: 'showAttendance',
-    component: () => import('layouts/ShowAttendance.vue'),
+    component: () => import('src/layouts/AttendanceLayout.vue'),
     children: [{
       path: '',
       name: 'viewAttendance',
@@ -92,7 +108,7 @@ const routes = [
   {
     path: '/users',
     name: 'showUsers',
-    component: () => import('src/layouts/ShowUsers.vue'),
+    component: () => import('src/layouts/UsersLayout.vue'),
     children: [{
       path: '',
       name: 'viewUsers',
@@ -102,7 +118,7 @@ const routes = [
   {
     path: '/settings',
     name: 'showSettings',
-    component: () => import('src/layouts/ShowSettings.vue'),
+    component: () => import('src/layouts/SettingsLayout.vue'),
     children: [{
       path: '',
       name: 'viewSettings',

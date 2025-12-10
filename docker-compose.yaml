@@ -1,0 +1,24 @@
+services:
+  frontend-service:
+    build: .
+    container_name: frontend-service
+    ports:
+      - 80:3000
+#     - 443:443
+    # environment:
+    #   VITE_AUTH_API_URL: {{ vite_auth_api_url }}
+    #   VITE_BOOK_API_URL: {{ vite_book_api_url }}
+    #   VITE_LAYER_API_URL: {{ vite_layer_api_url }}
+    #   VITE_REPORT_API_URL: {{ vite_report_api_url }}
+    #   VITE_USER_API_URL: {{ vite_user_api_url }}
+#   volumes:
+#     - /etc/ssl/certs/nginx-selfsigned.crt:/etc/ssl/certs/nginx-selfsigned.crt
+#     - /etc/ssl/private/nginx-selfsigned.key:/etc/ssl/private/nginx-selfsigned.key
+#     - /etc/ssl/certs/dhparam.pem:/etc/ssl/certs/dhparam.pem
+    networks:
+      - tyk-network
+    restart: unless-stopped
+
+networks:
+  tyk-network:
+    external: true

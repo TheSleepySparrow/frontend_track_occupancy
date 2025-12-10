@@ -1,10 +1,12 @@
 import { defineStore } from 'pinia'
-import { getCitiesList } from 'src/api/getCities'
+import { loadFromUrl } from 'src/composables/useFetch'
 
 export const useCitiesStore = defineStore('cities', {
   state: () => ({
     cities: [],
-    loaded: false
+    loaded: false,
+    loading: false,
+    error: null
   }),
 
   getters: {
@@ -30,14 +32,27 @@ export const useCitiesStore = defineStore('cities', {
 
   actions: {
     async fetchCities() {
-      if (this.loaded) return
+      if (this.loaded || this.loading) return
 
+      this.loading = true
+      this.error = null
       try {
-        this.cities = await getCitiesList()
+        const data = await loadFromUrl('/api/v1/cities/', { loading: true, notify: true })
+
+        this.cities = Array.isArray(data) ? data.map(
+          item => ({
+            id: item.id,
+            'name_ru-RU': item.name.ru,
+            'name_en-US': item.name.en
+          })
+        ) : []
         this.loaded = true
       } catch (err) {
-        console.error('Cities load failed in route guard', err)
+        this.error = err
+        console.error('Cities load failed', err)
         throw err
+      } finally {
+        this.loading = false
       }
     }
   }

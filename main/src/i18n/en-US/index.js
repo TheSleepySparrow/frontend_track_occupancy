@@ -31,5 +31,20 @@ export default {
         'floor': 'Floor',
         'typeOfRoom': 'Type of room',
         'noBuildingsChosen': 'No buildings chosen. Please select something...',
+        'noBuildings': 'No buildings found',
+        'error': 'Error while loading buildings. Please contact tech support: {address}',
     },
+    'errorOccured': {
+        'name': 'Error occured',
+        'meaning': 'This means that:',
+        '404': 'Data not found',
+        '401': 'You`re unauthorized',
+        '403': 'You`re forbidden to access data',
+        'else': 'Something went wrong... Please contact tech support'
+    },
+    'statistics': {
+        'city': 'City',
+        'building': 'Building',
+        'noBuildingsFound': 'Nothing found'
+    }
 }
