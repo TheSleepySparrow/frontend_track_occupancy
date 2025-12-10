@@ -7,7 +7,7 @@
             aria-label="Menu"
             @click="$router.push({ name: 'viewMenu' })"
         />
-        <div class="q-gutter-sm row items-center no-wrap">
+        <div class="q-gutter-x-sm row items-center no-wrap" style="padding-left: 2%;">
             <q-toolbar-title>{{ $t(props.HeaderName) }}</q-toolbar-title>
             
             <q-breadcrumbs v-if="props.showBreadcrumbs" class="text-white">

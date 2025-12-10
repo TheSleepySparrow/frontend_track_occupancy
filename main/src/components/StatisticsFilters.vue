@@ -63,6 +63,7 @@
         <q-btn
         type="submit"
         label="Построить"
+        disabled
         color="primary"
         class="col q-ml-sm"
         unelevated

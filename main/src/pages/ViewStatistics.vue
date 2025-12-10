@@ -1,60 +1,78 @@
 <template>
-  <q-page class="q-pa-md" style="min-height: 100vh;">
-      <div class="row q-gutter-x-md q-mb-md justify-start" style="width: 100%; height: 10%">
-          <div class="col">
-              <q-select
+  <q-page class="q-pa-lg">
+    <!-- Selection Section -->
+    <div class="row q-col-gutter-md q-mb-lg">
+        <div class="col-12 col-md-6">
+          <q-card flat bordered class="q-pa-sm">
+            <q-select
               v-model="chosenCity"
               :options="cities"
               dense
               outlined
+              :label="$t('statistics.city')"
               @update:model-value="onCityChange"
-              :display-value="`Город: ${ chosenCity ? chosenCity.label : 'Ничего не выбрано'}`"
-              />
-          </div>
-          <div class="col">
-              <q-select
+            />
+          </q-card>
+        </div>
+        <div class="col-12 col-md-6">
+          <q-card flat bordered class="q-pa-sm">
+            <q-select
               v-model="chosenBuildingId"
               :options="filteredBuildings"
               dense
               outlined
+              :label="$t('statistics.building')"
               use-input
               hide-selected
               fill-input
               input-debounce="200"
               @filter="filterFn"
-              >
+            >
               <template v-slot:no-option>
                 <q-item>
                   <q-item-section class="text-grey">
-                    Ничего не найдено
+                    {{ $t('statistics.noBuildingsFound') }}
                   </q-item-section>
                 </q-item>
               </template>
             </q-select>
-          </div>
-      </div>
-      <div class="q-pa-md row q-col-gutter-x-md items-start bg-secondary full-height full-width">
-        <div class="col-5">
+          </q-card>
+        </div>
+    </div>
+
+    <!-- Main Content Section -->
+    <div class="row q-col-gutter-lg">
+      <!-- Filters Section -->
+      <div class="col-12 col-md-4 col-lg-3">
+        <q-card flat bordered class="q-pa-md">
           <StatisticsFilters
-          v-model="filters"
-          :report-types="reportTypes"
-          @build-chart="buildChart(filters)"/>
-        </div>
-        <div class="col-grow full-height">
-          <StatisticsChart
-          :data="chartData"
-          :filters-max-show="filters.showMax"
-          :filters-min-show="filters.showMin"
-          :report-type="filters.reportType"
-          :stats="stats"
+            v-model="filters"
+            :report-types="reportTypes"
+            @build-chart="buildChart"
           />
-        </div>
+        </q-card>
       </div>
-      <!-- Обработка ошибки -->
-      <TheErrorPopUp :err="err"
-        :errorPage="'viewOccupancyError'"
-        :routeParams="route.params"
-      />
+
+      <!-- Chart Section -->
+      <div class="col-12 col-md-8 col-lg-9">
+        <q-card flat bordered class="q-pa-md">
+          <StatisticsChart
+            :data="chartData"
+            :filters-max-show="filters.showMax"
+            :filters-min-show="filters.showMin"
+            :report-type="filters.reportType"
+            :stats="stats"
+          />
+        </q-card>
+      </div>
+    </div>
+
+    <!-- Error Handling -->
+    <TheErrorPopUp
+      :err="err"
+      :errorPage="'viewOccupancyError'"
+      :routeParams="route.params"
+    />
   </q-page>
 </template>
 
@@ -75,7 +93,14 @@ const route = useRoute()
 
 const cityId = computed(() => parseInt(route.params.cityId))
 const citiesStore = useCitiesStore()
-const cities = citiesStore.cities.map(city => { return { label: city[`name_${locale.value}`], value: city.id } })
+
+const cities = computed(() => 
+  citiesStore.cities.map(city => ({ 
+    label: city[`name_${locale.value}`], 
+    value: city.id 
+  }))
+)
+
 const chosenCity = ref(null)
 const buildingsProps = computed(() => ({ id: cityId.value }))
 
@@ -158,6 +183,8 @@ const stats = ref({
 })
 
 function buildChart(updatedFilters) {
+  if (!updatedFilters) return
+  
   const daysInMonth = 30
   chartData.value = Array.from({ length: daysInMonth }, (_, i) => {
     const day = String(i + 1).padStart(2, '0')

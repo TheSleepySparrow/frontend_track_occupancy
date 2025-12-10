@@ -41,5 +41,10 @@ export default {
         '401': 'You`re unauthorized',
         '403': 'You`re forbidden to access data',
         'else': 'Something went wrong... Please contact tech support'
+    },
+    'statistics': {
+        'city': 'City',
+        'building': 'Building',
+        'noBuildingsFound': 'Nothing found'
     }
 }
