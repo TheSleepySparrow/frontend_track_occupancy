@@ -79,10 +79,9 @@ export default defineConfig((/* ctx */) => {
       // https: true,
       open: true,
       proxy: {
-        '/api': {
-          target: 'http://127.0.0.1:8080',
-          changeOrigin: true,
-          rewrite: (path) => path.replace(/^\/api/, '')
+        '/v1': {
+          target: 'http://172.18.130.222:8080',
+          changeOrigin: true
         }
       }
     },

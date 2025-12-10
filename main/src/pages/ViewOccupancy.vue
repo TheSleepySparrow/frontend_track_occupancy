@@ -59,7 +59,7 @@ const buildingIdRef = computed(() => {
   return { id: buildingId.value }
 })
 const url = computed(() => {
-  return '/api/v1/cities/' + cityId.value + '/buildings'
+  return '/v1/cities/' + cityId.value + '/buildings'
 })
 
 const { auditoriesInfo: roomsInfo, error: err } = useAuditoriesInfo(
