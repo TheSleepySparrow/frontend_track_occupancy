@@ -2,79 +2,146 @@
 
 ## Запрос на получение информации о загруженности
 
-Запрос на получение списка городов. Хочу получить:
+### Запрос на получение списка городов.
+Получаю:
 
-```JSON
-/cities
+**URL**: */cities*
 
-TYPE: GET
+**TYPE**: GET
 
+**ResponceBody**:
+
+```json
 [
     {
-        id: Number,
-        name_en: String,
-        name_ru: String
+        "id": "Number",
+        "name": {
+            "ru": "String",
+            "en": "String"
+        }
     }
 ]
 ```
 
-Запрос на получение списка корпусов для города. Отправляю по эндпойнту с id города. Хочу получить:
+### Запрос на получение списка корпусов для города.
+Получаю:
 
-```JSON
-/cities/{city_id}/buildings
+**URL**: */cities/{city_id}/buildings*
 
-TYPE: GET
+**TYPE**: GET
 
+**ResponceBody**:
+
+```json
 [
     {
-        id: Number,
-        address_en: String,
-        address_ru: String,
-        number_of_floors: Number
-    }
-]
-```
-
-Запрос на получение списка аудиторий. Отправляю по эндпойнту с id корпуса. Хочу получить:
-
-```JSON
-/buildings/{building_id}/auditory
-
-TYPE: GET
-
-[
-    {
-        id: Number,
-        ru: {
-            name: String,
-            type: String,
-            auditory_number(description): String
+        "id": "Number",
+        "city_id": "Number",
+        "address": {
+            "ru": "String",
+            "en": "String"
         },
-        en: {
-            name: String,
-            type: String,
-            auditory_number(description): String
-        },
-        floor: Number,
-        capacity: Number,
-        url: String
+        "floors_count": "Number"
     }
 ]
 ```
 
-Запрос на получение списка загруженности аудиторий (последние по актуальности данные) по списку аудиторий.
-Отправляю список id аудиторий. Хочу получить:
+### Запрос на получение списка аудиторий.
+Получаю:
 
-```JSON
-/auditory/occupancy
+**URL**: */buildings/{building_id}/auditory*
 
-TYPE: POST
+**TYPE**: GET
 
+**ResponceBody**:
+
+```json
 [
     {
-        auditory_id: Number,
-        number_of_people: Number,
-        timestamp: TimeStampWithUTC
+        "id": "Number",
+        "building_id": "Number",
+        "type": {
+            "ru": "String",
+            "en": "String"
+        },
+        "auditory_number": "String",
+        "floor_number": "Number",
+        "capacity": "Number",
+        "image_url": "String"
     }
 ]
+```
+
+### Запрос на получение загруженности аудитории (последние по актуальности данные).
+Получаю:
+
+**URL**: */cities/{city_id}/buildings/{building_id}/occupancy/{auditory_id}*
+
+**TYPE**: GET
+
+**ResponceBody**:
+
+```json
+{
+    "id": "Number",
+    "person_count": "Number",
+    "actual_timestamp": "TimeStampWithUTC",
+    "is_fresh": "Boolean"
+}
+```
+
+## Запросы на работу с аудиториями и камерами
+
+### Вся информация об одной аудитории по ее id.
+Получаю:
+
+**URL**: */cities/{city_id}/buildings/{building_id}/auditory/{auditory_id}*
+
+**TYPE**: GET
+
+**ResponceBody**:
+
+```json
+{
+    "id": "Number",
+    "building_id": "Number",
+    "type": {
+        "ru": "String",
+        "en": "String"
+    },
+    "auditory_number": "String",
+    "floor_number": "Number",
+    "capacity": "Number",
+    "image_url": "String",
+    "cameras": [
+        {
+            "id": "Number",
+            "mac": "String"
+        }
+    ]
+}
+
+```
+
+### Изменение информации об аудитории
+Отправляю:
+
+**URL**: */cities/{city_id}/buildings/{building_id}/auditory/{auditory_id}*
+
+**TYPE**: PUT
+
+**ResponceBody**:
+
+```json
+{
+    "building_id": "Number",
+    "type": {
+        "ru": "String",
+        "en": "String"
+    },
+    "auditory_number": "String",
+    "floor_number": "Number",
+    "capacity": "Number",
+    "image_url": "String"
+}
 ```
