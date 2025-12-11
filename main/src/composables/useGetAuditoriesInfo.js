@@ -1,4 +1,4 @@
-import { useFetchList } from './useFetch.js'
+import { useFetchList, useFetchObject } from './useFetch.js'
 import { computed } from 'vue'
 import { getLocalizedTypeLabel } from './GetMainInfo.js'
 
@@ -62,4 +62,29 @@ export function useAuditoriesOccupancyInfo(props, baseUrl, options = { optionalU
         })
     })
     return { auditoriesOccupancyInfo, error }
+}
+
+export function useAuditoryOccupancy(props, baseUrl, options = { optionalUrl: null, loading: null, notify: null }) {
+    const str = { timestamp: new Date().toISOString() }
+    const params = new URLSearchParams(str).toString()
+    const url = options.optionalUrl ? `${options.optionalUrl}?${params}` : params
+    const { data, error } = useFetchObject(props, baseUrl, { optionalUrl: url, loading: options.loading, notify: options.notify})
+
+    const auditoryOccupancy = computed(() => {
+        if (error.value) {
+            return null
+        }
+        if (!data.value) {
+            return null
+        }
+        return {
+            id: parseInt(data.value.auditorium_id),
+            count: parseInt(data.value.person_count),
+            timestamp: data.value.actual_timestamp,
+            isValid: data.value.is_fresh,
+            differenceIntime: data.value.time_diff_minutes,
+            warning: data.value.warning ? data.value.warning : null
+        }
+    })
+    return { auditoryOccupancy, error }
 }

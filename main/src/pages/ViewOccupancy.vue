@@ -21,7 +21,7 @@
             :key="item.id"
             class="col-12 col-sm-6 col-md-4"
           >
-            <RoomsInfoCard :item="item" :occupancy="auditoriesOccupancyInfo.find(occupancy => occupancy.id === item.id)" />
+            <RoomsInfoCard :url="occupancyUrl" :item="item" :occupancy="auditoriesOccupancyInfo.find(occupancy => occupancy.id === item.id)" />
           </div>
         </div>
         <div v-else class="q-pa-md column">
@@ -60,6 +60,9 @@ const buildingIdRef = computed(() => {
 })
 const url = computed(() => {
   return '/v1/cities/' + cityId.value + '/buildings'
+})
+const occupancyUrl = computed(() => {
+  return url.value + '/' + buildingIdRef.value.id + '/auditories'
 })
 
 const { auditoriesInfo: roomsInfo, error: err } = useAuditoriesInfo(
