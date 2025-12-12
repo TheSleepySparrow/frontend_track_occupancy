@@ -21,7 +21,13 @@
             :key="item.id"
             class="col-12 col-sm-6 col-md-4"
           >
-            <RoomsInfoCard :url="occupancyUrl" :item="item" :occupancy="auditoriesOccupancyInfo.find(occupancy => occupancy.id === item.id)" />
+            <RoomsInfoCard 
+              :url="occupancyUrl" 
+              :item="item" 
+              :occupancy="auditoriesOccupancyInfo.find(occupancy => occupancy.id === item.id)"
+              :city-id="cityId"
+              :building-id="buildingId"
+            />
           </div>
         </div>
         <div v-else class="q-pa-md column">

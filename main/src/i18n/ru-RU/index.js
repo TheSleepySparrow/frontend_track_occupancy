@@ -15,7 +15,8 @@ export default {
         'close': 'Закрыть',
         'save': 'Сохранить',
         'cancel': 'Отменить',
-        'ok': 'Ок'
+        'ok': 'Ок',
+        'saveTooltip': 'Вы не можете пока сохранить изменения'
     },
     'mainMenu': {
         'occupancy': 'Загруженность',
@@ -70,5 +71,21 @@ export default {
             'year': 'ГГ'
         },
         'calendarTooltip': 'Пожалуйста, выберите тип отчета сначала',
+    },
+    'statisticsPage': {
+        'noData': 'Нет данных',
+    },
+    'editAuditory': {
+        'title': 'Редактировать аудиторию',
+        'mainType': 'Тип',
+        'capacity': 'Вместимость',
+        'capacityError': 'Вместимость должна быть больше 0',
+        'imageUrl': 'URL изображения',
+        'locale': 'Язык',
+        'titleInput': 'Название',
+        'titleRequired': 'Название обязательно',
+        'localeType': 'Тип (Локализованный)',
+        'saveSuccess': 'Аудитория успешно обновлена',
+        'saveError': 'Ошибка при сохранении аудитории'
     }
 }

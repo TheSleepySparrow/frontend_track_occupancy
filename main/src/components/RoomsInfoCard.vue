@@ -1,16 +1,28 @@
 <template>
     <div class="q-pa-md row items-start full-width full-height">
         <q-card class="q-mb-md full-width full-height" flat bordered>
-            <q-img src="https://cdn.quasar.dev/img/parallax2.jpg" />
+            <!--<q-img :src="props.item.img_url || 'https://cdn.quasar.dev/img/parallax2.jpg'" />-->
+            <q-img :src="'https://cdn.quasar.dev/img/parallax2.jpg'" />
             <q-card-section horizontal class="justify-between full-width">
-                <q-card-section class="q-pa-md">
+                <q-card-section class="q-pa-md full-width">
                     <div class="text-overline text-primary">{{ props.item[$i18n.locale].type }}</div>
-                    <div class="text-h5 q-mt-sm q-mb-xs">{{ props.item[$i18n.locale].title }}</div>
+                    <div class="text-h5 q-mt-sm q-mb-xs">
+                        {{ props.item[$i18n.locale].title }}
+                    </div>
                     <div class="text-caption text-grey">
                     {{ $t('occupationPage.floor') }} {{ props.item.floor }}
                     </div>
+                    <div style="padding-top: 5%;">
+                        <q-btn
+                            outline
+                            color="primary"
+                            :label="$t('editAuditory.title')"
+                            size="sm"
+                            @click="showEditDialog = true"
+                        />
+                    </div>
                 </q-card-section>
-                <q-card-section class="flex flex-center">
+                <q-card-section class="row items-center justify-center">
                     <q-circular-progress
                         class="text-primary"
                         rounded
@@ -37,15 +49,25 @@
                 </q-card-section>
             </q-card-section>
         </q-card>
+
+        <!-- Edit Dialog -->
+        <EditAuditoryDialog
+            v-model="showEditDialog"
+            :item="props.item"
+            :city-id="props.cityId"
+            :building-id="props.buildingId"
+            @save="onSave"
+        />
     </div>
 </template>
 
 <script setup>
 import { computed, watch, onUnmounted, ref } from 'vue'
 import { useAuditoryOccupancy } from 'src/composables/useGetAuditoriesInfo'
+import EditAuditoryDialog from './EditAuditoryDialog.vue'
 
-const props = defineProps(['item', 'occupancy', 'url'])
-
+const props = defineProps(['item', 'occupancy', 'url', 'cityId', 'buildingId'])
+const showEditDialog = ref(false)
 // Local updates to merge with props.occupancy
 const localOccupancyUpdate = ref(null)
 
@@ -78,7 +100,7 @@ const progressColor = computed(() => {
 const differenceIntime = ref(occupancyItem.value?.differenceIntime ?? 0)
 
 // Ref to trigger useAuditoryOccupancy when refresh is needed
-const refreshTrigger = computed(() => ({ id: props.item?.id }))
+const refreshTrigger = ref({ id: props.item?.id })
 
 // Use the composable with the trigger ref
 const { auditoryOccupancy } = useAuditoryOccupancy(
@@ -118,4 +140,8 @@ const interval = setInterval(() => {
 }, 10 * 1000)
 
 onUnmounted(() => clearInterval(interval))
+
+function onSave(updatedItem) {
+    console.log(updatedItem)
+}
 </script>

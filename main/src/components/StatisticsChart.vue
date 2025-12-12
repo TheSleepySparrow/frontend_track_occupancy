@@ -4,23 +4,27 @@
     <div class="col-2">
       <h5>{{ props.reportType }}</h5>
     </div>
-    <div class="col" style="height: 400px; min-height: 400px;">
-        <v-chart :option="chartOption" autoresize style="width: 100%; height: 100%;" />
-    </div>
-    
-    <div class="col-4 q-mt-md">
-      <div v-if="props.filtersMaxShow">
-        Макс: {{ maxStats.value }} ({{ maxStats.time }})
+    <div v-if="data.length > 0">
+      <div
+        class="col"
+        style="height: 600px; min-height: 600px;">
+          <VChart :option="chartOption" autoresize style="width: 100%; height: 100%;" />
       </div>
-      <div v-if="props.filtersMinShow">
-        Мин: {{ minStats.value }} ({{ minStats.time }})
+      
+      <div class="col-4 q-mt-md">
+        <div v-if="props.filtersMaxShow">
+          Макс: {{ maxStats.value }} ({{ maxStats.time }})
+        </div>
+        <div v-if="props.filtersMinShow">
+          Мин: {{ minStats.value }} ({{ minStats.time }})
+        </div>
+        <div>Среднее: {{ avgValue.toFixed(1) }}</div>
       </div>
-      <div>Среднее: {{ avgValue.toFixed(1) }}</div>
     </div>
-  </div>
-  <div class="q-pa-md column items-center bg-white" v-else>
-    <div class="col">
-      <h5>Нет данных</h5>
+    <div v-else class="q-pa-md column items-center bg-white">
+      <div class="col">
+        <h5> {{ $t('statisticsPage.noData') }} </h5>
+      </div>
     </div>
   </div>
 </template>

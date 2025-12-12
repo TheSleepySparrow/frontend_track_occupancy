@@ -15,7 +15,8 @@ export default {
         'close': 'Close',
         'save': 'Save',
         'cancel': 'Cancel',
-        'ok': 'Ok'
+        'ok': 'Ok',
+        'saveTooltip': 'You can`t save changes yet'
     },
     'mainMenu': {
         'occupancy': 'Occupancy',
@@ -70,5 +71,21 @@ export default {
             'year': 'YY'
         },
         'calendarTooltip': 'Please select the type first',
+    },
+    'statisticsPage': {
+        'noData': 'No data',
+    },
+    'editAuditory': {
+        'title': 'Edit Auditory',
+        'mainType': 'Type',
+        'capacity': 'Capacity',
+        'capacityError': 'Capacity must be greater than 0',
+        'imageUrl': 'Image URL',
+        'locale': 'Locale',
+        'titleInput': 'Title',
+        'titleRequired': 'Title is required',
+        'localeType': 'Type (Localized)',
+        'saveSuccess': 'Auditory updated successfully',
+        'saveError': 'Error saving auditory'
     }
 }

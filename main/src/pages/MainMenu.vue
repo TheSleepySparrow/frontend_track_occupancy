@@ -53,7 +53,7 @@ const menuList = {
     occupancy: {
         id: 1,
         text: text + '.occupancy',
-        whatToDo: () => chooseCity('showOccupancy'),
+        whatToDo: () => chooseCity('NoOccupancySelected'),
         isClickable: true
     },
     statistics: {
