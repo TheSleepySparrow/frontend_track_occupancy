@@ -46,6 +46,29 @@ export default {
     'statistics': {
         'city': 'City',
         'building': 'Building',
-        'noBuildingsFound': 'Nothing found'
+        'auditory': 'Auditory',
+        'noBuildingsFound': 'Nothing found',
+        'noAuditoriesFound': 'Nothing found',
+        'warningDataChart': 'Please select city, building, auditory, and date'
+    },
+    'statisticsFilters': {
+        'day': 'Day',
+        'week': 'Week',
+        'month': 'Month',
+        'download': 'Download',
+        'build': 'Draw chart',
+        'typeLabel': 'Type of report',
+        'periodLabel': 'Period',
+        'format': 'Format',
+        'showMaxLabel': 'Show maximum value',
+        'showMinLabel': 'Show minimum value',
+        'formatValue': {
+            'default': 'Not selected',
+            'day': 'DD/MM/YY',
+            'week': 'DD/MM/YY - DD/MM/YY',
+            'month': 'MM/YY',
+            'year': 'YY'
+        },
+        'calendarTooltip': 'Please select the type first',
     }
 }

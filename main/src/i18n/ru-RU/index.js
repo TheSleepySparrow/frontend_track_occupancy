@@ -46,6 +46,29 @@ export default {
     'statistics': {
         'city': 'Город',
         'building': 'Корпус',
-        'noBuildingsFound': 'Ничего не найдено'
+        'auditory': 'Аудитория',
+        'noBuildingsFound': 'Ничего не найдено',
+        'noAuditoriesFound': 'Ничего не найдено',
+        'warningDataChart': 'Пожалуйста, выберите город, корпус, аудиторию и дату'
+    },
+    'statisticsFilters': {
+        'day': 'За день',
+        'week': 'За неделю',
+        'month': 'За месяц',
+        'download': 'Загрузить',
+        'build': 'Построить',
+        'typeLabel': 'Тип отчета',
+        'periodLabel': 'Период',
+        'format': 'Формат',
+        'showMaxLabel': 'Показывать максимальное значение',
+        'showMinLabel': 'Показывать минимальное значение',
+        'formatValue': {
+            'default': 'Не выбрано',
+            'day': 'ДД/ММ/ГГ',
+            'week': 'ДД/ММ/ГГ - ДД/ММ/ГГ',
+            'month': 'ММ/ГГ',
+            'year': 'ГГ'
+        },
+        'calendarTooltip': 'Пожалуйста, выберите тип отчета сначала',
     }
 }
