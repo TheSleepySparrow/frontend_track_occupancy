@@ -72,7 +72,11 @@ const props = defineProps({
     default: false
   },
   city: Object,
-  buildingName: String
+  buildingName: String,
+  defaultRouteName: {
+    type: String,
+    default: null
+  }
 })
 
 const router = useRouter()
@@ -100,8 +104,11 @@ function handleCityChange(newCityId) {
   const slug = citiesStore.getSlugByCityId(newCityId)
   const currentRoute = router.currentRoute.value
   
+  // Use defaultRouteName prop if provided, otherwise use current route name
+  const routeName = props.defaultRouteName || currentRoute.name
+  
   router.push({
-    name: currentRoute.name,
+    name: routeName,
     params: {
       cityId: newCityId,
       slug: slug

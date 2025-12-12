@@ -100,6 +100,36 @@ export function useFetchList(props, baseUrl, options = { optionalUrl: null, load
     return { data, error }
 }
 
+export function useFetchObject(props, baseUrl, options = { optionalUrl: null, loading: null, notify: null }) {
+    const data = ref(null)
+    const error = ref(null)
+
+    const load = async () => {
+        const id = typeof props === 'object' && 'value' in props ? props.value?.id : props?.id
+        if (!id) return
+        try {
+            error.value = null
+            const url = typeof baseUrl === 'object' && 'value' in baseUrl ? baseUrl.value : baseUrl
+            const result = await loadById(id, url, options)
+            data.value = result || null
+        } catch (err) {
+            error.value = err
+            data.value = null
+        }
+    }
+
+    watch(props, () => {
+        const id = typeof props === 'object' && 'value' in props ? props.value?.id : props?.id
+        if (id) load()
+    }, { immediate: true, deep: true })
+    
+    if (typeof baseUrl === 'object' && 'value' in baseUrl) {
+        watch(baseUrl, load, { immediate: false })
+    }
+
+    return { data, error }
+}
+
 export function useFetchListOnMounted(url, options = { loading: null, notify: null }) {
     const data = ref([])
     const error = ref(null)

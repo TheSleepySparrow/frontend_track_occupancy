@@ -9,6 +9,7 @@
                 <q-select
                 emit-value
                 borderless
+                behavior="menu"
                 v-model="$i18n.locale"
                 :options="localLanguageOptions">
                 </q-select>

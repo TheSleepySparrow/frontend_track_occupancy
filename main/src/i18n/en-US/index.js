@@ -15,7 +15,8 @@ export default {
         'close': 'Close',
         'save': 'Save',
         'cancel': 'Cancel',
-        'ok': 'Ok'
+        'ok': 'Ok',
+        'saveTooltip': 'You can`t save changes yet'
     },
     'mainMenu': {
         'occupancy': 'Occupancy',
@@ -46,6 +47,45 @@ export default {
     'statistics': {
         'city': 'City',
         'building': 'Building',
-        'noBuildingsFound': 'Nothing found'
+        'auditory': 'Auditory',
+        'noBuildingsFound': 'Nothing found',
+        'noAuditoriesFound': 'Nothing found',
+        'warningDataChart': 'Please select city, building, auditory, and date'
+    },
+    'statisticsFilters': {
+        'day': 'Day',
+        'week': 'Week',
+        'month': 'Month',
+        'download': 'Download',
+        'build': 'Draw chart',
+        'typeLabel': 'Type of report',
+        'periodLabel': 'Period',
+        'format': 'Format',
+        'showMaxLabel': 'Show maximum value',
+        'showMinLabel': 'Show minimum value',
+        'formatValue': {
+            'default': 'Not selected',
+            'day': 'DD/MM/YY',
+            'week': 'DD/MM/YY - DD/MM/YY',
+            'month': 'MM/YY',
+            'year': 'YY'
+        },
+        'calendarTooltip': 'Please select the type first',
+    },
+    'statisticsPage': {
+        'noData': 'No data',
+    },
+    'editAuditory': {
+        'title': 'Edit Auditory',
+        'mainType': 'Type',
+        'capacity': 'Capacity',
+        'capacityError': 'Capacity must be greater than 0',
+        'imageUrl': 'Image URL',
+        'locale': 'Locale',
+        'titleInput': 'Title',
+        'titleRequired': 'Title is required',
+        'localeType': 'Type (Localized)',
+        'saveSuccess': 'Auditory updated successfully',
+        'saveError': 'Error saving auditory'
     }
 }
