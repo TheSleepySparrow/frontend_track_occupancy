@@ -2,40 +2,67 @@
   <q-page class="q-pa-lg">
     <!-- Selection Section -->
     <div class="row q-col-gutter-md q-mb-lg">
-        <div class="col-12 col-md-6">
+        <div class="col-12">
           <q-card flat bordered class="q-pa-sm">
-            <q-select
-              v-model="chosenCity"
-              :options="cities"
-              dense
-              outlined
-              :label="$t('statistics.city')"
-              @update:model-value="onCityChange"
-            />
-          </q-card>
-        </div>
-        <div class="col-12 col-md-6">
-          <q-card flat bordered class="q-pa-sm">
-            <q-select
-              v-model="chosenBuildingId"
-              :options="filteredBuildings"
-              dense
-              outlined
-              :label="$t('statistics.building')"
-              use-input
-              hide-selected
-              fill-input
-              input-debounce="200"
-              @filter="filterFn"
-            >
-              <template v-slot:no-option>
-                <q-item>
-                  <q-item-section class="text-grey">
-                    {{ $t('statistics.noBuildingsFound') }}
-                  </q-item-section>
-                </q-item>
-              </template>
-            </q-select>
+            <div class="row q-col-gutter-md">
+              <div class="col-12 col-md-4">
+                <q-select
+                  v-model="chosenCity"
+                  :options="cities"
+                  dense
+                  behavior="menu"
+                  outlined
+                  :label="$t('statistics.city')"
+                  @update:model-value="onCityChange"
+                />
+              </div>
+              <div class="col-12 col-md-4">
+                <q-select
+                  v-model="chosenBuildingId"
+                  :options="filteredBuildings"
+                  dense
+                  outlined
+                  :label="$t('statistics.building')"
+                  use-input
+                  behavior="menu"
+                  hide-selected
+                  fill-input
+                  input-debounce="200"
+                  @filter="filterFn"
+                >
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-grey">
+                        {{ $t('statistics.noBuildingsFound') }}
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
+              </div>
+              <div class="col-12 col-md-4">
+                <q-select
+                  v-model="chosenAuditoryId"
+                  :options="filteredAuditories"
+                  dense
+                  outlined
+                  :label="$t('statistics.auditory')"
+                  use-input
+                  behavior="menu"
+                  hide-selected
+                  fill-input
+                  input-debounce="200"
+                  @filter="filterAuditoriesFn"
+                >
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-grey">
+                        {{ $t('statistics.noAuditoriesFound') }}
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
+              </div>
+            </div>
           </q-card>
         </div>
     </div>
@@ -58,21 +85,18 @@
         <q-card flat bordered class="q-pa-md">
           <StatisticsChart
             :data="chartData"
-            :filters-max-show="filters.showMax"
-            :filters-min-show="filters.showMin"
-            :report-type="filters.reportType"
-            :stats="stats"
+            :filters="filters"
           />
         </q-card>
       </div>
     </div>
 
     <!-- Error Handling -->
-    <TheErrorPopUp
-      :err="err"
+<!--     <TheErrorPopUp
+      :err="err || errAuditories"
       :errorPage="'viewOccupancyError'"
       :routeParams="route.params"
-    />
+    /> -->
   </q-page>
 </template>
 
@@ -80,17 +104,21 @@
 import { computed, ref, watch } from 'vue'
 import StatisticsChart from 'src/components/StatisticsChart.vue'
 import StatisticsFilters from 'src/components/StatisticsFilters.vue'
-import TheErrorPopUp from 'src/components/TheErrorPopUp.vue'
+//import TheErrorPopUp from 'src/components/TheErrorPopUp.vue'
 import { useBuildingsInfo } from 'src/composables/useGetBuildingsInfo.js'
+import { useAuditoriesInfo } from 'src/composables/useGetAuditoriesInfo.js'
+import { useStatisticsByDay } from 'src/composables/useGetStatisticsInfo.js'
 import { getReportTypes } from 'src/services/getStatisticsInfo.js'
 import { useCitiesStore } from 'src/stores/cities.store'
-import { useRouter, useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+import { useQuasar } from 'quasar'
 
-const { locale } = useI18n()
-const router = useRouter()
+const { t, locale } = useI18n()
 const route = useRoute()
+const $q = useQuasar()
 
+// Data for city
 const cityId = computed(() => parseInt(route.params.cityId))
 const citiesStore = useCitiesStore()
 
@@ -100,13 +128,16 @@ const cities = computed(() =>
     value: city.id 
   }))
 )
-
 const chosenCity = ref(null)
-const buildingsProps = computed(() => ({ id: cityId.value }))
 
-const { buildingsInfo: buildingsList, error: err } = useBuildingsInfo(
-  buildingsProps,
-  '/api/v1/cities',
+// Data for buildings
+const cityIdRef = computed(() => { 
+  if (!chosenCity.value?.value) return { id: null }
+  return { id: chosenCity.value.value } 
+})
+const { buildingsInfo: buildingsList } = useBuildingsInfo(
+  cityIdRef,
+  '/v1/cities',
   {
     optionalUrl: 'buildings',
     loading: true,
@@ -114,14 +145,14 @@ const { buildingsInfo: buildingsList, error: err } = useBuildingsInfo(
   }
 )
 
-const chosenBuildingId = ref(null)
+// Filter buildings
+const filteredBuildings = ref([])
 const buildings = computed(() => {
   return buildingsList.value.map(building => {
     return { label: building[locale.value].title, value: building.id }
   })
 })
-const filteredBuildings = ref([])
-
+const chosenBuildingId = ref(null)
 function filterFn(val, update) {
   update(() => {
     if (val === '') {
@@ -136,6 +167,41 @@ function filterFn(val, update) {
   })
 }
 
+// Data for auditories
+const chosenAuditoryId = ref(null)
+const auditoriesUrl = computed(() => {
+  if (!chosenCity.value?.value) return '/v1/cities'
+  return '/v1/cities/' + chosenCity.value.value + '/buildings'
+})
+const buildingIdRef = computed(() => { 
+  if (!chosenBuildingId.value?.value) return { id: null }
+  return { id: chosenBuildingId.value.value } 
+})
+const auditoriesList = ref([])
+
+// Filter auditories
+const auditories = computed(() => {
+  if (!auditoriesList.value) return []
+  return auditoriesList.value.map(auditory => {
+    return { label: auditory[locale.value].title, value: auditory.id }
+  })
+})
+const filteredAuditories = ref([])
+function filterAuditoriesFn(val, update) {
+  update(() => {
+    if (val === '') {
+      filteredAuditories.value = auditories.value
+      return
+    } else {
+      const needle = val.toLowerCase()
+      filteredAuditories.value = auditories.value.filter(
+        v => v.label.toLowerCase().indexOf(needle) > -1
+      )
+    }
+  })
+}
+
+// Watch city
 watch(cityId, (newCityId) => {
   if (!newCityId) {
     chosenCity.value = null
@@ -152,6 +218,16 @@ watch(cityId, (newCityId) => {
   }
 }, { immediate: true })
 
+watch(cities, (newCities) => {
+  if (newCities.length > 0 && cityId.value) {
+    const city = newCities.find(city => city.value === cityId.value)
+    if (city && !chosenCity.value) {
+      chosenCity.value = city
+    }
+  }
+}, { immediate: true })
+
+// Change city - reset buildings and auditories
 function onCityChange(selected) {
   if (!selected?.value) {
     return
@@ -160,54 +236,99 @@ function onCityChange(selected) {
   const city = citiesStore.findCityById(cityId)
   if (!city) return
   chosenBuildingId.value = null
-  const cityNameSlug = citiesStore.getSlugByCityId(cityId)
-  router.push({ name: 'viewStatistics', params: { cityId, slug: cityNameSlug } })
+  chosenAuditoryId.value = null
 }
 
-const reportTypes = getReportTypes()
-const filters = ref({
-  reportType: '',
-  month: '',
-  monthModel: '',
-  showMax: true,
-  showMin: true
+// Watch building - reset auditories
+const { auditoriesInfo: auditoriesData } = useAuditoriesInfo(
+  buildingIdRef,
+  auditoriesUrl,
+  {
+    optionalUrl: 'auditories',
+    loading: true,
+    notify: true
+  }
+)
+
+watch(auditoriesData, (newData) => {
+  if (newData && Array.isArray(newData)) {
+    auditoriesList.value = newData
+  } else {
+    auditoriesList.value = []
+  }
+}, { immediate: true })
+
+watch(chosenBuildingId, (newBuildingId) => {
+  if (newBuildingId) {
+    chosenAuditoryId.value = null
+    filteredAuditories.value = []
+  } else {
+    chosenAuditoryId.value = null
+    auditoriesList.value = []
+    filteredAuditories.value = []
+  }
 })
 
+// Watch auditories - filter auditories
+watch(auditories, (newAuditories) => {
+  filteredAuditories.value = newAuditories
+}, { immediate: true })
+
+// Watch buildings - filter buildings
+watch(buildings, (newBuildings) => {
+  filteredBuildings.value = newBuildings
+}, { immediate: true })
+
+// Data for report types
+const reportTypes = getReportTypes()
+
+// Data for filters
+const filters = ref({
+  reportType: '',
+  dateModel: '',
+  showMax: false,
+  showMin: false
+})
+
+// Data for chart
 const chartData = ref([])
-const stats = ref({
-  maxValue: 0,
-  maxDate: '',
-  minValue: 0,
-  minDate: '',
-  avgValue: 0
+
+// Data for chart url
+const url = computed(() => {
+  if (!chosenCity.value?.value || !chosenBuildingId.value?.value || !chosenAuditoryId.value?.value) {
+    return ''
+  }
+  return '/v1/cities/' + chosenCity.value.value + '/buildings/' + chosenBuildingId.value.value + '/auditories'
+})
+const auditoryProps = computed(() => {
+  if (!chosenAuditoryId.value?.value) return { id: null }
+  return { id: chosenAuditoryId.value.value }
 })
 
 function buildChart(updatedFilters) {
   if (!updatedFilters) return
-  
-  const daysInMonth = 30
-  chartData.value = Array.from({ length: daysInMonth }, (_, i) => {
-    const day = String(i + 1).padStart(2, '0')
-    const value = Math.floor(Math.random() * 100) + 10
-    return { date: `${day}.11`, value }
-  })
+  filters.value = { ...updatedFilters }
 
-  const values = chartData.value.map(d => d.value)
-  const maxValue = Math.max(...values)
-  const minValue = Math.min(...values)
-  const avgValue = values.reduce((a, b) => a + b, 0) / values.length
-
-  const maxItem = chartData.value.find(d => d.value === maxValue)
-  const minItem = chartData.value.find(d => d.value === minValue)
-
-  stats.value = {
-    maxValue,
-    maxDate: maxItem?.date || '',
-    minValue,
-    minDate: minItem?.date || '',
-    avgValue
+  if (!chosenCity.value?.value || !chosenBuildingId.value?.value || !chosenAuditoryId.value?.value || !filters.value.dateModel) {
+    $q.notify({
+      message: t('statistics.warningDataChart'),
+      color: 'primary',
+      icon: 'warning'
+    })
+    return
   }
 
-  filters.value = { ...updatedFilters }
+  const { statisticsByDay } = useStatisticsByDay(
+    auditoryProps,
+    url,
+    filters.value.dateModel,
+    {
+      optionalUrl: 'statistics',
+      loading: true,
+      notify: true
+    }
+  )
+  chartData.value = statisticsByDay.value
+  console.log('chartData', chartData.value)
 }
 </script>

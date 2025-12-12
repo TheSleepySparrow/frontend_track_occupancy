@@ -37,7 +37,7 @@ export const useCitiesStore = defineStore('cities', {
       this.loading = true
       this.error = null
       try {
-        const data = await loadFromUrl('/api/v1/cities/', { loading: true, notify: true })
+        const data = await loadFromUrl('/v1/cities/', { loading: true, notify: true })
 
         this.cities = Array.isArray(data) ? data.map(
           item => ({

@@ -3,7 +3,8 @@
         <TheHeader HeaderName="mainMenu.statistics"
         :showBreadcrumbs="false"
         :city="null"
-        :buildingName="null" />
+        :buildingName="null"
+        default-route-name="viewStatistics" />
         <q-page-container>
             <router-view />
         </q-page-container>

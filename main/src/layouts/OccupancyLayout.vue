@@ -5,6 +5,7 @@
       :showBreadcrumbs="true"
       :city="city"
       :buildingName="currentBuildingName"
+      default-route-name="NoOccupancySelected"
     />
     <q-drawer class="bg-secondary" v-model="leftDrawerOpen" show-if-above bordered>
       <div class="q-gutter-y-md text-center" style="padding: 25% 7%; position: relative;">
@@ -89,7 +90,7 @@ const buildingsProps = computed(() => ({ id: cityId.value }))
 
 const { buildingsInfo: buildingsList, error: err } = useBuildingsInfo(
   buildingsProps,
-  '/api/v1/cities',
+  '/v1/cities',
   {
     optionalUrl: 'buildings',
     loading: true,
