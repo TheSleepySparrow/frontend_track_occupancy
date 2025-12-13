@@ -78,3 +78,4 @@ npm run dev
 ## Ссылки
 
 Backend-часть -- https://github.com/FernFloss/webBackend
+ML-часть -- https://github.com/FernFloss/webML
