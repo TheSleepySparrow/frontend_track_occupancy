@@ -9,7 +9,7 @@
         />
         <div class="q-gutter-x-sm row items-center no-wrap" style="padding-left: 2%;">
             <q-toolbar-title>{{ $t(props.HeaderName) }}</q-toolbar-title>
-            
+
             <q-breadcrumbs v-if="props.showBreadcrumbs" class="text-white">
                 <q-breadcrumbs-el>
                     <q-btn
@@ -24,7 +24,7 @@
                 </q-breadcrumbs-el>
                 <q-breadcrumbs-el v-if="buildingName" :label="buildingName" />
             </q-breadcrumbs>
-            
+
             <TheCitySelectDialog
                 v-model="cityDialogOpen"
                 @citySelected="handleCityChange"
@@ -41,7 +41,7 @@
                 padding="xs md"
                 content-style="background-color: accent"
             >
-                <SettingsList
+                <TheSettingsList
                     :languageName="$t(headerText.language)"
                     :themeName="$t(headerText.theme)"
                 />
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import SettingsList from 'src/components/SettingsList.vue'
+import TheSettingsList from 'src/components/TheSettingsList.vue'
 import TheCitySelectDialog from 'src/components/TheCitySelectDialog.vue'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
@@ -103,10 +103,10 @@ function handleCityChange(newCityId) {
   if (!newCityId) return
   const slug = citiesStore.getSlugByCityId(newCityId)
   const currentRoute = router.currentRoute.value
-  
+
   // Use defaultRouteName prop if provided, otherwise use current route name
   const routeName = props.defaultRouteName || currentRoute.name
-  
+
   router.push({
     name: routeName,
     params: {
