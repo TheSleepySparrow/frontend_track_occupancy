@@ -92,12 +92,12 @@ export function useFetchList(props, baseUrl, options = { optionalUrl: null, load
         const id = typeof props === 'object' && 'value' in props ? props.value?.id : props?.id
         if (id) load()
     }, { immediate: true, deep: true })
-    
+
     if (typeof baseUrl === 'object' && 'value' in baseUrl) {
         watch(baseUrl, load, { immediate: false })
     }
 
-    return { data, error }
+    return { data, error, refetch: load }
 }
 
 export function useFetchObject(props, baseUrl, options = { optionalUrl: null, loading: null, notify: null }) {
@@ -122,7 +122,7 @@ export function useFetchObject(props, baseUrl, options = { optionalUrl: null, lo
         const id = typeof props === 'object' && 'value' in props ? props.value?.id : props?.id
         if (id) load()
     }, { immediate: true, deep: true })
-    
+
     if (typeof baseUrl === 'object' && 'value' in baseUrl) {
         watch(baseUrl, load, { immediate: false })
     }
@@ -139,7 +139,6 @@ export function useFetchListOnMounted(url, options = { loading: null, notify: nu
             error.value = null
             const result = await loadFromUrl(url, options)
             data.value = Array.isArray(result) ? result : []
-            console.log(data.value)
         } catch (err) {
             error.value = err
             data.value = []

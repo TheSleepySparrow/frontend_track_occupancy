@@ -85,7 +85,10 @@
         <q-card flat bordered class="q-pa-md">
           <StatisticsChart
             :data="chartData"
-            :filters="filters"
+            :filters-max-show="filters.showMax"
+            :filters-min-show="filters.showMin"
+            :report-type="filters.reportType?.label || ''"
+            :time="filters.dateModel"
           />
         </q-card>
       </div>
@@ -93,8 +96,8 @@
 
     <!-- Error Handling -->
 <!--     <TheErrorPopUp
-      :err="err || errAuditories"
-      :errorPage="'viewOccupancyError'"
+      :err="error"
+      :errorPage="'viewStatisticsError'"
       :routeParams="route.params"
     /> -->
   </q-page>
@@ -122,18 +125,18 @@ const $q = useQuasar()
 const cityId = computed(() => parseInt(route.params.cityId))
 const citiesStore = useCitiesStore()
 
-const cities = computed(() => 
-  citiesStore.cities.map(city => ({ 
-    label: city[`name_${locale.value}`], 
-    value: city.id 
+const cities = computed(() =>
+  citiesStore.cities.map(city => ({
+    label: city[`name_${locale.value}`],
+    value: city.id
   }))
 )
 const chosenCity = ref(null)
 
 // Data for buildings
-const cityIdRef = computed(() => { 
+const cityIdRef = computed(() => {
   if (!chosenCity.value?.value) return { id: null }
-  return { id: chosenCity.value.value } 
+  return { id: chosenCity.value.value }
 })
 const { buildingsInfo: buildingsList } = useBuildingsInfo(
   cityIdRef,
@@ -173,9 +176,9 @@ const auditoriesUrl = computed(() => {
   if (!chosenCity.value?.value) return '/v1/cities'
   return '/v1/cities/' + chosenCity.value.value + '/buildings'
 })
-const buildingIdRef = computed(() => { 
+const buildingIdRef = computed(() => {
   if (!chosenBuildingId.value?.value) return { id: null }
-  return { id: chosenBuildingId.value.value } 
+  return { id: chosenBuildingId.value.value }
 })
 const auditoriesList = ref([])
 
@@ -290,10 +293,6 @@ const filters = ref({
   showMin: false
 })
 
-// Data for chart
-const chartData = ref([])
-
-// Data for chart url
 const url = computed(() => {
   if (!chosenCity.value?.value || !chosenBuildingId.value?.value || !chosenAuditoryId.value?.value) {
     return ''
@@ -305,10 +304,9 @@ const auditoryProps = computed(() => {
   return { id: chosenAuditoryId.value.value }
 })
 
-function buildChart(updatedFilters) {
-  if (!updatedFilters) return
-  filters.value = { ...updatedFilters }
+const chartData = ref([])
 
+function buildChart() {
   if (!chosenCity.value?.value || !chosenBuildingId.value?.value || !chosenAuditoryId.value?.value || !filters.value.dateModel) {
     $q.notify({
       message: t('statistics.warningDataChart'),
@@ -317,7 +315,13 @@ function buildChart(updatedFilters) {
     })
     return
   }
-
+  if (filters.value.reportType.value !== 'day') {
+    $q.notify({
+      message: t('statistics.weAreSorry'),
+      color: 'primary'
+    })
+    return
+  }
   const { statisticsByDay } = useStatisticsByDay(
     auditoryProps,
     url,
@@ -328,7 +332,10 @@ function buildChart(updatedFilters) {
       notify: true
     }
   )
-  chartData.value = statisticsByDay.value
-  console.log('chartData', chartData.value)
+  watch(statisticsByDay, (newVal) => {
+    chartData.value = newVal
+    console.log('chartData', chartData.value)
+  })
 }
+
 </script>
