@@ -3,7 +3,7 @@ export default {
         'settings': 'Settings',
         'language': 'Language',
         'theme': 'Theme',
-        'logout': 'Logout',        
+        'logout': 'Logout',
     },
     'menu': {
         'headerName': 'Main menu',
@@ -50,12 +50,14 @@ export default {
         'auditory': 'Auditory',
         'noBuildingsFound': 'Nothing found',
         'noAuditoriesFound': 'Nothing found',
-        'warningDataChart': 'Please select city, building, auditory, and date'
+        'warningDataChart': 'Please select city, building, auditory, and date',
+        'weAreSorry': 'We are sorry, but we are not able to draw charts for this period. Please select another period.'
     },
     'statisticsFilters': {
         'day': 'Day',
         'week': 'Week',
         'month': 'Month',
+        'year': 'Year',
         'download': 'Download',
         'build': 'Draw chart',
         'typeLabel': 'Type of report',
@@ -65,15 +67,20 @@ export default {
         'showMinLabel': 'Show minimum value',
         'formatValue': {
             'default': 'Not selected',
-            'day': 'DD/MM/YY',
-            'week': 'DD/MM/YY - DD/MM/YY',
-            'month': 'MM/YY',
-            'year': 'YY'
+            'day': 'DD/MM/YYYY',
+            'week': 'DD/MM/YYYY - DD/MM/YYYY',
+            'month': 'MM/YYYY',
+            'year': 'YYYY'
         },
         'calendarTooltip': 'Please select the type first',
     },
     'statisticsPage': {
         'noData': 'No data',
+        'title': 'Occupancy statistics for {period}',
+        'titleChart': 'Occupancy statistics',
+        'seriesName': 'Statistics',
+        'xAxis': 'Time',
+        'yAxis': 'Average people count'
     },
     'editAuditory': {
         'title': 'Edit Auditory',

@@ -11,5 +11,5 @@
 </template>
 
 <script setup>
-import techSupportInfo from 'src/techSupportInfo'
+import techSupportInfo from 'src/config/techSupportInfo'
 </script>

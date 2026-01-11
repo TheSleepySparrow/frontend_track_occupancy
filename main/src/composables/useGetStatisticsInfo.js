@@ -1,10 +1,12 @@
 import { useFetchList } from './useFetch.js'
-import { computed, ref } from 'vue'
+import { computed } from 'vue'
 
 
 export function useStatisticsByDay(props, baseUrl, date,
     options = { optionalUrl: null, loading: null, notify: null }) {
-    const dateRef = typeof date === 'object' && 'value' in date ? date : ref(date)
+    const dateRef = computed(() => {
+        return typeof date === 'object' && 'value' in date ? date.value : date
+    })
     const queryParams = computed(() => {
         if (!dateRef.value) return ''
 
@@ -12,12 +14,12 @@ export function useStatisticsByDay(props, baseUrl, date,
         str = 'day=' + str + '&type=1'
         return new URLSearchParams(str).toString()
     })
-    
+
     const url = computed(() => {
         const params = queryParams.value
         return options.optionalUrl ? `${options.optionalUrl}?${params}` : params
     })
-    const { data, error } = useFetchList(props, baseUrl, { optionalUrl: url.value, loading: options.loading, notify: options.notify})
+    const { data, error, refetch } = useFetchList(props, baseUrl, { optionalUrl: url.value, loading: options.loading, notify: options.notify})
 
     const statisticsByDay = computed(() => {
         if (error.value) {
@@ -26,15 +28,14 @@ export function useStatisticsByDay(props, baseUrl, date,
         if (!data.value) {
             return []
         }
-        console.log('data', data.value)
         return data.value?.map(item => ({
             time: item.hour + ':00 - ' + (item.hour + 1) + ':00',
             average: item.avg_person_count,
-            min: item.min_people_count ? item.min_people_count : 0,
+            min: item.min_people_count ? item.min_people_count : '',
             min_time: item.min_time ? item.min_time : '',
-            max: item.max_people_count ? item.max_people_count : 0,
+            max: item.max_people_count ? item.max_people_count : '',
             max_time: item.max_time ? item.max_time : ''
         }))
     })
-    return { statisticsByDay, error }
+    return { statisticsByDay, error, refetch }
 }

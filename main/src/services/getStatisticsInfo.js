@@ -11,8 +11,11 @@ export function getReportTypes() {
         {
             labelName: 'statisticsFilters.month',
             value: 'month'
+        },
+        {
+            labelName: 'statisticsFilters.year',
+            value: 'year'
         }
-
     ]
 }
 
