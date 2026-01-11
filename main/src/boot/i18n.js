@@ -1,11 +1,14 @@
 import { defineBoot } from '#q-app/wrappers'
 import { createI18n } from 'vue-i18n'
 import messages from 'src/i18n'
+import { useGlobalState } from 'src/composables/GlobalState'
+
+const { globalState } = useGlobalState()
 
 export const i18n = createI18n({
     legacy: false,
-    locale: 'en-US',
-    fallbackLocale: 'ru-RU',
+    locale: globalState.value.language,
+    fallbackLocale: 'en-US',
     messages,
     missing(locale, key) {
       console.warn(`Missing translation for key "${key}" in locale "${locale}"`)

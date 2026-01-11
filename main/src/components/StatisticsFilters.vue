@@ -1,6 +1,6 @@
 <template>
     <q-form @submit.prevent="handleSubmit"
-    class="q-gutter-y-md bg-white"
+    class="q-gutter-y-md"
     style="padding: 5%">
     <div class="col-12 col-md-4">
       <q-select
@@ -16,35 +16,10 @@
     </div>
 
     <div class="col-12 col-md-4">
-      <q-input
+      <DatePicker
         v-model="localFilters.dateModel"
-        :label="$t('statisticsFilters.periodLabel')"
-        :hint="$t('statisticsFilters.format') + ': ' + hintLabel"
-        :mask="inputMask"
-        fill-mask
-        dense
-        outlined
-        :disable="isCalendarEnabled"
-      >
-        <template v-slot:append>
-          <q-icon name="event" class="cursor-pointer" v-if="!isCalendarEnabled">
-            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
-              <q-date
-                v-model="calendarModel"
-                mask="DD/MM/YYYY"
-                @update:model-value="updateMonthFromCalendar"
-              >
-                <div class="row items-center justify-end q-gutter-sm q-mt-sm">
-                  <q-btn :label="$t('popUps.close')" color="primary" flat v-close-popup />
-                </div>
-              </q-date>
-            </q-popup-proxy>
-          </q-icon>
-        </template>
-      </q-input>
-      <q-tooltip>
-        {{ $t('statisticsFilters.calendarTooltip') }}
-      </q-tooltip>
+        :report-type="localFilters.reportType?.value || 'day'"
+      />
     </div>
 
     <div class="col-12">
@@ -83,19 +58,18 @@
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue'
+import { watch, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import DatePicker from './DatePicker.vue'
 
 const { t, locale } = useI18n({ useScope: 'global' })
 
 const props = defineProps({
-  modelValue: { type: Object, required: true },
   reportTypes: { type: Array, required: true }
 })
 
-const calendarModel = ref('')
-const localFilters = ref({ ...props.modelValue })
-const emit = defineEmits(['update:modelValue', 'build-chart'])
+const localFilters = defineModel()
+const emit = defineEmits(['build-chart'])
 
 const typeOptions = computed(() => {
   return props.reportTypes.map(type => {
@@ -103,77 +77,16 @@ const typeOptions = computed(() => {
   })
 })
 
-const inputMask = computed(() => {
-  const reportTypeValue = localFilters.value.reportType?.value
-  const maskMap = {
-    'day': '##/##/####',
-    'week': '##/##/#### - ##/##/####',
-    'month': '##/####',
-    'year': '####'
-  }
-  return maskMap[reportTypeValue] || '##/##/####'
-})
-
-const hintLabel = computed(() => {
-  const reportTypeValue = localFilters.value.reportType?.value
-  if (reportTypeValue) {
-    return t('statisticsFilters.formatValue.' + reportTypeValue)
-  }
-  return t('statisticsFilters.formatValue.default')
-})
-
-const isCalendarEnabled = computed(() => {
-  return !localFilters.value.reportType
-})
-
 const isButtonEnabled = computed(() => {
-  return !!(localFilters.value.reportType && (localFilters.value.dateModel || calendarModel.value))
+  return !!(localFilters.value.reportType && localFilters.value.dateModel)
 })
-
-function updateMonthFromCalendar(val) {
-  if (!val) return
-  
-  const reportTypeValue = localFilters.value.reportType?.value
-  const [day, month, year] = val.split('/')
-  
-  switch (reportTypeValue) {
-    case 'day':
-      // Format: DD/MM/YY
-      localFilters.value.dateModel = `${day}/${month}/${year}`
-      break
-    case 'week': {
-      // Format: DD/MM/YY - DD/MM/YY (start date - end date)
-      const endDay = String(parseInt(day) + 6).padStart(2, '0')
-      localFilters.value.dateModel = `${day}/${month}/${year} - ${endDay}/${month}/${year}`
-      break
-    }
-    case 'month':
-      // Format: MM/YY
-      localFilters.value.dateModel = `${month}/${year}`
-      break
-    case 'year':
-      // Format: YY
-      localFilters.value.dateModel = year
-      break
-    default:
-      // Default format: DD/MM/YY
-      localFilters.value.dateModel = `${day}/${month}/${year}`
-  }
-  calendarModel.value = `${day}/${month}/${year}`
-}
 
 function handleSubmit() {
-  const payload = { ...localFilters.value }
-  emit('build-chart', payload)
+  emit('build-chart')
 }
-
-watch(localFilters, (newVal) => {
-  emit('update:modelValue', { ...newVal })
-}, { deep: true })
 
 watch(() => localFilters.value.reportType, () => {
   localFilters.value.dateModel = ''
-  calendarModel.value = ''
 })
 
 watch(locale, () => {
@@ -187,7 +100,8 @@ watch(locale, () => {
   }
 })
 
-watch(() => localFilters.value.dateModel, (newVal) => {
-  calendarModel.value = newVal || ''
+watch(localFilters.value, () => {
+  console.log(`localFilters.value: ${localFilters.value.dateModel}`)
 })
+
 </script>

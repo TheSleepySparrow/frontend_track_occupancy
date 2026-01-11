@@ -1,0 +1,21 @@
+{
+    "en-US": {
+        "days": ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        "daysShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+        "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        "monthsShort": ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+        "firstDayOfWeek": 0,
+        "format24h": true,
+        "pluralDay": "days"
+    },
+    "ru-RU": {
+        "days": ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
+        "daysShort": ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+        "months": ["Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август", "Сентябрь", "Октябрь", "Ноябрь", "Декабрь"],
+        "monthsShort": ["Янв", "Фев", "Март", "Апр", "Май", "Июнь", "Июль", "Авг", "Сен", "Окт", "Ноя", "Дек"],
+        "firstDayOfWeek": 1,
+        "format24h": true,
+        "pluralDay": "дней"
+    },
+    "dayThatStartsStatistics": "2025/12/12"
+}

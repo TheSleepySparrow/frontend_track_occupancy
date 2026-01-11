@@ -37,8 +37,12 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { useQuasar } from 'quasar'
+import { useGlobalState, setTheme } from 'src/composables/GlobalState'
+import { useI18n } from 'vue-i18n'
 
+const { globalState } = useGlobalState()
 const $q = useQuasar()
+const { locale } = useI18n()
 const theme = ref($q.dark.isActive)
 
 const props = defineProps([
@@ -47,14 +51,19 @@ const props = defineProps([
 ])
 
 const localLanguageOptions = [{
-        label: 'English',
-        value: 'en-US'
+    label: 'English',
+    value: 'en-US'
     }, {
-        label: 'Русский',
-        value: 'ru-RU'
+    label: 'Русский',
+    value: 'ru-RU'
 }]
 
-watch(theme, () => {
-    $q.dark.set(theme.value)
+watch(theme, (newValue) => {
+  $q.dark.set(newValue)
+  setTheme(newValue)
+})
+
+watch(locale, (newValue) => {
+  globalState.value.language = newValue
 })
 </script>
