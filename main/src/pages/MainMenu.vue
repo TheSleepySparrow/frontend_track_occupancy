@@ -3,18 +3,17 @@
         <div class="full-width full-height bg-secondary col items-center"
         style="padding: 10% 20%;">
             <q-card class="q-pa-xl" bordered style="border-radius: 2rem;">
-                <q-list separator>
+                <q-list>
                     <q-item
                         v-for="item in menuList"
                         :key="item.id"
-                        :clickable="item.isClickable"
-                        v-ripple
-                        @click="item.whatToDo"
-                        class="menu-item"
                     >
-                        <q-item-section>
-                            {{ $t(item.text) }}
-                        </q-item-section>
+                      <q-btn class="full-width bg-primary text-white"
+                      :disabled="!item.isClickable"
+                      flat @click="item.whatToDo"
+                      style="border-radius: 1rem; transition: all 0.2s ease; padding: 2%;">
+                          {{ $t(item.text) }}
+                      </q-btn>
                     </q-item>
                 </q-list>
             </q-card>
@@ -82,21 +81,3 @@ const menuList = {
     }
 }
 </script>
-
-<style scoped>
-.menu-item {
-  border-radius: 1rem;
-  background: #e3e9f5;
-  text-align: center;
-  margin-bottom: 5%;
-  transition: all 0.2s ease;
-}
-
-.menu-item:hover {
-  background: #d0d9e7;
-}
-
-.menu-item:last-child {
-    margin-bottom: 0;
-}
-</style>
