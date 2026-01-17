@@ -1,13 +1,14 @@
 import { useCitiesStore } from 'src/stores/cities.store'
-import { useAuth } from 'src/stores/auth.store'
+//import { useAuth } from 'src/stores/auth.store'
 
 function requireAuth(to, from, next) {
-  const authStore = useAuth()
+  next()
+  /* const authStore = useAuth()
   if (authStore.isAuthenticated) {
     next()
   } else {
     next({ name: 'login' })
-  }
+  } */
 }
 
 async function checkCityId (to, from, next) {

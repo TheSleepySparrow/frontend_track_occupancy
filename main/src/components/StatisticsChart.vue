@@ -154,17 +154,10 @@ function calculateMaxValue(data) {
   return Math.max(data)
 }
 
-function chooseBarColor(value) {
-  if (value > 10) { return '#e03b2f' }
-  if (value > 5) { return '#E05A2F' }
-  return '#E0792F'
-}
-
-function setChartOption(data, oneThird, twoThirds) {
+function setChartOption(data) {
   if (!instance.value) {
     return
   }
-  console.log(oneThird, twoThirds)
   instance.value.setOption({
     xAxis: {
       data: data.map(d => d.time),
@@ -174,7 +167,22 @@ function setChartOption(data, oneThird, twoThirds) {
         return {
           value: d.average.toFixed(1),
           itemStyle: {
-            color: chooseBarColor(d.average)
+            // Linear gradient with first four parameters x0, y0, x2, y2, ranging from 0 - 1,
+            // corresponding to the percentage in the graphical wraparound box,
+            // if globalCoord is ``true``, then the four values are absolute pixel positions
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [{
+                offset: 0, color: '#02D0E3' // color at 0%
+              }, {
+                offset: 1, color: '#0289E3' // color at 100%
+              }],
+              global: false // default is false
+            }
           }
         }
       }),
@@ -189,7 +197,7 @@ function createChart(data) {
   isChartInitialized.value = true
   avgValue.value = calculateAvgValue(data)
   maxValue.value = calculateMaxValue(data.map(d => d.average))
-  setChartOption(data, maxValue.value / 3, 2 * maxValue.value / 3)
+  setChartOption(data)
 }
 
 watch(() => props.data, async (newData) => {
