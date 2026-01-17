@@ -16,6 +16,8 @@ export default {
         'save': 'Сохранить',
         'cancel': 'Отменить',
         'ok': 'Ок',
+        'yes': 'Да',
+        'no': 'Нет',
         'saveTooltip': 'Вы не можете пока сохранить изменения'
     },
     'mainMenu': {
@@ -80,7 +82,10 @@ export default {
         'titleChart': 'Статистика загруженности',
         'seriesName': 'Статистика',
         'xAxis': 'Время',
-        'yAxis': 'Среднее количество людей'
+        'yAxis': 'Среднее количество людей',
+        'saveCsv': 'Экспорт csv',
+        'saveTxt': 'Экспорт txt',
+        'saveTsv': 'Экспорт tsv'
     },
     'editAuditory': {
         'title': 'Редактировать аудиторию',
@@ -94,5 +99,15 @@ export default {
         'localeType': 'Тип (Локализованный)',
         'saveSuccess': 'Аудитория успешно обновлена',
         'saveError': 'Ошибка при сохранении аудитории'
+    },
+    'auth': {
+        'title': 'Авторизация',
+        'login': 'Логин',
+        'password': 'Пароль',
+        'loginButton': 'Войти',
+        'logoutConfirm': 'Вы действительно хотите выйти?',
+        'logoutSuccess': 'Вы успешно вышли из системы',
+        'loginRequired': 'Логин обязателен',
+        'passwordRequired': 'Пароль обязателен'
     }
 }

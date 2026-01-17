@@ -55,6 +55,29 @@
         </div>
       </q-toolbar>
     </q-header>
+
+    <q-dialog v-model="logoutDialogOpen">
+      <q-card style="min-width: 300px">
+        <q-card-section>
+          <div class="text-h6">{{ $t('auth.logoutConfirm') }}</div>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            flat
+            :label="$t('popUps.no')"
+            color="primary"
+            @click="logoutDialogOpen = false"
+          />
+          <q-btn
+            flat
+            :label="$t('popUps.yes')"
+            color="primary"
+            @click="confirmLogout"
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 </template>
 
 <script setup>
@@ -63,7 +86,9 @@ import TheCitySelectDialog from 'src/components/TheCitySelectDialog.vue'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCitiesStore } from 'src/stores/cities.store'
+import { useAuth } from 'src/stores/auth.store'
 import { useI18n } from 'vue-i18n'
+import { useQuasar } from 'quasar'
 
 const props = defineProps({
   HeaderName: String,
@@ -81,10 +106,14 @@ const props = defineProps({
 
 const router = useRouter()
 const citiesStore = useCitiesStore()
-const { locale } = useI18n()
-const cityDialogOpen = ref(false)
-const text = 'settings'
+const authStore = useAuth()
+const { locale, t } = useI18n()
+const $q = useQuasar()
 
+const cityDialogOpen = ref(false)
+const logoutDialogOpen = ref(false)
+
+const text = 'settings'
 const headerText = computed(() => {
     return {
         settings: text + '.settings',
@@ -118,6 +147,18 @@ function handleCityChange(newCityId) {
 }
 
 function logout() {
-  console.log('logout')
+  logoutDialogOpen.value = true
+}
+
+function confirmLogout() {
+  logoutDialogOpen.value = false
+  authStore.logout()
+  router.push({ name: 'login' }).then(() => {
+    $q.notify({
+      message: t('auth.logoutSuccess'),
+      color: 'positive',
+      position: 'bottom'
+    })
+  })
 }
 </script>

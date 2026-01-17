@@ -1,14 +1,17 @@
 <template>
-  <div v-if="props.data && props.data.length > 0" class="q-pa-md column items-center">
+  <div v-if="props.data && props.data.length > 0" class="q-pa-xs column items-center">
     <div class="col-2">
       <h5>{{ $t('statisticsPage.title', { period: props.time }) }}</h5>
     </div>
-    <div ref="chartWrapperRef" class="col-8" style="width: 100%; min-height: 400px;">
+    <div ref="chartWrapperRef" class="col-6" style="width: 100%; min-height: 500px;">
       <div ref="chartRef" :style="chartStyle"></div>
     </div>
 
     <div class="col-2 q-mt-md">
-      <div>Среднее: {{ avgValue.toFixed(1) }}</div>
+      <div>{{ $t('statisticsPage.yAxis') }}: {{ avgValue.toFixed(1) }} </div>
+    </div>
+    <div class="col-2 q-mt-md">
+      <ImportData :data="props.data" :reportType="props.reportType"/>
     </div>
   </div>
   <div v-else class="q-pa-md column items-center">
@@ -19,6 +22,7 @@
 </template>
 
 <script setup>
+import ImportData from './ImportData.vue'
 import { computed, ref, onBeforeUnmount, watch, nextTick, useTemplateRef } from 'vue'
 import * as echarts from 'echarts'
 import { useResizeObserver, useElementSize } from '@vueuse/core'
@@ -51,13 +55,7 @@ const chartStyle = ref({
   height: '200px',
 })
 
-onBeforeUnmount(() => {
-  if (instance.value) {
-    instance.value.dispose()
-  }
-})
-
-const initChart = () => {
+function initChart() {
   if (!chartRef.value) {
     return
   }
@@ -103,7 +101,14 @@ const initChart = () => {
         backgroundStyle: {
           color: 'rgba(180, 180, 180, 0.2)',
         },
-      }]
+      }],
+      toolbox: {
+        show: true,
+        feature: {
+          dataView: { show: true, readOnly: true },
+          saveAsImage: { show: true },
+        }
+      }
     })
     const { width, height } = useElementSize(chartWrapperRef)
     chartStyle.value = {
@@ -116,11 +121,10 @@ const initChart = () => {
 }
 
 useResizeObserver(chartWrapperRef, (entries) => {
-  if (!instance.value) {
+  if (!isChartInitialized.value) {
     return
   }
-
-  if (!isChartInitialized.value) {
+  if (!instance.value) {
     return
   }
 
@@ -133,35 +137,73 @@ useResizeObserver(chartWrapperRef, (entries) => {
   instance.value.resize()
 })
 
-const avgValue = computed(() => {
-  if (!props.data.value || props.data.value.length === 0) {
+// Calculate average value
+const avgValue = ref(0)
+function calculateAvgValue(data) {
+  if (!data || data.length === 0) {
     return 0
   }
-  const sum = props.data.value.reduce((acc, d) => acc + d.average, 0)
-  return sum / props.data.value.length
-})
-
-const setChartOption = (data) => {
-  if (instance.value) {
-    instance.value.setOption({
-      xAxis: {
-        data: data.map(d => d.time),
-      },
-      series: [{
-        data: data.map(d => d.average.toFixed(1)),
-      }],
-    })
+  const sum = data.reduce((acc, d) => acc + d.average, 0)
+  return sum / data.length
+}
+const maxValue = ref(0)
+function calculateMaxValue(data) {
+  if (!data || data.length === 0) {
+    return 0
   }
+  return Math.max(data)
+}
+
+function setChartOption(data) {
+  if (!instance.value) {
+    return
+  }
+  instance.value.setOption({
+    xAxis: {
+      data: data.map(d => d.time),
+    },
+    series: [{
+      data: data.map(d => {
+        return {
+          value: d.average.toFixed(1),
+          itemStyle: {
+            // Linear gradient with first four parameters x0, y0, x2, y2, ranging from 0 - 1,
+            // corresponding to the percentage in the graphical wraparound box,
+            // if globalCoord is ``true``, then the four values are absolute pixel positions
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [{
+                offset: 0, color: '#02D0E3' // color at 0%
+              }, {
+                offset: 1, color: '#0289E3' // color at 100%
+              }],
+              global: false // default is false
+            }
+          }
+        }
+      }),
+    }],
+  })
+}
+
+function createChart(data) {
+  if(!instance.value) {
+    initChart()
+  }
+  isChartInitialized.value = true
+  avgValue.value = calculateAvgValue(data)
+  maxValue.value = calculateMaxValue(data.map(d => d.average))
+  setChartOption(data)
 }
 
 watch(() => props.data, async (newData) => {
   if (newData && newData.length > 0) {
     await nextTick()
-    if (!instance.value) {
-      initChart()
-    }
-    isChartInitialized.value = true
-    setChartOption(newData)
+    createChart(newData)
   } else {
     isChartInitialized.value = false
   }
@@ -187,12 +229,20 @@ watch(locale, () => {
 })
 
 watch(theme, () => {
+  if (!isChartInitialized.value) {
+    return
+  }
   if (instance.value) {
+    isChartInitialized.value = false
     instance.value.dispose()
     instance.value = null
-    initChart()
-    isChartInitialized.value = true
-    setChartOption(props.data.value)
+    createChart(props.data.value)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (instance.value) {
+    instance.value.dispose()
   }
 })
 </script>

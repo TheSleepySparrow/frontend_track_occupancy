@@ -90,6 +90,9 @@ watch(() => localFilters.value.reportType, () => {
 })
 
 watch(locale, () => {
+  if (localFilters.value.dateModel) {
+    return
+  }
   if (localFilters.value.reportType?.value) {
     const matchingOption = typeOptions.value.find(
       option => option.value === localFilters.value.reportType.value
@@ -98,10 +101,6 @@ watch(locale, () => {
       localFilters.value.reportType = matchingOption
     }
   }
-})
-
-watch(localFilters.value, () => {
-  console.log(`localFilters.value: ${localFilters.value.dateModel}`)
 })
 
 </script>
