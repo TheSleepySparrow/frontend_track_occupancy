@@ -1,4 +1,15 @@
 import { useCitiesStore } from 'src/stores/cities.store'
+//import { useAuth } from 'src/stores/auth.store'
+
+function requireAuth(to, from, next) {
+  next()
+  /* const authStore = useAuth()
+  if (authStore.isAuthenticated) {
+    next()
+  } else {
+    next({ name: 'login' })
+  } */
+}
 
 async function checkCityId (to, from, next) {
   const citiesStore = useCitiesStore()
@@ -33,10 +44,16 @@ async function checkCityId (to, from, next) {
 
 const routes = [
   {
+    path: '/login',
+    name: 'login',
+    component: () => import('src/pages/LoginPage.vue'),
+  },
+  {
     path: '/',
     name: "mainMenu",
     alias: ['/mainMenu', '/home', '/index'],
     component: () => import('layouts/AppMenu.vue'),
+    beforeEnter: requireAuth,
     children: [{
       path: '',
       name: 'viewMenu',
@@ -51,7 +68,7 @@ const routes = [
       cityId: parseInt(route.params.cityId),
       slug: route.params.slug || ''
     }),
-    beforeEnter : [checkCityId],
+    beforeEnter : [requireAuth, checkCityId],
     children: [
       {
         path: '',
@@ -82,7 +99,7 @@ const routes = [
       cityId: parseInt(route.params.cityId),
       slug: route.params.slug || ''
     }),
-    beforeEnter : [checkCityId],
+    beforeEnter : [requireAuth, checkCityId],
     children: [
       {
         path: '',
@@ -99,6 +116,7 @@ const routes = [
     path: '/attendance',
     name: 'showAttendance',
     component: () => import('src/layouts/AttendanceLayout.vue'),
+    beforeEnter: requireAuth,
     children: [{
       path: '',
       name: 'viewAttendance',
@@ -109,6 +127,7 @@ const routes = [
     path: '/users',
     name: 'showUsers',
     component: () => import('src/layouts/UsersLayout.vue'),
+    beforeEnter: requireAuth,
     children: [{
       path: '',
       name: 'viewUsers',
@@ -119,6 +138,7 @@ const routes = [
     path: '/settings',
     name: 'showSettings',
     component: () => import('src/layouts/SettingsLayout.vue'),
+    beforeEnter: requireAuth,
     children: [{
       path: '',
       name: 'viewSettings',

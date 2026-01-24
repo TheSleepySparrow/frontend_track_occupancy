@@ -16,6 +16,8 @@ export default {
         'save': 'Save',
         'cancel': 'Cancel',
         'ok': 'Ok',
+        'yes': 'Yes',
+        'no': 'No',
         'saveTooltip': 'You can`t save changes yet'
     },
     'mainMenu': {
@@ -80,7 +82,12 @@ export default {
         'titleChart': 'Occupancy statistics',
         'seriesName': 'Statistics',
         'xAxis': 'Time',
-        'yAxis': 'Average people count'
+        'yAxis': 'Average people count',
+        'saveTxt': 'save to txt',
+        'saveCsv': 'save to csv',
+        'saveTsv': 'save to tsv',
+        'Average': 'Average number of people in total',
+        'MaxPeopleMarkline': 'Max number of people in auditory'
     },
     'editAuditory': {
         'title': 'Edit Auditory',
@@ -94,5 +101,15 @@ export default {
         'localeType': 'Type (Localized)',
         'saveSuccess': 'Auditory updated successfully',
         'saveError': 'Error saving auditory'
+    },
+    'auth': {
+        'title': 'Authorization',
+        'login': 'Login',
+        'password': 'Password',
+        'loginButton': 'Sign in',
+        'logoutConfirm': 'Are you sure you want to logout?',
+        'logoutSuccess': 'You have successfully logged out',
+        'loginRequired': 'Login is required',
+        'passwordRequired': 'Password is required'
     }
 }

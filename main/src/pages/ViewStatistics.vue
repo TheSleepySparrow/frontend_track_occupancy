@@ -89,6 +89,7 @@
             :filters-min-show="filters.showMin"
             :report-type="filters.reportType?.label || ''"
             :time="filters.dateModel"
+            :auditoryInfo="chosenAuditory"
           />
         </q-card>
       </div>
@@ -181,6 +182,11 @@ const buildingIdRef = computed(() => {
   return { id: chosenBuildingId.value.value }
 })
 const auditoriesList = ref([])
+const chosenAuditory = computed(() => {
+  if (!auditoriesList.value) return null
+  if (!chosenAuditoryId.value) return null
+  return auditoriesList.value.find(aud => String(aud.id) === String(chosenAuditoryId.value.value))
+})
 
 // Filter auditories
 const auditories = computed(() => {

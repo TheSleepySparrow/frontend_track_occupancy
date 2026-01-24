@@ -1,14 +1,18 @@
 <template>
-  <div v-if="props.data && props.data.length > 0" class="q-pa-md column items-center">
+  <div v-if="props.data && props.data.length > 0" class="q-pa-xs column items-center">
     <div class="col-2">
       <h5>{{ $t('statisticsPage.title', { period: props.time }) }}</h5>
     </div>
-    <div ref="chartWrapperRef" class="col-8" style="width: 100%; min-height: 400px;">
+    <div ref="chartWrapperRef" class="col-6" style="width: 100%; min-height: 500px;">
       <div ref="chartRef" :style="chartStyle"></div>
     </div>
 
+    <div class="col-2 q-mt-md column items-center">
+      <div>{{ $t('statisticsPage.Average') }}: {{ avgValue }} </div>
+      <div>{{ $t('statisticsPage.MaxPeopleMarkline')}}: {{ maxNumberOfPeopleInAuditory }}</div>
+    </div>
     <div class="col-2 q-mt-md">
-      <div>Среднее: {{ avgValue.toFixed(1) }}</div>
+      <ImportData :data="props.data" :reportType="props.reportType"/>
     </div>
   </div>
   <div v-else class="q-pa-md column items-center">
@@ -19,6 +23,7 @@
 </template>
 
 <script setup>
+import ImportData from './ImportData.vue'
 import { computed, ref, onBeforeUnmount, watch, nextTick, useTemplateRef } from 'vue'
 import * as echarts from 'echarts'
 import { useResizeObserver, useElementSize } from '@vueuse/core'
@@ -34,7 +39,8 @@ const props = defineProps({
   filtersMaxShow: { type: Boolean, default: false },
   filtersMinShow: { type: Boolean, default: false },
   reportType: { type: String, default: '' },
-  time: { type: String, default: '' }
+  time: { type: String, default: '' },
+  auditoryInfo: { require: true }
 })
 
 const theme = computed(() => {
@@ -46,25 +52,26 @@ const instance = ref(null)
 const chartWrapperRef = useTemplateRef('chartWrapperRef')
 const isChartInitialized = ref(false)
 
+const maxNumberOfPeopleInAuditory = computed(() =>
+  {
+    if (!props.auditoryInfo) { return 30 }
+    return props.auditoryInfo.capacity
+  }
+)
+
 const chartStyle = ref({
   width: '400px',
   height: '200px',
 })
 
-onBeforeUnmount(() => {
-  if (instance.value) {
-    instance.value.dispose()
-  }
-})
-
-const initChart = () => {
+function initChart() {
   if (!chartRef.value) {
     return
   }
 
   if (!instance.value) {
     instance.value = echarts.init(chartRef.value)
-
+    // main bar chart options
     instance.value.setOption({
       title: {
         text: t('statisticsPage.titleChart'),
@@ -93,17 +100,23 @@ const initChart = () => {
         type: 'value',
         name: t('statisticsPage.yAxis'),
         nameLocation: 'middle',
-        nameGap: 30,
+        nameGap: 50,
+        max: 30
       },
       series: [{
         name: t('statisticsPage.seriesName'),
         type: 'bar',
         data: [],
         showBackground: true,
-        backgroundStyle: {
-          color: 'rgba(180, 180, 180, 0.2)',
-        },
-      }]
+        backgroundStyle: { color: 'rgba(180, 180, 180, 0.2)' },
+      }],
+      toolbox: {
+        show: true,
+        feature: {
+          dataView: { show: true, readOnly: true },
+          saveAsImage: { show: true },
+        }
+      }
     })
     const { width, height } = useElementSize(chartWrapperRef)
     chartStyle.value = {
@@ -116,11 +129,10 @@ const initChart = () => {
 }
 
 useResizeObserver(chartWrapperRef, (entries) => {
-  if (!instance.value) {
+  if (!isChartInitialized.value) {
     return
   }
-
-  if (!isChartInitialized.value) {
+  if (!instance.value) {
     return
   }
 
@@ -133,35 +145,131 @@ useResizeObserver(chartWrapperRef, (entries) => {
   instance.value.resize()
 })
 
-const avgValue = computed(() => {
-  if (!props.data.value || props.data.value.length === 0) {
-    return 0
-  }
-  const sum = props.data.value.reduce((acc, d) => acc + d.average, 0)
-  return sum / props.data.value.length
-})
+// Calculate average value
+const avgValue = ref(0)
+function calculateAvgValue(data) {
+  if (!data || data.length === 0) { return 0 }
 
-const setChartOption = (data) => {
-  if (instance.value) {
-    instance.value.setOption({
-      xAxis: {
-        data: data.map(d => d.time),
-      },
-      series: [{
-        data: data.map(d => d.average.toFixed(1)),
-      }],
-    })
+  const sum = data.reduce((acc, d) => acc + d.average, 0)
+  return Math.ceil(sum / data.length)
+}
+// calculate maximum in data
+const maxValue = ref(0)
+function calculateMaxValue(data) {
+  if (!data || data.length === 0) { return 0 }
+
+  return Math.max(data)
+}
+
+/* function setDataColorMin(data) {
+  if (data > 10) { return '#EB1400' }
+  return '#0054F0'
+}
+
+function setDataColorMax(data) {
+  if (data > 10) { return '#EB6600' }
+  return '#00A0F0'
+} */
+
+function setChartOption(data) {
+  if (!instance.value) {
+    return
   }
+  // if max in props.data is greater than max number of people in auditory
+  const maxYAxisValue = maxValue.value > maxNumberOfPeopleInAuditory.value ?
+    Math.ceil(maxValue.value * 1.1) :
+    Math.ceil(maxNumberOfPeopleInAuditory.value * 1.1)
+
+  // get gradient colors for bar based on its data
+  function getGradientColors(average) {
+    const occupancyRate = average / maxNumberOfPeopleInAuditory.value
+
+    if (occupancyRate >= 0.9) {
+      return { start: '#63544C', end: '#FCA470' }
+    }
+    if (occupancyRate >= 0.7) {
+      return { start: '#CCB68F', end: '#FED080' }
+    }
+    if (occupancyRate >= 0.5) {
+      return { start: '#828A51', end: '#E9EFC1' }
+    }
+    if (occupancyRate >= 0.3) {
+      return { start: '#4A7075', end: '#A9D4DB' }
+    }
+    return { start: '#8CA6C2', end: '#80B9F4' }
+  }
+
+  instance.value.setOption({
+    xAxis: {
+      data: data.map(d => d.time),
+    },
+    yAxis: {
+      max: maxYAxisValue,
+    },
+    series: [{
+      data: data.map(d => {
+        const colorsForColorStops = getGradientColors(d.average)
+        return {
+          value: Math.ceil(d.average),
+          itemStyle: {
+            color: {
+              type: 'linear',
+              x: 0,
+              y: 0,
+              x2: 0,
+              y2: 1,
+              colorStops: [{
+                offset: 0, color: colorsForColorStops.end // color at 0%
+              }, {
+                offset: 1, color: colorsForColorStops.start // color at 100%
+              }],
+              global: false // default is false
+            }
+          }
+        }
+      }),
+    }],
+  })
+}
+
+// set up for horizontal lines (max number of people in auditory and average number)
+function setSeriesMarkLine() {
+  if (!instance.value) { return }
+
+  // always show max number of people in auditory
+  const whatIsShownInMarkLine = [
+    { name: t('statisticsPage.MaxPeopleMarkline'), yAxis: maxNumberOfPeopleInAuditory.value}
+  ]
+  // if average is not tooo small show it
+  if (avgValue.value > 1) {
+    whatIsShownInMarkLine.push({ name: t('statisticsPage.Average'), type: 'average' })
+  }
+
+  instance.value.setOption({
+    series: [{
+      markLine: {
+        lineStyle: { color: '#EB1400' },
+        data: whatIsShownInMarkLine
+      }
+    }]
+  })
+}
+
+function createChart(data) {
+  if (!instance.value) {
+    initChart()
+  }
+  isChartInitialized.value = true
+  avgValue.value = calculateAvgValue(data)
+  maxValue.value = calculateMaxValue(data.map(d => d.average))
+  setChartOption(data)
+  setSeriesMarkLine()
 }
 
 watch(() => props.data, async (newData) => {
   if (newData && newData.length > 0) {
     await nextTick()
-    if (!instance.value) {
-      initChart()
-    }
-    isChartInitialized.value = true
-    setChartOption(newData)
+    createChart(newData)
   } else {
     isChartInitialized.value = false
   }
@@ -170,29 +278,33 @@ watch(() => props.data, async (newData) => {
 watch(locale, () => {
   if (instance.value) {
     instance.value.setOption({
-      title: {
-        text: t('statisticsPage.titleChart'),
-      },
-      xAxis: {
-        name: t('statisticsPage.xAxis'),
-      },
-      yAxis: {
-        name: t('statisticsPage.yAxis'),
-      },
+      title: { text: t('statisticsPage.titleChart'), },
+      xAxis: { name: t('statisticsPage.xAxis'), },
+      yAxis: { name: t('statisticsPage.yAxis'), },
       series: [{
         name: t('statisticsPage.seriesName'),
       }],
     })
+    setSeriesMarkLine() // need to reset horizontal lines because of locale in names
   }
 })
 
 watch(theme, () => {
+  if (!isChartInitialized.value) {
+    return
+  }
+  // need to reset chart
   if (instance.value) {
+    isChartInitialized.value = false
     instance.value.dispose()
     instance.value = null
-    initChart()
-    isChartInitialized.value = true
-    setChartOption(props.data.value)
+    createChart(props.data)
+  }
+})
+
+onBeforeUnmount(() => {
+  if (instance.value) {
+    instance.value.dispose()
   }
 })
 </script>

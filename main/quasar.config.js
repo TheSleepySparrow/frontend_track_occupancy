@@ -80,7 +80,7 @@ export default defineConfig((/* ctx */) => {
       open: true,
       proxy: {
         '/v1': {
-          target: 'http://172.18.130.222:8080',
+          target: 'https://track-occupancy.auditory.ru',
           changeOrigin: true
         }
       }
