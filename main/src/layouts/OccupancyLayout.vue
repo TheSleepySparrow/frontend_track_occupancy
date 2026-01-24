@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh Lpr lFf">
-    <TheHeader 
+    <TheHeader
       HeaderName="mainMenu.occupancy"
       :showBreadcrumbs="true"
       :city="city"
@@ -74,6 +74,7 @@ import TheErrorPopUp from 'src/components/TheErrorPopUp.vue'
 import { useCitiesStore } from 'src/stores/cities.store'
 import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
+import { setLastBuildingId, getLastBuildingId } from 'src/composables/GlobalState.js'
 
 const { locale } = useI18n()
 
@@ -83,7 +84,7 @@ const citiesStore = useCitiesStore()
 const chosenBuilding = ref(null)
 
 const cityId = computed(() => parseInt(route.params.cityId))
-const city = computed(() => 
+const city = computed(() =>
   citiesStore.findCityById(cityId.value)
 )
 const buildingsProps = computed(() => ({ id: cityId.value }))
@@ -117,9 +118,33 @@ watch(() => route.params.buildingId, (newBuildingId) => {
   }
 }, { immediate: true })
 
+// Автоматическое перенаправление на последнее выбранное здание
+watch([buildingsList, () => route.params.buildingId, cityId],
+  ([newBuildingsList, buildingId, currentCityId]) => {
+  // Перенаправляем только если:
+  // 1. buildingId отсутствует в URL (пользователь на NoOccupancySelected)
+  // 2. Список зданий загружен и не пуст
+  // 3. Нет ошибки загрузки
+  // 4. Есть сохраненное здание для текущего cityId
+  if (!buildingId && newBuildingsList && newBuildingsList.length > 0 && !err.value && currentCityId) {
+    const savedBuildingId = getLastBuildingId(currentCityId)
+    if (savedBuildingId) {
+      const buildingExists = newBuildingsList.some(b => b.id === savedBuildingId)
+      if (buildingExists) {
+        router.push({ name: 'viewOccupancy', params: {
+          cityId: parseInt(city.value.id),
+          slug: citiesStore.getSlugByCityId(city.value.id),
+          buildingId: savedBuildingId
+        }})
+      }
+    }
+  }
+}, { immediate: true })
+
 function clickBuilding(buildingId) {
   chosenBuilding.value = buildingId
-  router.push({ name: 'viewOccupancy', params: { 
+  setLastBuildingId(cityId.value, buildingId)
+  router.push({ name: 'viewOccupancy', params: {
     cityId: parseInt(city.value.id),
     slug: citiesStore.getSlugByCityId(city.value.id),
     buildingId: buildingId }

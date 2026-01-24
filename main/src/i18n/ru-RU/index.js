@@ -85,7 +85,9 @@ export default {
         'yAxis': 'Среднее количество людей',
         'saveCsv': 'Экспорт csv',
         'saveTxt': 'Экспорт txt',
-        'saveTsv': 'Экспорт tsv'
+        'saveTsv': 'Экспорт tsv',
+        'Average': 'Итоговое среднее количество людей',
+        'MaxPeopleMarkline': 'Максимальное количество людей в аудитории'
     },
     'editAuditory': {
         'title': 'Редактировать аудиторию',

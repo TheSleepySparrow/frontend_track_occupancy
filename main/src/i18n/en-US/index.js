@@ -85,7 +85,9 @@ export default {
         'yAxis': 'Average people count',
         'saveTxt': 'save to txt',
         'saveCsv': 'save to csv',
-        'saveTsv': 'save to tsv'
+        'saveTsv': 'save to tsv',
+        'Average': 'Average number of people in total',
+        'MaxPeopleMarkline': 'Max number of people in auditory'
     },
     'editAuditory': {
         'title': 'Edit Auditory',

@@ -11,7 +11,7 @@
         <!-- Image Preview Section (similar to RoomsInfoCard) -->
         <q-card flat bordered class="q-mb-md">
           <q-img
-            :src="'https://cdn.quasar.dev/img/parallax2.jpg'" 
+            :src="imageUrl"
             :alt="localItem[selectedLocale]?.title"
             style="height: 30%"
           >
@@ -91,15 +91,15 @@
         <q-card-actions align="right">
           <!-- Action Buttons -->
           <div class="row q-mt-lg">
-            <q-btn 
-              :label="$t('popUps.cancel')" 
-              color="grey" 
-              flat 
+            <q-btn
+              :label="$t('popUps.cancel')"
+              color="grey"
+              flat
               @click="onCancel"
             />
-            <q-btn 
-              :label="$t('popUps.save')" 
-              color="primary" 
+            <q-btn
+              :label="$t('popUps.save')"
+              color="primary"
               type="submit"
               disable
               @click="onSave"
@@ -137,6 +137,7 @@ const props = defineProps({
   }
 })
 
+const imageUrl = computed(() => `src/assets/images/${props.item.id}.jpg`)
 const emit = defineEmits(['update:modelValue', 'save'])
 
 const { locale, t } = useI18n()
