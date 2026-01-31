@@ -46,6 +46,11 @@ export function setLastBuildingId(cityId, buildingId) {
   if (!globalState.value.lastBuildingId) {
     globalState.value.lastBuildingId = []
   }
+  const isCityInArray = globalState.value.lastBuildingId.findIndex(obj => obj.city === cityId)
+  if (isCityInArray > -1) {
+    globalState.value.lastBuildingId[isCityInArray].building = buildingId
+    return
+  }
   globalState.value.lastBuildingId.push(
     {
       city: cityId,
