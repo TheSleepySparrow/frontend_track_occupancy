@@ -1,96 +1,120 @@
 <template>
   <q-dialog v-model="localModelValue" @update:model-value="updateModelValue">
-    <q-card style="min-width: 500px; max-width: 800px">
-      <q-card-section class="row items-center q-pb-none">
+    <q-card class="q-pa-md" style="min-width: 50vw; max-width: 50vw; min-height: 80vh;">
+      <q-card-section class="row items-center">
         <div class="text-h6">{{ $t('editAuditory.title') }}</div>
         <q-space />
         <q-btn icon="close" flat round dense v-close-popup />
       </q-card-section>
 
-      <q-card-section>
-        <!-- Image Preview Section (similar to RoomsInfoCard) -->
-        <q-card flat bordered class="q-mb-md">
-          <q-img
-            :src="imageUrl"
-            :alt="localItem[selectedLocale]?.title"
-            style="height: 30%"
-          >
-          </q-img>
-        </q-card>
+      <q-card-section class="q-pa-md">
+        <div class="q-gutter-y-md">
+          <q-card flat bordered class="q-px-md">
+            <q-img
+              :src="imageUrl"
+              :alt="localItem[selectedLocale]?.title"
+              style="height: 30%"
+            >
+            </q-img>
+          </q-card>
+          <div class="text-center text-h6">{{ localItem[selectedLocale]?.title }}</div>
+
+          <q-tabs v-model="activeTab"
+          dense
+          class="text-center text-grey"
+          active-color="primary"
+          indicator-color="primary"
+          align="justify">
+            <q-tab name="info" :label="$t('editAuditory.tabInfo')" />
+            <q-tab name="cameras" :label="$t('editAuditory.tabCameras')" />
+          </q-tabs>
+
+          <q-separator />
+
+          <q-tab-panels v-model="activeTab" animated>
+            <q-tab-panel name="info" class="q-pa-none">
+              <div class="q-gutter-y-md">
+                <div class="row q-gutter-x-xs">
+                  <q-select
+                    v-model="selectedLocale"
+                    class="col-4"
+                    :options="localeOptions"
+                    :label="$t('editAuditory.locale')"
+                    filled
+                    option-value="value"
+                    option-label="label"
+                    emit-value
+                    map-options
+                  />
+
+                  <q-input
+                    v-model="localItem[selectedLocale].title"
+                    class="col"
+                    :label="$t('editAuditory.titleInput')"
+                    filled
+                    readonly
+                    :rules="[val => !!val || $t('editAuditory.titleRequired')]"
+                  />
+                </div>
+
+                <q-select
+                  v-model="localItem[selectedLocale].type"
+                  :options="localeTypeOptions"
+                  :label="$t('editAuditory.localeType')"
+                  filled
+                  readonly
+                  option-value="label"
+                  option-label="label"
+                  emit-value
+                  map-options
+                />
+
+                <q-input
+                  v-model="localItem.capacity"
+                  type="number"
+                  :label="$t('editAuditory.capacity')"
+                  filled
+                  readonly
+                  :rules="[val => val > 0 || $t('editAuditory.capacityError')]"
+                />
+                <q-input
+                  v-model="localItem.floor"
+                  type="number"
+                  :label="$t('occupationPage.floor')"
+                  filled
+                  readonly
+                />
+                <q-input
+                  v-model="localItem.img_url"
+                  :label="$t('editAuditory.imageUrl')"
+                  filled
+                  readonly
+                />
+              </div>
+            </q-tab-panel>
+
+            <q-tab-panel name="cameras" class="q-pa-none">
+              <div v-if="camerasError" class="text-negative">
+                {{ camerasError.message }}
+              </div>
+              <q-list v-else-if="camerasInfo.length > 0" bordered separator>
+                <q-item v-for="camera in camerasInfo" :key="camera.id">
+                  <q-item-section>
+                    <q-item-label>{{ $t('editAuditory.cameraId') }}: {{ camera.id }}</q-item-label>
+                    <q-item-label caption>{{ $t('editAuditory.cameraMac') }}: {{ camera.mac }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </q-list>
+              <div v-else class="text-grey">
+                {{ $t('editAuditory.noCameras') }}
+              </div>
+            </q-tab-panel>
+          </q-tab-panels>
+        </div>
       </q-card-section>
 
-      <q-card-section>
-        <!-- Capacity Input -->
-        <q-input
-          v-model.number="localItem.capacity"
-          type="number"
-          :label="$t('editAuditory.capacity')"
-          outlined
-          dense
-          readonly
-          :rules="[val => val > 0 || $t('editAuditory.capacityError')]"
-        />
-
-        <!-- Image URL Input -->
-        <q-input
-          v-model="localItem.img_url"
-          :label="$t('editAuditory.imageUrl')"
-          outlined
-          readonly
-          dense
-        />
-        <!-- Floor Display (read-only) -->
-        <q-input
-          :model-value="localItem.floor"
-          :label="$t('occupationPage.floor')"
-          outlined
-          dense
-          readonly
-        />
-      </q-card-section>
-
-      <q-card-section>
-          <!-- Locale Select -->
-          <q-select
-            v-model="selectedLocale"
-            :options="localeOptions"
-            :label="$t('editAuditory.locale')"
-            outlined
-            dense
-            option-value="value"
-            option-label="label"
-            emit-value
-            map-options
-          />
-
-          <!-- Locale-specific Title Input -->
-          <q-input
-            v-model="localItem[selectedLocale].title"
-            :label="$t('editAuditory.titleInput')"
-            outlined
-            readonly
-            dense
-            :rules="[val => !!val || $t('editAuditory.titleRequired')]"
-          />
-
-          <!-- Locale-specific Type Select -->
-          <q-select
-            v-model="localItem[selectedLocale].type"
-            :options="localeTypeOptions"
-            :label="$t('editAuditory.localeType')"
-            outlined
-            dense
-            readonly
-            option-value="label"
-            option-label="label"
-            emit-value
-            map-options
-          />
-        </q-card-section>
-
-        <q-card-actions align="right">
-          <!-- Action Buttons -->
-          <div class="row q-mt-lg">
+      <q-card-actions align="right">
+          <div class="q-gutter-x-md q-mt-lg">
             <q-btn
               :label="$t('popUps.cancel')"
               color="grey"
@@ -118,6 +142,7 @@ import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { putResponse } from 'src/services/api.js'
 import { getRoomTypesInfo } from 'src/composables/GetMainInfo.js'
+import { useCamerasInfo } from 'src/composables/useGetCamerasInfo.js'
 import { Notify, Loading } from 'quasar'
 
 const props = defineProps({
@@ -157,6 +182,11 @@ watch(() => props.item, (newItem) => {
 
 const selectedLocale = ref(locale.value || 'ru-RU')
 const saving = ref(false)
+const activeTab = ref('info')
+
+const propsForFetch = computed(() => ({ id: props.item?.id }))
+const baseUrl = computed(() => `/v1/cities/${props.cityId}/buildings/${props.buildingId}/auditories`)
+const { camerasInfo, error: camerasError } = useCamerasInfo(propsForFetch, baseUrl, { loading: false })
 
 // Locale options
 const localeOptions = [
@@ -235,9 +265,3 @@ async function onSave() {
   }
 }
 </script>
-
-<style scoped>
-.bg-black-transparent {
-  background: rgba(0, 0, 0, 0.5);
-}
-</style>

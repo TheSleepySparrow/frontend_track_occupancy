@@ -91,6 +91,11 @@ export default {
     },
     'editAuditory': {
         'title': 'Edit Auditory',
+        'tabInfo': 'Main info',
+        'tabCameras': 'Cameras',
+        'cameraId': 'Camera ID',
+        'cameraMac': 'MAC address',
+        'noCameras': 'No cameras assigned to this auditory',
         'mainType': 'Type',
         'capacity': 'Capacity',
         'capacityError': 'Capacity must be greater than 0',

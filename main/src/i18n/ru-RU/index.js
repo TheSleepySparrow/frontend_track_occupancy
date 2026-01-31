@@ -91,6 +91,11 @@ export default {
     },
     'editAuditory': {
         'title': 'Редактировать аудиторию',
+        'tabInfo': 'Основная информация',
+        'tabCameras': 'Камеры',
+        'cameraId': 'ID камеры',
+        'cameraMac': 'MAC-адрес',
+        'noCameras': 'Нет камер, закреплённых за аудиторией',
         'mainType': 'Тип',
         'capacity': 'Вместимость',
         'capacityError': 'Вместимость должна быть больше 0',
