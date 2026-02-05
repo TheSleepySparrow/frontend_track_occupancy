@@ -9,11 +9,12 @@
 
       <q-card-section class="q-pa-md">
         <div class="q-gutter-y-md">
-          <q-card flat bordered class="q-px-md">
+          <q-card flat bordered class="q-px-xl">
             <q-img
               :src="imageUrl"
               :alt="localItem[selectedLocale]?.title"
-              style="height: 30%"
+              height="30%"
+              initial-ratio
             >
             </q-img>
           </q-card>
