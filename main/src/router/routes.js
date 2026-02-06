@@ -146,13 +146,8 @@ const routes = [
         component: () => import('src/pages/ViewSettingsEntities.vue')
       },
       {
-        path: 'cities',
-        name: 'viewSettingsCities',
-        component: () => import('src/pages/ViewSettingsEntities.vue')
-      },
-      {
-        path: 'buildings',
-        name: 'viewSettingsBuildings',
+        path: 'cities&buildings',
+        name: 'viewSettingsCitiesAndBuildings',
         component: () => import('src/pages/ViewSettingsEntities.vue')
       },
       {

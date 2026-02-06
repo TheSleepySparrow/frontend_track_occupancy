@@ -4,7 +4,7 @@
     header-class="text-weight-medium"
   >
     <template v-slot:header>
-      <q-item-section>{{ itemTitle }}</q-item-section>
+      <q-item-section>{{ buildingTitle }}</q-item-section>
       <q-item-section side>
         <div class="row q-gutter-xs no-wrap">
           <q-btn
@@ -67,7 +67,7 @@ const props = defineProps({
 
 const emit = defineEmits(['edit', 'delete'])
 
-const itemTitle = computed(() => {
+const buildingTitle = computed(() => {
   if (!props.item) return ''
   return props.item[props.locale]?.title || props.item['ru-RU']?.title || props.item['en-US']?.title || ''
 })

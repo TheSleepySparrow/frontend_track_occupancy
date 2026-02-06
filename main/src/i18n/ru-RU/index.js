@@ -110,17 +110,19 @@ export default {
     'settingsPage': {
         'emptyState': 'Здесь вы можете просматривать и изменять основную информацию по проекту. Выберите сущность в меню слева.',
         'toolbar': 'Настройки',
+        'toolbarCities': 'Выбранный город',
         'entitiesGroups': {
           'mainEntities': 'Основные сущности',
           'other': 'Другое'
         },
         'entities': {
-            'cities': 'Города',
-            'buildings': 'Корпуса',
+            'cities': 'Города и Корпуса',
             'auditories': 'Аудитории',
             'cameras': 'Камеры',
             'theme': 'Тема'
         },
+        'addCityButton': 'Добавить новый город',
+        'selectCity': 'Выберите город',
         'searchPlaceholder': 'Поиск по названию',
         'cameraAttached': 'Закреплена',
         'cameraFree': 'Свободна',
@@ -137,5 +139,6 @@ export default {
         'logoutSuccess': 'Вы успешно вышли из системы',
         'loginRequired': 'Логин обязателен',
         'passwordRequired': 'Пароль обязателен'
-    }
+    },
+    'nothingDone': 'Эта часть приложения еще не реализована. Следите за обновлениями...'
 }

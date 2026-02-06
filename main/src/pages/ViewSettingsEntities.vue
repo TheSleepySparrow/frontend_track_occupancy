@@ -9,10 +9,13 @@
       </q-card>
     </div>
 
-    <!-- Entity list: when cities, buildings, auditories or cameras selected -->
+    <!-- Entity list: when cities, auditories or cameras selected -->
     <div v-else class="column q-col-gutter-xl">
-      <!-- Filter section -->
-      <div class="col-12 col-md-4">
+      <!-- Filter section: only for auditories and cameras -->
+      <div
+        v-if="currentEntity && currentEntity !== 'cities'"
+        class="col-12 col-md-4"
+      >
         <q-input
           v-model="searchQuery"
           type="search"
@@ -32,35 +35,42 @@
       <!-- Content section -->
       <div class="col-12">
         <q-card flat bordered class="q-pa-md">
-          <div v-if="loading" class="q-pa-lg text-center">
-            <q-spinner-dots
-              color="primary"
-              size="40px"
-            />
-          </div>
-          <TheErrorPopUp
-            v-else-if="error"
-            :err="error"
-            error-page="viewSettings"
-            :route-params="{}"
+          <!-- Cities: self-contained component, no parent loading/error/filteredItems -->
+          <SettingsItemCities
+            v-if="currentEntity === 'cities'"
+            :locale="locale"
+            @edit="onEdit"
+            @delete="onDelete"
           />
-          <div
-            v-else-if="filteredItems.length === 0"
-            class="q-pa-lg text-center text-grey"
-          >
-            {{ $t('settingsPage.noItems') }}
-          </div>
-          <q-list v-else bordered separator>
+          <!-- Auditories and cameras: parent handles loading, error, filteredItems -->
+          <template v-else>
+            <div v-if="loading" class="q-pa-lg text-center">
+              <q-spinner-dots
+                color="primary"
+                size="40px"
+              />
+            </div>
+            <TheErrorPopUp
+              v-else-if="error"
+              :err="error"
+              error-page="viewSettings"
+              :route-params="{}"
+            />
+            <div
+              v-else-if="filteredItems.length === 0"
+              class="q-pa-lg text-center text-grey"
+            >
+              {{ $t('settingsPage.noItems') }}
+            </div>
             <component
-              v-for="item in filteredItems"
-              :key="item.id"
+              v-else
+              :filtered-items="filteredItems"
               :is="entityComponent"
-              :item="item"
               :locale="locale"
               @edit="onEdit"
               @delete="onDelete"
             />
-          </q-list>
+          </template>
         </q-card>
       </div>
     </div>
@@ -68,28 +78,23 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import TheErrorPopUp from 'src/components/TheErrorPopUp.vue'
 import SettingsItemCities from 'src/components/SettingsItemCities.vue'
-import SettingsItemBuildings from 'src/components/SettingsItemBuildings.vue'
 import SettingsItemAuditories from 'src/components/SettingsItemAuditories.vue'
 import SettingsItemCameras from 'src/components/SettingsItemCameras.vue'
-import { useCitiesStore } from 'src/stores/cities.store'
-import { useBuildingsInfo } from 'src/composables/useGetBuildingsInfo.js'
 import { useAuditoriesInfo } from 'src/composables/useGetAuditoriesInfo.js'
 import { useGetAllCamerasInfo } from 'src/composables/useGetAllCamerasInfo.js'
 
 const route = useRoute()
 const { locale } = useI18n()
-const citiesStore = useCitiesStore()
 
 const searchQuery = ref('')
 
 const entityByRoute = {
-  viewSettingsCities: 'cities',
-  viewSettingsBuildings: 'buildings',
+  viewSettingsCitiesAndBuildings: 'cities',
   viewSettingsAuditories: 'auditories',
   viewSettingsCameras: 'cameras'
 }
@@ -97,14 +102,6 @@ const entityByRoute = {
 const currentEntity = computed(() => entityByRoute[route.name] || null)
 
 const entityConfig = {
-  cities: {
-    component: SettingsItemCities,
-    getTitle: (item, loc) => item[`name_${loc}`] || item['name_ru-RU'] || item['name_en-US'] || ''
-  },
-  buildings: {
-    component: SettingsItemBuildings,
-    getTitle: (item, loc) => item[loc]?.title || item['ru-RU']?.title || item['en-US']?.title || ''
-  },
   auditories: {
     component: SettingsItemAuditories,
     getTitle: (item, loc) => item[loc]?.title || item['ru-RU']?.title || item['en-US']?.title || ''
@@ -116,28 +113,7 @@ const entityConfig = {
 }
 
 const entityComponent = computed(() =>
-  currentEntity.value ? entityConfig[currentEntity.value].component : null
-)
-
-// Cities: use store
-const citiesLoaded = ref(false)
-async function loadCities() {
-  if (!citiesStore.loaded && !citiesStore.loading) {
-    try {
-      await citiesStore.fetchCities()
-    } catch (err) {
-      console.error('Cities load failed', err)
-    }
-  }
-  citiesLoaded.value = true
-}
-
-// Buildings: cityId=1
-const buildingsProps = computed(() => ({ id: 1 }))
-const { buildingsInfo: buildingsList, error: buildingsError } = useBuildingsInfo(
-  buildingsProps,
-  '/v1/cities',
-  { optionalUrl: 'buildings', loading: true, notify: true }
+  currentEntity.value ? entityConfig[currentEntity.value]?.component : null
 )
 
 // Auditories: buildingId=1, cityId=1
@@ -154,20 +130,7 @@ const { camerasInfo: camerasList, error: camerasError, loading: camerasLoading }
   { loading: true, notify: true }
 )
 
-// Load cities when opening cities tab
-watch(currentEntity, (entity) => {
-  if (entity === 'cities') {
-    loadCities()
-  }
-}, { immediate: true })
-
 const rawItems = computed(() => {
-  if (currentEntity.value === 'cities') {
-    return citiesStore.cities
-  }
-  if (currentEntity.value === 'buildings') {
-    return buildingsList.value || []
-  }
   if (currentEntity.value === 'auditories') {
     return auditoriesList.value || []
   }
@@ -198,7 +161,6 @@ const loading = computed(() => {
 })
 
 const error = computed(() => {
-  if (currentEntity.value === 'buildings') return buildingsError.value
   if (currentEntity.value === 'auditories') return auditoriesError.value
   if (currentEntity.value === 'cameras') return camerasError.value
   return null

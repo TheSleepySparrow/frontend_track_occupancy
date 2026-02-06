@@ -72,8 +72,7 @@ const menuItems = [
     name: 'mainEntities',
     label: 'settingsPage.entitiesGroups.mainEntities',
     list: [
-      { routeName: 'viewSettingsCities', label: 'settingsPage.entities.cities' },
-      { routeName: 'viewSettingsBuildings', label: 'settingsPage.entities.buildings' },
+      { routeName: 'viewSettingsCitiesAndBuildings', label: 'settingsPage.entities.cities' },
       { routeName: 'viewSettingsAuditories', label: 'settingsPage.entities.auditories' },
       { routeName: 'viewSettingsCameras', label: 'settingsPage.entities.cameras' }
     ]

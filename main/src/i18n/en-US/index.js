@@ -110,17 +110,19 @@ export default {
     'settingsPage': {
         'emptyState': 'Here you can view and edit the main project information. Select an entity from the menu on the left.',
         'toolbar': 'Settings List',
+        'toolbarCities': 'Chosen city',
         'entitiesGroups': {
           'mainEntities': 'Main Entities',
           'other': 'Other Settings'
         },
         'entities': {
-            'cities': 'Cities',
-            'buildings': 'Buildings',
+            'cities': 'Cities and buildings',
             'auditories': 'Auditories',
             'cameras': 'Cameras',
             'theme': 'Theme'
         },
+        'addCityButton': 'Add new city',
+        'selectCity': 'Select a city',
         'searchPlaceholder': 'Search by name',
         'cameraAttached': 'Attached',
         'cameraFree': 'Free',
@@ -137,5 +139,6 @@ export default {
         'logoutSuccess': 'You have successfully logged out',
         'loginRequired': 'Login is required',
         'passwordRequired': 'Password is required'
-    }
+    },
+    'nothingDone': 'This part of aplication is not yet done. Check for updates...'
 }
