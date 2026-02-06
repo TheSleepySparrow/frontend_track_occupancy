@@ -139,11 +139,38 @@ const routes = [
     name: 'showSettings',
     component: () => import('src/layouts/SettingsLayout.vue'),
     beforeEnter: requireAuth,
-    children: [{
-      path: '',
-      name: 'viewSettings',
-      component: () => import('src/pages/ViewSettings.vue')
-    }],
+    children: [
+      {
+        path: '',
+        name: 'viewSettings',
+        component: () => import('src/pages/ViewSettingsEntities.vue')
+      },
+      {
+        path: 'cities',
+        name: 'viewSettingsCities',
+        component: () => import('src/pages/ViewSettingsEntities.vue')
+      },
+      {
+        path: 'buildings',
+        name: 'viewSettingsBuildings',
+        component: () => import('src/pages/ViewSettingsEntities.vue')
+      },
+      {
+        path: 'auditories',
+        name: 'viewSettingsAuditories',
+        component: () => import('src/pages/ViewSettingsEntities.vue')
+      },
+      {
+        path: 'cameras',
+        name: 'viewSettingsCameras',
+        component: () => import('src/pages/ViewSettingsEntities.vue')
+      },
+      {
+        path: 'theme',
+        name: 'viewSettingsTheme',
+        component: () => import('src/pages/ViewSettingsTheme.vue')
+      }
+    ],
   },
   {
     path: '/:catchAll(.*)*',

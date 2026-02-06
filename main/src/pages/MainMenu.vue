@@ -77,7 +77,7 @@ const menuList = {
         id: 5,
         text: text + '.settings',
         whatToDo: () => pushRoute('viewSettings', {}),
-        isClickable: false
+        isClickable: true
     }
 }
 </script>

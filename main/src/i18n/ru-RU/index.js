@@ -107,6 +107,27 @@ export default {
         'saveSuccess': 'Аудитория успешно обновлена',
         'saveError': 'Ошибка при сохранении аудитории'
     },
+    'settingsPage': {
+        'emptyState': 'Здесь вы можете просматривать и изменять основную информацию по проекту. Выберите сущность в меню слева.',
+        'toolbar': 'Настройки',
+        'entitiesGroups': {
+          'mainEntities': 'Основные сущности',
+          'other': 'Другое'
+        },
+        'entities': {
+            'cities': 'Города',
+            'buildings': 'Корпуса',
+            'auditories': 'Аудитории',
+            'cameras': 'Камеры',
+            'theme': 'Тема'
+        },
+        'searchPlaceholder': 'Поиск по названию',
+        'cameraAttached': 'Закреплена',
+        'cameraFree': 'Свободна',
+        'edit': 'Редактировать',
+        'delete': 'Удалить',
+        'noItems': 'Нет данных для отображения'
+    },
     'auth': {
         'title': 'Авторизация',
         'login': 'Логин',

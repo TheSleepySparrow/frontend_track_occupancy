@@ -107,6 +107,27 @@ export default {
         'saveSuccess': 'Auditory updated successfully',
         'saveError': 'Error saving auditory'
     },
+    'settingsPage': {
+        'emptyState': 'Here you can view and edit the main project information. Select an entity from the menu on the left.',
+        'toolbar': 'Settings List',
+        'entitiesGroups': {
+          'mainEntities': 'Main Entities',
+          'other': 'Other Settings'
+        },
+        'entities': {
+            'cities': 'Cities',
+            'buildings': 'Buildings',
+            'auditories': 'Auditories',
+            'cameras': 'Cameras',
+            'theme': 'Theme'
+        },
+        'searchPlaceholder': 'Search by name',
+        'cameraAttached': 'Attached',
+        'cameraFree': 'Free',
+        'edit': 'Edit',
+        'delete': 'Delete',
+        'noItems': 'No data to display'
+    },
     'auth': {
         'title': 'Authorization',
         'login': 'Login',
