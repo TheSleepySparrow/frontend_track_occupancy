@@ -7,6 +7,7 @@ const STORAGE_KEY = 'global-storage-for-user'
 const initialGlobalState = {
   theme: 'light',
   language: 'en-US',
+  lastBuildingId: [],
 }
 
 const storageKey = computed(() => {
@@ -32,4 +33,38 @@ export function getTheme() {
 
 export function setTheme(theme) {
   globalState.value.theme = theme ? 'dark' : 'light'
+}
+
+export function getLastBuildingId(cityId) {
+  if (!cityId) return null
+  const obj = globalState.value.lastBuildingId.find(obj => obj.city === cityId)
+  return obj ? obj.building : null
+}
+
+export function setLastBuildingId(cityId, buildingId) {
+  if (!cityId || !buildingId) return
+  if (!globalState.value.lastBuildingId) {
+    globalState.value.lastBuildingId = []
+  }
+  const isCityInArray = globalState.value.lastBuildingId.findIndex(obj => obj.city === cityId)
+  if (isCityInArray > -1) {
+    globalState.value.lastBuildingId[isCityInArray].building = buildingId
+    return
+  }
+  globalState.value.lastBuildingId.push(
+    {
+      city: cityId,
+      building: buildingId
+    }
+  )
+}
+
+export function clearLastBuildingId(cityId) {
+  if (!cityId) return
+  if (globalState.value.lastBuildingId) {
+    const id = globalState.value.lastBuildingId.findIndex(obj => obj.city === cityId)
+    if (id > -1) {
+      globalState.value.lastBuildingId.splice(id, 1)
+    }
+  }
 }

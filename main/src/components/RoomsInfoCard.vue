@@ -2,10 +2,12 @@
     <div class="q-pa-md row items-start full-width full-height">
         <q-card class="q-mb-md full-width full-height" flat bordered>
             <!--<q-img :src="props.item.img_url || 'https://cdn.quasar.dev/img/parallax2.jpg'" />-->
-            <q-img :src="'https://cdn.quasar.dev/img/parallax2.jpg'" />
+            <q-img :src="imageUrl" />
             <q-card-section horizontal class="justify-between full-width">
                 <q-card-section class="q-pa-md full-width">
-                    <div class="text-overline text-primary">{{ props.item[$i18n.locale].type }}</div>
+                    <div :class="$q.dark.isActive ? 'text-overline grey-6' : 'text-overline text-primary'">
+                      {{ props.item[$i18n.locale].type }}
+                    </div>
                     <div class="text-h5 q-mt-sm q-mb-xs">
                         {{ props.item[$i18n.locale].title }}
                     </div>
@@ -15,7 +17,7 @@
                     <div style="padding-top: 5%;">
                         <q-btn
                             outline
-                            color="primary"
+                            :color="$q.dark.isActive ? 'blue-grey-4' : 'primary'"
                             :label="$t('editAuditory.title')"
                             size="sm"
                             @click="showEditDialog = true"
@@ -76,12 +78,16 @@ const occupancyItem = computed(() => {
     const baseOccupancy = props.occupancy || null
     if (!baseOccupancy) return null
     if (!localOccupancyUpdate.value) return baseOccupancy
-    
+
     return {
         ...baseOccupancy,
         ...localOccupancyUpdate.value
     }
 })
+
+const imageUrl = computed(() => props.item.id ?
+  `src/assets/images/${props.item.id}.jpg` :
+  'https://cdn.quasar.dev/img/parallax2.jpg')
 
 const occupancyPercent = computed(() => {
     const count = occupancyItem.value?.count || 0

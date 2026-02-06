@@ -3,7 +3,7 @@ export default {
         'settings': 'Settings',
         'language': 'Language',
         'theme': 'Theme',
-        'logout': 'Logout',
+        'infoTooltip': 'More about us!',
     },
     'menu': {
         'headerName': 'Main menu',
@@ -39,7 +39,7 @@ export default {
         'noOccupationWarning': 'Data is not valid'
     },
     'errorOccured': {
-        'name': 'Error occured',
+        'name': 'Error occurred',
         'meaning': 'This means that:',
         '404': 'Data not found',
         '401': 'You`re unauthorized',
@@ -85,10 +85,17 @@ export default {
         'yAxis': 'Average people count',
         'saveTxt': 'save to txt',
         'saveCsv': 'save to csv',
-        'saveTsv': 'save to tsv'
+        'saveTsv': 'save to tsv',
+        'Average': 'Average number of people in total',
+        'MaxPeopleMarkline': 'Max number of people in auditory'
     },
     'editAuditory': {
         'title': 'Edit Auditory',
+        'tabInfo': 'Main info',
+        'tabCameras': 'Cameras',
+        'cameraId': 'Camera ID',
+        'cameraMac': 'MAC address',
+        'noCameras': 'No cameras assigned to this auditory',
         'mainType': 'Type',
         'capacity': 'Capacity',
         'capacityError': 'Capacity must be greater than 0',
@@ -100,6 +107,43 @@ export default {
         'saveSuccess': 'Auditory updated successfully',
         'saveError': 'Error saving auditory'
     },
+    'settingsPage': {
+        'emptyState': 'Here you can view and edit the main project information. Select an entity from the menu on the left.',
+        'toolbar': 'Settings List',
+        'toolbarCities': 'Chosen city',
+        'entitiesGroups': {
+          'mainEntities': 'Main Entities',
+          'other': 'Other Settings'
+        },
+        'entities': {
+            'cities': 'Cities and buildings',
+            'auditories': 'Auditories',
+            'cameras': 'Cameras',
+            'theme': 'Theme'
+        },
+        'addCityButton': 'Add new city',
+        'selectCity': 'Select a city',
+        'searchPlaceholder': 'Search by name',
+        'cameraAttached': 'Attached',
+        'cameraFree': 'Free',
+        'edit': 'Edit',
+        'delete': 'Delete',
+        'noItems': 'No data to display'
+    },
+    'infoDialog': {
+        'title': 'Project information',
+        'aboutUs': 'About us',
+        'description': 'This project helps improve the university experience. While students can see auditorium occupancy in real time and find a place to study or relax, University teachers and staff can now monitor lecture attendance.',
+        'description2': 'We aimed for a simple, easy-to-use app. Hope you enjoy it!',
+        'tech': 'Tech support',
+        'techSupport': 'Contact us via email ({email}) or telegram ({telegram}).',
+        'documentation': 'Documentation',
+        'documentationDescription': 'Access the user documentation',
+        'feedback': 'Feedback',
+        'feedbackForm': 'Share your thoughts with us',
+        'afterThought': 'We\'d love to hear what you think! Every suggestion helps to make the app better.',
+        'link': 'here'
+    },
     'auth': {
         'title': 'Authorization',
         'login': 'Login',
@@ -109,5 +153,6 @@ export default {
         'logoutSuccess': 'You have successfully logged out',
         'loginRequired': 'Login is required',
         'passwordRequired': 'Password is required'
-    }
+    },
+    'nothingDone': 'This part of the application is not yet done. Check for updates...'
 }

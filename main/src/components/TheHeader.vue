@@ -34,7 +34,15 @@
         <q-space/>
 
         <div class="q-gutter-sm row items-center no-wrap">
-            <q-btn-dropdown
+          <q-btn flat round icon="question_mark" color="accent" size="sm"
+          @click="infoDialogOpen = true">
+            <q-tooltip
+              transition-show="scale"
+              transition-hide="scale">
+                {{ $t('settings.infoTooltip') }}
+            </q-tooltip>
+          </q-btn>
+          <q-btn-dropdown
                 push flat dense
                 color="accent"
                 :label="$t(headerText.settings)"
@@ -49,7 +57,6 @@
             <q-btn
                 flat dense
                 icon-right="logout"
-                :label="$t(headerText.logout)"
                 @click="logout" padding="xs md"
             />
         </div>
@@ -78,11 +85,16 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
+
+    <q-dialog v-model="infoDialogOpen">
+      <FeedBackDialog />
+    </q-dialog>
 </template>
 
 <script setup>
 import TheSettingsList from 'src/components/TheSettingsList.vue'
 import TheCitySelectDialog from 'src/components/TheCitySelectDialog.vue'
+import FeedBackDialog from './FeedBackDialog.vue'
 import { computed, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useCitiesStore } from 'src/stores/cities.store'
@@ -112,6 +124,7 @@ const $q = useQuasar()
 
 const cityDialogOpen = ref(false)
 const logoutDialogOpen = ref(false)
+const infoDialogOpen = ref(false)
 
 const text = 'settings'
 const headerText = computed(() => {
