@@ -3,7 +3,7 @@ export default {
         'settings': 'Settings',
         'language': 'Language',
         'theme': 'Theme',
-        'logout': 'Logout',
+        'infoTooltip': 'More about us!',
     },
     'menu': {
         'headerName': 'Main menu',
@@ -39,7 +39,7 @@ export default {
         'noOccupationWarning': 'Data is not valid'
     },
     'errorOccured': {
-        'name': 'Error occured',
+        'name': 'Error occurred',
         'meaning': 'This means that:',
         '404': 'Data not found',
         '401': 'You`re unauthorized',
@@ -130,6 +130,20 @@ export default {
         'delete': 'Delete',
         'noItems': 'No data to display'
     },
+    'infoDialog': {
+        'title': 'Project information',
+        'aboutUs': 'About us',
+        'description': 'This project helps improve the university experience. While students can see auditorium occupancy in real time and find a place to study or relax, University teachers and staff can now monitor lecture attendance.',
+        'description2': 'We aimed for a simple, easy-to-use app. Hope you enjoy it!',
+        'tech': 'Tech support',
+        'techSupport': 'Contact us via email ({email}) or telegram ({telegram}).',
+        'documentation': 'Documentation',
+        'documentationDescription': 'Access the user documentation',
+        'feedback': 'Feedback',
+        'feedbackForm': 'Share your thoughts with us',
+        'afterThought': 'We\'d love to hear what you think! Every suggestion helps to make the app better.',
+        'link': 'here'
+    },
     'auth': {
         'title': 'Authorization',
         'login': 'Login',
@@ -140,5 +154,5 @@ export default {
         'loginRequired': 'Login is required',
         'passwordRequired': 'Password is required'
     },
-    'nothingDone': 'This part of aplication is not yet done. Check for updates...'
+    'nothingDone': 'This part of the application is not yet done. Check for updates...'
 }

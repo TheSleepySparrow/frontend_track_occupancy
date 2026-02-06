@@ -5,7 +5,7 @@ import { useGlobalState } from 'src/composables/GlobalState'
 
 const { globalState } = useGlobalState()
 
-export const i18n = createI18n({
+const i18n = createI18n({
     legacy: false,
     locale: globalState.value.language,
     fallbackLocale: 'en-US',
@@ -19,3 +19,5 @@ export const i18n = createI18n({
 export default defineBoot(({ app }) => {
   app.use(i18n)
 })
+
+export { i18n }
