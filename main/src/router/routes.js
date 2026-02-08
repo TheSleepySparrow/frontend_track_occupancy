@@ -54,7 +54,10 @@ const routes = [
     name: "mainMenu",
     alias: ['/mainMenu', '/home', '/index'],
     component: () => import('layouts/AppMenu.vue'),
-    meta: { requireAuth: true },
+    meta: {
+      requireAuth: true,
+      whoCanAccess: ['admin']
+    },
     children: [{
       path: '',
       name: 'viewMenu',
@@ -70,7 +73,10 @@ const routes = [
       slug: route.params.slug || ''
     }),
     beforeEnter : checkCityId,
-    meta: { requireAuth: true },
+    meta: {
+      requireAuth: true,
+      whoCanAccess: ['admin', 'student']
+    },
     children: [
       {
         path: '',
@@ -102,7 +108,10 @@ const routes = [
       slug: route.params.slug || ''
     }),
     beforeEnter : checkCityId,
-    meta: { requireAuth: true },
+    meta: {
+      requireAuth: true,
+      whoCanAccess: ['admin']
+    },
     children: [
       {
         path: '',
@@ -119,7 +128,10 @@ const routes = [
     path: '/attendance',
     name: 'showAttendance',
     component: () => import('src/layouts/AttendanceLayout.vue'),
-    meta: { requireAuth: true },
+    meta: {
+      requireAuth: true,
+      whoCanAccess: ['admin']
+    },
     children: [{
       path: '',
       name: 'viewAttendance',
@@ -130,7 +142,10 @@ const routes = [
     path: '/users',
     name: 'showUsers',
     component: () => import('src/layouts/UsersLayout.vue'),
-    meta: { requireAuth: true },
+    meta: {
+      requireAuth: true,
+      whoCanAccess: ['admin']
+    },
     children: [{
       path: '',
       name: 'viewUsers',
@@ -141,7 +156,10 @@ const routes = [
     path: '/settings',
     name: 'showSettings',
     component: () => import('src/layouts/SettingsLayout.vue'),
-    meta: { requireAuth: true },
+    meta: {
+      requireAuth: true,
+      whoCanAccess: ['admin']
+    },
     children: [
       {
         path: '',

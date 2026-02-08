@@ -42,8 +42,17 @@ export default defineRouter(function (/* { store, ssrContext } */) {
   Router.beforeEach(async (to, from, next) => {
     if (!to.meta?.requireAuth) return next()
 
-    const authenticated = await checkUser()
-    return authenticated ? next() : next({ name: 'login', query: { redirect: to.fullPath }})
+    const authenticatedCheck = await checkUser()
+
+    if (!authenticatedCheck.authenticated) {
+      return next({ name: 'login', query: { redirect: to.fullPath }})
+    }
+
+    return to.meta?.whoCanAccess.find(
+      role => role === authenticatedCheck.role
+    )
+    ? next()
+    : next({ name: from.name })
   })
 
   return Router

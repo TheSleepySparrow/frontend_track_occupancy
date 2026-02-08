@@ -21,9 +21,9 @@
             :key="item.id"
             class="col-12 col-sm-6 col-md-4"
           >
-            <RoomsInfoCard 
-              :url="occupancyUrl" 
-              :item="item" 
+            <RoomsInfoCard
+              :url="occupancyUrl"
+              :item="item"
               :occupancy="auditoriesOccupancyInfo.find(occupancy => occupancy.id === item.id)"
               :city-id="cityId"
               :building-id="buildingId"
@@ -104,7 +104,7 @@ const numberOfFloorsOptions = computed(() => {
   const uniqueFloors = [...new Set(roomsInfo.value.map(room => room.floor))]
     .filter(floor => floor != null)
     .sort((a, b) => a - b)
-  
+
   return uniqueFloors.map(floor => ({
     label: String(floor),
     value: String(floor)

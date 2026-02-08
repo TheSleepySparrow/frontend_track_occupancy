@@ -100,7 +100,8 @@ async function getToken() {
   isLoading.value = true
   try {
     await authStore.login(username.value, password.value)
-    const redirectPath = route.query.redirect || '/'
+    const redirectPath = route.query.redirect
+    || authStore.role === 'student' ? '/occupancy/1' : '/'
     router.push(redirectPath)
 
   } catch (err) {

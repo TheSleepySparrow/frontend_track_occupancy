@@ -18,9 +18,6 @@ export const useAuth = defineStore('auth', {
   getters: {
     isAuthenticated: (state) => {
       return !!state.loaded
-    },
-    returnTokenForHeader: (state) => {
-      return state.tokenType + ' ' + state.token
     }
   },
 
