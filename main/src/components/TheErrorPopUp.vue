@@ -47,11 +47,13 @@ const errorPageOpen = () => {
   router.push({ name: props.errorPage, params: props.routeParams })
 }
 
-watch(() => props.err, (newErr) =>
-  {
-    if (newErr != null) {
+watch(
+  () => props.err,
+  (newErr) => {
+    if (newErr !== null) {
       dialogOpen.value = true
     }
-  }, { immediate: true }
+  },
+  { immediate: true },
 )
 </script>

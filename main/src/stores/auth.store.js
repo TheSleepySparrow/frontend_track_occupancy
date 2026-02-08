@@ -8,7 +8,7 @@ export const useAuth = defineStore('auth', {
     role: null,
     tokenType: null,
     loaded: false,
-    loading: false
+    loading: false,
   }),
 
   persist: {
@@ -18,7 +18,7 @@ export const useAuth = defineStore('auth', {
   getters: {
     isAuthenticated: (state) => {
       return !!state.loaded
-    }
+    },
   },
 
   actions: {
@@ -28,8 +28,8 @@ export const useAuth = defineStore('auth', {
       this.loading = true
       try {
         const data = await postResponseWithoutAuth('/auth/login', {
-          'login': username,
-          'password': password
+          login: username,
+          password: password,
         })
 
         this.token = data.access_token
@@ -37,13 +37,11 @@ export const useAuth = defineStore('auth', {
         this.role = data.role
         this.tokenType = data.token_type
         this.loaded = true
-
-      } catch(err) {
+      } catch (err) {
         console.error('Login failed', err)
         const error = new Error(err.message)
         error.statusCode = err.statusCode
         throw error
-
       } finally {
         this.loading = false
       }
@@ -57,7 +55,7 @@ export const useAuth = defineStore('auth', {
         clearAuthState()
 
         await postResponseWithoutAuth('/auth/logout', {
-          'refresh_token': this.refreshToken,
+          refresh_token: this.refreshToken,
         })
 
         this.token = null
@@ -65,13 +63,11 @@ export const useAuth = defineStore('auth', {
         this.role = null
         this.tokenType = null
         this.loaded = false
-
-      } catch(err) {
+      } catch (err) {
         console.error('Logout failed', err)
         const error = new Error(err.message)
         error.statusCode = err.statusCode
         throw error
-
       } finally {
         localStorage.removeItem('auth')
         this.loading = false
@@ -79,4 +75,3 @@ export const useAuth = defineStore('auth', {
     },
   },
 })
-

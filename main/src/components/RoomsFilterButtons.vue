@@ -16,10 +16,7 @@
 <script setup>
 import { watch } from 'vue'
 import { ref } from 'vue'
-const props = defineProps([
-    'label',
-    'options'
-])
+const props = defineProps(['label', 'options'])
 
 const whatIsChosen = ref([])
 const emit = defineEmits(['updateFilter'])

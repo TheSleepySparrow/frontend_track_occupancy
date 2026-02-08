@@ -7,8 +7,15 @@
       :buildingName="null"
       default-route-name="viewSettings"
     />
-    <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-scroll-area class="q-pa-md" style="height: calc(100vh - 50px)">
+    <q-drawer
+      v-model="leftDrawerOpen"
+      show-if-above
+      bordered
+    >
+      <q-scroll-area
+        class="q-pa-md"
+        style="height: calc(100vh - 50px)"
+      >
         <q-toolbar :class="$q.dark.isActive ? 'text-white' : 'text-primary'">
           <q-toolbar-title>{{ $t('settingsPage.toolbar') }}</q-toolbar-title>
         </q-toolbar>
@@ -16,7 +23,7 @@
           <div
             v-for="settingsOption in menuItems"
             :key="settingsOption.name"
-            >
+          >
             <q-separator spaced />
             <q-item-label header>
               {{ $t(settingsOption.label) }}
@@ -47,7 +54,11 @@
       <router-view />
     </q-page-container>
 
-    <q-page-sticky v-if="!leftDrawerOpen" position="top-left" :offset="[15, 15]">
+    <q-page-sticky
+      v-if="!leftDrawerOpen"
+      position="top-left"
+      :offset="[15, 15]"
+    >
       <q-btn
         fab-mini
         icon="menu"
@@ -74,16 +85,14 @@ const menuItems = [
     list: [
       { routeName: 'viewSettingsCitiesAndBuildings', label: 'settingsPage.entities.cities' },
       { routeName: 'viewSettingsAuditories', label: 'settingsPage.entities.auditories' },
-      { routeName: 'viewSettingsCameras', label: 'settingsPage.entities.cameras' }
-    ]
+      { routeName: 'viewSettingsCameras', label: 'settingsPage.entities.cameras' },
+    ],
   },
   {
     name: 'otherSettings',
     label: 'settingsPage.entitiesGroups.other',
-    list: [
-      { routeName: 'viewSettingsTheme', label: 'settingsPage.entities.theme' },
-    ]
-  }
+    list: [{ routeName: 'viewSettingsTheme', label: 'settingsPage.entities.theme' }],
+  },
 ]
 
 function navigateTo(routeName) {

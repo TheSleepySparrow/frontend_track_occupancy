@@ -1,21 +1,37 @@
 <template>
-  <div v-if="props.data && props.data.length > 0" class="q-pa-xs column items-center">
+  <div
+    v-if="props.data && props.data.length > 0"
+    class="q-pa-xs column items-center"
+  >
     <div class="col-2">
       <h5>{{ $t('statisticsPage.title', { period: props.time }) }}</h5>
     </div>
-    <div ref="chartWrapperRef" class="col-6" style="width: 100%; min-height: 500px;">
-      <div ref="chartRef" :style="chartStyle"></div>
+    <div
+      ref="chartWrapperRef"
+      class="col-6"
+      style="width: 100%; min-height: 500px"
+    >
+      <div
+        ref="chartRef"
+        :style="chartStyle"
+      ></div>
     </div>
 
     <div class="col-2 q-mt-md column items-center">
       <div>{{ $t('statisticsPage.Average') }}: {{ avgValue }} </div>
-      <div>{{ $t('statisticsPage.MaxPeopleMarkline')}}: {{ maxNumberOfPeopleInAuditory }}</div>
+      <div>{{ $t('statisticsPage.MaxPeopleMarkline') }}: {{ maxNumberOfPeopleInAuditory }}</div>
     </div>
     <div class="col-2 q-mt-md">
-      <ImportData :data="props.data" :reportType="props.reportType"/>
+      <ImportData
+        :data="props.data"
+        :reportType="props.reportType"
+      />
     </div>
   </div>
-  <div v-else class="q-pa-md column items-center">
+  <div
+    v-else
+    class="q-pa-md column items-center"
+  >
     <div class="col">
       <h5>{{ $t('statisticsPage.noData') }}</h5>
     </div>
@@ -40,7 +56,7 @@ const props = defineProps({
   filtersMinShow: { type: Boolean, default: false },
   reportType: { type: String, default: '' },
   time: { type: String, default: '' },
-  auditoryInfo: { require: true }
+  auditoryInfo: { require: true },
 })
 
 const theme = computed(() => {
@@ -52,12 +68,12 @@ const instance = ref(null)
 const chartWrapperRef = useTemplateRef('chartWrapperRef')
 const isChartInitialized = ref(false)
 
-const maxNumberOfPeopleInAuditory = computed(() =>
-  {
-    if (!props.auditoryInfo) { return 30 }
-    return props.auditoryInfo.capacity
+const maxNumberOfPeopleInAuditory = computed(() => {
+  if (!props.auditoryInfo) {
+    return 30
   }
-)
+  return props.auditoryInfo.capacity
+})
 
 const chartStyle = ref({
   width: '400px',
@@ -101,22 +117,24 @@ function initChart() {
         name: t('statisticsPage.yAxis'),
         nameLocation: 'middle',
         nameGap: 50,
-        max: 30
+        max: 30,
       },
-      series: [{
-        name: t('statisticsPage.seriesName'),
-        type: 'bar',
-        data: [],
-        showBackground: true,
-        backgroundStyle: { color: 'rgba(180, 180, 180, 0.2)' },
-      }],
+      series: [
+        {
+          name: t('statisticsPage.seriesName'),
+          type: 'bar',
+          data: [],
+          showBackground: true,
+          backgroundStyle: { color: 'rgba(180, 180, 180, 0.2)' },
+        },
+      ],
       toolbox: {
         show: true,
         feature: {
           dataView: { show: true, readOnly: true },
           saveAsImage: { show: true },
-        }
-      }
+        },
+      },
     })
     const { width, height } = useElementSize(chartWrapperRef)
     chartStyle.value = {
@@ -148,7 +166,9 @@ useResizeObserver(chartWrapperRef, (entries) => {
 // Calculate average value
 const avgValue = ref(0)
 function calculateAvgValue(data) {
-  if (!data || data.length === 0) { return 0 }
+  if (!data || data.length === 0) {
+    return 0
+  }
 
   const sum = data.reduce((acc, d) => acc + d.average, 0)
   return Math.ceil(sum / data.length)
@@ -156,7 +176,9 @@ function calculateAvgValue(data) {
 // calculate maximum in data
 const maxValue = ref(0)
 function calculateMaxValue(data) {
-  if (!data || data.length === 0) { return 0 }
+  if (!data || data.length === 0) {
+    return 0
+  }
 
   return Math.max(data)
 }
@@ -176,9 +198,10 @@ function setChartOption(data) {
     return
   }
   // if max in props.data is greater than max number of people in auditory
-  const maxYAxisValue = maxValue.value > maxNumberOfPeopleInAuditory.value ?
-    Math.ceil(maxValue.value * 1.1) :
-    Math.ceil(maxNumberOfPeopleInAuditory.value * 1.1)
+  const maxYAxisValue =
+    maxValue.value > maxNumberOfPeopleInAuditory.value
+      ? Math.ceil(maxValue.value * 1.1)
+      : Math.ceil(maxNumberOfPeopleInAuditory.value * 1.1)
 
   // get gradient colors for bar based on its data
   function getGradientColors(average) {
@@ -201,44 +224,53 @@ function setChartOption(data) {
 
   instance.value.setOption({
     xAxis: {
-      data: data.map(d => d.time),
+      data: data.map((d) => d.time),
     },
     yAxis: {
       max: maxYAxisValue,
     },
-    series: [{
-      data: data.map(d => {
-        const colorsForColorStops = getGradientColors(d.average)
-        return {
-          value: Math.ceil(d.average),
-          itemStyle: {
-            color: {
-              type: 'linear',
-              x: 0,
-              y: 0,
-              x2: 0,
-              y2: 1,
-              colorStops: [{
-                offset: 0, color: colorsForColorStops.end // color at 0%
-              }, {
-                offset: 1, color: colorsForColorStops.start // color at 100%
-              }],
-              global: false // default is false
-            }
+    series: [
+      {
+        data: data.map((d) => {
+          const colorsForColorStops = getGradientColors(d.average)
+          return {
+            value: Math.ceil(d.average),
+            itemStyle: {
+              color: {
+                type: 'linear',
+                x: 0,
+                y: 0,
+                x2: 0,
+                y2: 1,
+                colorStops: [
+                  {
+                    offset: 0,
+                    color: colorsForColorStops.end, // color at 0%
+                  },
+                  {
+                    offset: 1,
+                    color: colorsForColorStops.start, // color at 100%
+                  },
+                ],
+                global: false, // default is false
+              },
+            },
           }
-        }
-      }),
-    }],
+        }),
+      },
+    ],
   })
 }
 
 // set up for horizontal lines (max number of people in auditory and average number)
 function setSeriesMarkLine() {
-  if (!instance.value) { return }
+  if (!instance.value) {
+    return
+  }
 
   // always show max number of people in auditory
   const whatIsShownInMarkLine = [
-    { name: t('statisticsPage.MaxPeopleMarkline'), yAxis: maxNumberOfPeopleInAuditory.value}
+    { name: t('statisticsPage.MaxPeopleMarkline'), yAxis: maxNumberOfPeopleInAuditory.value },
   ]
   // if average is not tooo small show it
   if (avgValue.value > 1) {
@@ -246,12 +278,14 @@ function setSeriesMarkLine() {
   }
 
   instance.value.setOption({
-    series: [{
-      markLine: {
-        lineStyle: { color: '#EB1400' },
-        data: whatIsShownInMarkLine
-      }
-    }]
+    series: [
+      {
+        markLine: {
+          lineStyle: { color: '#EB1400' },
+          data: whatIsShownInMarkLine,
+        },
+      },
+    ],
   })
 }
 
@@ -261,29 +295,34 @@ function createChart(data) {
   }
   isChartInitialized.value = true
   avgValue.value = calculateAvgValue(data)
-  maxValue.value = calculateMaxValue(data.map(d => d.average))
+  maxValue.value = calculateMaxValue(data.map((d) => d.average))
   setChartOption(data)
   setSeriesMarkLine()
 }
 
-watch(() => props.data, async (newData) => {
-  if (newData && newData.length > 0) {
-    await nextTick()
-    createChart(newData)
-  } else {
-    isChartInitialized.value = false
-  }
-})
+watch(
+  () => props.data,
+  async (newData) => {
+    if (newData && newData.length > 0) {
+      await nextTick()
+      createChart(newData)
+    } else {
+      isChartInitialized.value = false
+    }
+  },
+)
 
 watch(locale, () => {
   if (instance.value) {
     instance.value.setOption({
-      title: { text: t('statisticsPage.titleChart'), },
-      xAxis: { name: t('statisticsPage.xAxis'), },
-      yAxis: { name: t('statisticsPage.yAxis'), },
-      series: [{
-        name: t('statisticsPage.seriesName'),
-      }],
+      title: { text: t('statisticsPage.titleChart') },
+      xAxis: { name: t('statisticsPage.xAxis') },
+      yAxis: { name: t('statisticsPage.yAxis') },
+      series: [
+        {
+          name: t('statisticsPage.seriesName'),
+        },
+      ],
     })
     setSeriesMarkLine() // need to reset horizontal lines because of locale in names
   }

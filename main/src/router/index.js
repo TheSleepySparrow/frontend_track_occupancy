@@ -26,10 +26,12 @@ export default defineRouter(function (/* { store, ssrContext } */) {
 
   const Router = createRouter({
     scrollBehavior(to, from, savedPosition) {
-        return savedPosition || new Promise(
-            (resolve) => {
-            setTimeout(() => resolve({ top: 0, behavior: 'smooth' }), 300)
+      return (
+        savedPosition ||
+        new Promise((resolve) => {
+          setTimeout(() => resolve({ top: 0, behavior: 'smooth' }), 300)
         })
+      )
     },
     routes,
 
@@ -45,14 +47,12 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     const authenticatedCheck = await checkUser()
 
     if (!authenticatedCheck.authenticated) {
-      return next({ name: 'login', query: { redirect: to.fullPath }})
+      return next({ name: 'login', query: { redirect: to.fullPath } })
     }
 
-    return to.meta?.whoCanAccess.find(
-      role => role === authenticatedCheck.role
-    )
-    ? next()
-    : next({ name: from.name })
+    return to.meta?.whoCanAccess.find((role) => role === authenticatedCheck.role)
+      ? next()
+      : next({ name: from.name })
   })
 
   return Router

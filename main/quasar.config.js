@@ -11,11 +11,7 @@ export default defineConfig((/* ctx */) => {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
-    boot: [
-      'i18n',
-      'pinia',
-      'theme',
-    ],
+    boot: ['i18n', 'pinia', 'theme'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#css
     css: ['app.scss'],
@@ -81,15 +77,14 @@ export default defineConfig((/* ctx */) => {
       proxy: {
         '/v1': {
           target: 'https://track-occupancy.auditory.ru',
-          changeOrigin: true
+          changeOrigin: true,
         },
-        '/auth': 'https://track-occupancy.auditory.ru'
-      }
+        '/auth': 'https://track-occupancy.auditory.ru',
+      },
     },
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-file#framework
     framework: {
-
       // iconSet: 'material-icons', // Quasar icon set
       // lang: 'en-US', // Quasar language pack
 
@@ -101,17 +96,14 @@ export default defineConfig((/* ctx */) => {
       // directives: [],
 
       // Quasar plugins
-      plugins: [
-        'Notify',
-        'Loading'
-      ],
-      lang: 'en-US'
+      plugins: ['Notify', 'Loading'],
+      lang: 'en-US',
     },
 
     i18n: {
       defaultLocale: 'en-US',
       locales: ['en-US', 'ru-RU'],
-      fallbackLocale: 'en-US'
+      fallbackLocale: 'en-US',
     },
     // animations: 'all', // --- includes all animations
     // https://v2.quasar.dev/options/animations

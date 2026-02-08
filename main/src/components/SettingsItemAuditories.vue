@@ -1,5 +1,8 @@
 <template>
-  <q-list bordered separator>
+  <q-list
+    bordered
+    separator
+  >
     <q-expansion-item
       v-for="item in filteredItems"
       :key="item.id"
@@ -7,7 +10,9 @@
       header-class="text-weight-medium"
     >
       <template v-slot:header>
-        <q-item-section>{{ item[locale]?.title || item['ru-RU']?.title || item['en-US']?.title || '' }}</q-item-section>
+        <q-item-section>{{
+          item[locale]?.title || item['ru-RU']?.title || item['en-US']?.title || ''
+        }}</q-item-section>
         <q-item-section side>
           <div class="row q-gutter-xs no-wrap">
             <q-btn
@@ -71,12 +76,12 @@
 defineProps({
   filteredItems: {
     type: Array,
-    required: true
+    required: true,
   },
   locale: {
     type: String,
-    default: 'ru-RU'
-  }
+    default: 'ru-RU',
+  },
 })
 
 const emit = defineEmits(['edit', 'delete'])

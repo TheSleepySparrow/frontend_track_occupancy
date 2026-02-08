@@ -16,12 +16,9 @@ const storageKey = computed(() => {
   return STORAGE_KEY
 })
 
-const globalState = useStorage(
-  storageKey,
-  initialGlobalState,
-  localStorage,
-  { mergeDefaults: true }
-)
+const globalState = useStorage(storageKey, initialGlobalState, localStorage, {
+  mergeDefaults: true,
+})
 
 export function useGlobalState() {
   return { globalState, initialGlobalState, storageKey }
@@ -37,7 +34,7 @@ export function setTheme(theme) {
 
 export function getLastBuildingId(cityId) {
   if (!cityId) return null
-  const obj = globalState.value.lastBuildingId.find(obj => obj.city === cityId)
+  const obj = globalState.value.lastBuildingId.find((obj) => obj.city === cityId)
   return obj ? obj.building : null
 }
 
@@ -46,23 +43,21 @@ export function setLastBuildingId(cityId, buildingId) {
   if (!globalState.value.lastBuildingId) {
     globalState.value.lastBuildingId = []
   }
-  const isCityInArray = globalState.value.lastBuildingId.findIndex(obj => obj.city === cityId)
+  const isCityInArray = globalState.value.lastBuildingId.findIndex((obj) => obj.city === cityId)
   if (isCityInArray > -1) {
     globalState.value.lastBuildingId[isCityInArray].building = buildingId
     return
   }
-  globalState.value.lastBuildingId.push(
-    {
-      city: cityId,
-      building: buildingId
-    }
-  )
+  globalState.value.lastBuildingId.push({
+    city: cityId,
+    building: buildingId,
+  })
 }
 
 export function clearLastBuildingId(cityId) {
   if (!cityId) return
   if (globalState.value.lastBuildingId) {
-    const id = globalState.value.lastBuildingId.findIndex(obj => obj.city === cityId)
+    const id = globalState.value.lastBuildingId.findIndex((obj) => obj.city === cityId)
     if (id > -1) {
       globalState.value.lastBuildingId.splice(id, 1)
     }

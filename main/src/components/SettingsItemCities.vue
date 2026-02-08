@@ -2,51 +2,60 @@
   <div class="col-12">
     <q-splitter v-model="splitterModel">
       <template v-slot:before>
-        <div :class="$q.dark.isActive
-        ? 'q-pa-md text-h6 text-white text-center'
-        : 'q-pa-md text-h6 text-primary text-center'">
+        <div
+          :class="
+            $q.dark.isActive
+              ? 'q-pa-md text-h6 text-white text-center'
+              : 'q-pa-md text-h6 text-primary text-center'
+          "
+        >
           {{ $t('settingsPage.toolbarCities') }}
         </div>
 
-        <q-separator spaced/>
+        <q-separator spaced />
 
         <q-tabs
-        v-model="citiesChoose"
-        vertical
-        class="text-grey"
-        :active-color="$q.dark.isActive
-        ? 'white'
-        : 'primary'"
-        dense
-        indicator-color="primary"
-        align="justify">
+          v-model="citiesChoose"
+          vertical
+          class="text-grey"
+          :active-color="$q.dark.isActive ? 'white' : 'primary'"
+          dense
+          indicator-color="primary"
+          align="justify"
+        >
           <q-tab
-          v-for="city in citiesOptions"
-          :key="city.value"
-          :name="city.value"
-          :label="city.label"/>
+            v-for="city in citiesOptions"
+            :key="city.value"
+            :name="city.value"
+            :label="city.label"
+          />
         </q-tabs>
 
         <q-separator spaced />
 
         <div class="full-width q-py-xl column items-center">
           <q-btn
-          :label="$t('settingsPage.addCityButton')"
-          class="col q-ml-sm text-secondary"
-          outline
-          disable
+            :label="$t('settingsPage.addCityButton')"
+            class="col q-ml-sm text-secondary"
+            outline
+            disable
           />
         </div>
-
       </template>
 
       <template v-slot:after>
         <div class="q-pa-md">
-          <div v-if="!citiesChoose" class="text-grey text-center q-pa-lg">
+          <div
+            v-if="!citiesChoose"
+            class="text-grey text-center q-pa-lg"
+          >
             {{ $t('settingsPage.selectCity') }}
           </div>
           <template v-else>
-            <div v-if="citiesLoading" class="q-pa-lg text-center">
+            <div
+              v-if="citiesLoading"
+              class="q-pa-lg text-center"
+            >
               <q-spinner-dots
                 color="primary"
                 size="40px"
@@ -115,8 +124,8 @@ import TheErrorPopUp from 'src/components/TheErrorPopUp.vue'
 const props = defineProps({
   locale: {
     type: String,
-    default: 'ru-RU'
-  }
+    default: 'ru-RU',
+  },
 })
 
 const emit = defineEmits(['edit', 'delete'])
@@ -129,20 +138,20 @@ const citiesLoading = ref(false)
 const citiesStore = useCitiesStore()
 
 const buildingsProps = computed(() =>
-  citiesChoose.value ? { id: citiesChoose.value } : { id: null }
+  citiesChoose.value ? { id: citiesChoose.value } : { id: null },
 )
 
 const { buildingsInfo: buildingsList, error: buildingsError } = useBuildingsInfo(
   buildingsProps,
   '/v1/cities',
-  { optionalUrl: 'buildings', loading: true, notify: true }
+  { optionalUrl: 'buildings', loading: true, notify: true },
 )
 
 const citiesOptions = computed(() => {
   if (!citiesStore.loaded) return []
-  return citiesStore.cities.map(city => ({
+  return citiesStore.cities.map((city) => ({
     label: city[`name_${props.locale}`],
-    value: city.id
+    value: city.id,
   }))
 })
 
@@ -157,9 +166,13 @@ const filteredBuildings = computed(() => {
   const query = (searchQuery.value || '').toString().toLowerCase()
   if (!query) return buildings
 
-  return buildings.filter(building => {
-    const title = (building[props.locale]?.title || building['ru-RU']?.title || building['en-US']?.title || '')
-      .toLowerCase()
+  return buildings.filter((building) => {
+    const title = (
+      building[props.locale]?.title ||
+      building['ru-RU']?.title ||
+      building['en-US']?.title ||
+      ''
+    ).toLowerCase()
     return title.includes(query)
   })
 })
@@ -175,11 +188,15 @@ async function loadCities() {
   }
 }
 
-watch(citiesOptions, (options) => {
-  if (options.length > 0 && !citiesChoose.value) {
-    citiesChoose.value = options[0].value
-  }
-}, { immediate: true })
+watch(
+  citiesOptions,
+  (options) => {
+    if (options.length > 0 && !citiesChoose.value) {
+      citiesChoose.value = options[0].value
+    }
+  },
+  { immediate: true },
+)
 
 onMounted(() => {
   loadCities()

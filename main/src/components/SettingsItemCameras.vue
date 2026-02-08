@@ -1,6 +1,9 @@
 <template>
-  <q-list bordered separator>
-      <q-expansion-item
+  <q-list
+    bordered
+    separator
+  >
+    <q-expansion-item
       expand-separator
       v-for="item in filteredItems"
       :key="item.id"
@@ -49,8 +52,12 @@
               {{ item.mac }}
             </div>
             <div>
-              <span class="text-caption text-grey">{{ $t('settingsPage.cameraAttached') }}/{{ $t('settingsPage.cameraFree') }}:</span>
-              {{ item.isAttached ? $t('settingsPage.cameraAttached') : $t('settingsPage.cameraFree') }}
+              <span class="text-caption text-grey"
+                >{{ $t('settingsPage.cameraAttached') }}/{{ $t('settingsPage.cameraFree') }}:</span
+              >
+              {{
+                item.isAttached ? $t('settingsPage.cameraAttached') : $t('settingsPage.cameraFree')
+              }}
             </div>
             <div v-if="item.auditorium_id">
               <span class="text-caption text-grey">auditorium_id:</span>
@@ -67,12 +74,12 @@
 defineProps({
   filteredItems: {
     type: Array,
-    required: true
+    required: true,
   },
   locale: {
     type: String,
-    default: 'ru-RU'
-  }
+    default: 'ru-RU',
+  },
 })
 
 const emit = defineEmits(['edit', 'delete'])

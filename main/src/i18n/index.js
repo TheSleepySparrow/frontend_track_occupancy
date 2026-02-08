@@ -3,5 +3,5 @@ import ruRU from './ru-RU'
 
 export default {
   'en-US': enUS,
-  'ru-RU': ruRU
+  'ru-RU': ruRU,
 }

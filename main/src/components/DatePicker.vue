@@ -10,8 +10,16 @@
     :disable="isCalendarEnabled"
   >
     <template v-slot:append>
-      <q-icon name="event" class="cursor-pointer" v-if="!isCalendarEnabled">
-        <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+      <q-icon
+        name="event"
+        class="cursor-pointer"
+        v-if="!isCalendarEnabled"
+      >
+        <q-popup-proxy
+          cover
+          transition-show="scale"
+          transition-hide="scale"
+        >
           <q-date
             v-model="model"
             :mask="qDateMask"
@@ -23,7 +31,12 @@
             today-btn
           >
             <div class="row items-center justify-end q-gutter-sm q-mt-sm">
-              <q-btn :label="$t('popUps.close')" color="primary" flat v-close-popup />
+              <q-btn
+                :label="$t('popUps.close')"
+                color="primary"
+                flat
+                v-close-popup
+              />
             </div>
           </q-date>
         </q-popup-proxy>
@@ -47,17 +60,17 @@ const calendarConfigLocale = computed(() => {
 })
 
 const props = defineProps({
-  reportType: { type: String, default: 'day' }
+  reportType: { type: String, default: 'day' },
 })
 
 const model = defineModel()
 
 const inputMask = computed(() => {
   const maskMap = {
-    'day': '##/##/####',
-    'week': '##/##/#### - ##/##/####',
-    'month': '##/####',
-    'year': '####'
+    day: '##/##/####',
+    week: '##/##/#### - ##/##/####',
+    month: '##/####',
+    year: '####',
   }
   return maskMap[props.reportType] || '##/##/####'
 })
@@ -110,7 +123,10 @@ function dateOptions(date) {
   return date >= minDate && date <= maxDate
 }
 
-watch(() => props.reportType, () => {
-  model.value = ''
-})
+watch(
+  () => props.reportType,
+  () => {
+    model.value = ''
+  },
+)
 </script>

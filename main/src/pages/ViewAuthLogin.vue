@@ -1,18 +1,21 @@
 <template>
   <q-page class="q-pa-md bg-secondary">
     <div class="column justify-center q-py-xl q-px-xs">
-        <q-card flat bordered
+      <q-card
+        flat
+        bordered
         class="col self-center q-py-xl q-px-md"
-        style="border-radius: 2rem; min-width: 30vw">
-          <q-card-section>
-            <q-form
+        style="border-radius: 2rem; min-width: 30vw"
+      >
+        <q-card-section>
+          <q-form
             @submit.prevent="handleLogin"
             class="column q-gutter-md"
             autocorrect="off"
             autocapitalize="off"
             autocomplete="off"
-            spellcheck="false">
-
+            spellcheck="false"
+          >
             <div class="text-h4 text-center q-py-sm">
               {{ $t('auth.title') }}
             </div>
@@ -23,7 +26,7 @@
                 :label="$t('auth.login')"
                 outlined
                 dense
-                :rules="[val => !!val || $t('auth.loginRequired')]"
+                :rules="[(val) => !!val || $t('auth.loginRequired')]"
               />
 
               <q-input
@@ -32,7 +35,7 @@
                 :type="isPasswordVisible ? 'text' : 'password'"
                 outlined
                 dense
-                :rules="[val => !!val || $t('auth.passwordRequired')]"
+                :rules="[(val) => !!val || $t('auth.passwordRequired')]"
               >
                 <template v-slot:append>
                   <q-icon
@@ -50,29 +53,35 @@
               unelevated
               :loading="isLoading"
             >
-            {{ $t('auth.loginButton') }}
+              {{ $t('auth.loginButton') }}
               <template v-slot:loading>
                 <q-spinner-hourglass class="on-left" />
                 {{ $t('auth.loading') }}
               </template>
             </q-btn>
 
-            <q-btn outline disable
-            :label="$t('auth.signWithKeycloak')"
-            color="primary"
+            <q-btn
+              outline
+              disable
+              :label="$t('auth.signWithKeycloak')"
+              color="primary"
             />
 
             <q-separator />
 
-            <q-btn flat
-            :label="$t('auth.registration')"
-            color="primary"
-            @click="$router.push({
-              name: 'register'
-            })"/>
+            <q-btn
+              flat
+              :label="$t('auth.registration')"
+              color="primary"
+              @click="
+                $router.push({
+                  name: 'register',
+                })
+              "
+            />
           </q-form>
-          </q-card-section>
-        </q-card>
+        </q-card-section>
+      </q-card>
     </div>
   </q-page>
 </template>
@@ -100,19 +109,16 @@ async function getToken() {
   isLoading.value = true
   try {
     await authStore.login(username.value, password.value)
-    const redirectPath = route.query.redirect
-    || authStore.role === 'student' ? '/occupancy/1' : '/'
+    const redirectPath = route.query.redirect || authStore.role === 'student' ? '/occupancy/1' : '/'
     router.push(redirectPath)
-
   } catch (err) {
     const messageText = 'errorOccured.' + err.statusCode
     $q.notify({
       message: t(messageText) ? t(messageText) : t('errorOccured.else'),
       color: 'negative',
-      position: 'top'
+      position: 'top',
     })
     password.value = ''
-
   } finally {
     isLoading.value = false
   }
@@ -125,4 +131,3 @@ function handleLogin() {
   getToken()
 }
 </script>
-

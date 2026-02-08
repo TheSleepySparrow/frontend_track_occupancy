@@ -6,18 +6,18 @@ export const useCitiesStore = defineStore('cities', {
     cities: [],
     loaded: false,
     loading: false,
-    error: null
+    error: null,
   }),
 
   getters: {
     findCityById: (state) => (id) => {
-      return state.cities.find(city => String(city.id) === String(id))
+      return state.cities.find((city) => String(city.id) === String(id))
     },
 
     getSlugByCityId: (state) => {
       const locale = 'en-US'
       return (id) => {
-        const city = state.cities.find(c => c.id === id)
+        const city = state.cities.find((c) => c.id === id)
         if (!city) return ''
 
         const slugKey = `name_${locale}`
@@ -39,13 +39,13 @@ export const useCitiesStore = defineStore('cities', {
       try {
         const data = await loadFromUrl('/v1/cities/', { loading: true, notify: true })
 
-        this.cities = Array.isArray(data) ? data.map(
-          item => ({
-            id: item.id,
-            'name_ru-RU': item.name.ru,
-            'name_en-US': item.name.en
-          })
-        ) : []
+        this.cities = Array.isArray(data)
+          ? data.map((item) => ({
+              id: item.id,
+              'name_ru-RU': item.name.ru,
+              'name_en-US': item.name.en,
+            }))
+          : []
         this.loaded = true
       } catch (err) {
         this.error = err
@@ -54,6 +54,6 @@ export const useCitiesStore = defineStore('cities', {
       } finally {
         this.loading = false
       }
-    }
-  }
+    },
+  },
 })
