@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { postResponseWithoutAuth } from 'src/services/api'
+import { postResponseWithoutAuth, clearAuthState } from 'src/services/api'
 
 export const useAuth = defineStore('auth', {
   state: () => ({
@@ -40,31 +40,9 @@ export const useAuth = defineStore('auth', {
         this.role = data.role
         this.tokenType = data.token_type
         this.loaded = true
-        window.user = username
 
       } catch(err) {
         console.error('Login failed', err)
-        const error = new Error(err.message)
-        error.statusCode = err.statusCode
-        throw error
-
-      } finally {
-        this.loading = false
-      }
-    },
-
-    async refresh() {
-      if (!this.loaded || this.loading) return
-
-      this.loading = true
-      try {
-        const data = await postResponseWithoutAuth('/auth/refresh', {
-          'refresh_token': this.refreshToken,
-        })
-        this.token = data.access_token
-
-      } catch(err) {
-        console.error('Refresh failed', err)
         const error = new Error(err.message)
         error.statusCode = err.statusCode
         throw error
@@ -79,15 +57,17 @@ export const useAuth = defineStore('auth', {
 
       this.loading = true
       try {
+        clearAuthState()
+
         await postResponseWithoutAuth('/auth/logout', {
           'refresh_token': this.refreshToken,
         })
+
         this.token = null
         this.refreshToken = null
         this.role = null
         this.tokenType = null
         this.loaded = false
-        window.user = null
 
       } catch(err) {
         console.error('Logout failed', err)
@@ -96,6 +76,7 @@ export const useAuth = defineStore('auth', {
         throw error
 
       } finally {
+        localStorage.removeItem('auth')
         this.loading = false
       }
     },

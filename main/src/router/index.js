@@ -6,6 +6,7 @@ import {
   createWebHashHistory,
 } from 'vue-router'
 import routes from './routes'
+import { checkUser } from 'src/services/auth'
 
 /*
  * If not building with SSR mode, you can
@@ -38,10 +39,11 @@ export default defineRouter(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   })
 
-  Router.beforeEach((to) => {
-    if (to.meta.requireAuth && !window.user) {
-        return { name: 'login', query: { redirect: to.fullPath }}
-    }
+  Router.beforeEach(async (to, from, next) => {
+    if (!to.meta?.requireAuth) return next()
+
+    const authenticated = await checkUser()
+    return authenticated ? next() : next({ name: 'login', query: { redirect: to.fullPath }})
   })
 
   return Router
