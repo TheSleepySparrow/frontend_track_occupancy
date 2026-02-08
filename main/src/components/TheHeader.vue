@@ -2,6 +2,7 @@
     <q-header elevated>
       <q-toolbar class="bg-primary text-white">
         <q-btn flat dense round
+            v-if="isGoBackButtonShown"
             color="secondary"
             icon="arrow_back"
             aria-label="Menu"
@@ -53,18 +54,19 @@
                     :languageName="$t(headerText.language)"
                     :themeName="$t(headerText.theme)"
                 />
-            </q-btn-dropdown>
-            <q-btn
-                flat dense
-                icon-right="logout"
-                @click="logout" padding="xs md"
-            />
+          </q-btn-dropdown>
+          <q-btn
+              flat dense
+              v-if="isLogoutButtonShown"
+              icon-right="logout"
+              @click="logout" padding="xs md"
+          />
         </div>
       </q-toolbar>
     </q-header>
 
     <q-dialog v-model="logoutDialogOpen">
-      <q-card style="min-width: 300px">
+      <q-card class="q-pa-md" style="min-width: 300px">
         <q-card-section>
           <div class="text-h6">{{ $t('auth.logoutConfirm') }}</div>
         </q-card-section>
@@ -96,7 +98,7 @@ import TheSettingsList from 'src/components/TheSettingsList.vue'
 import TheCitySelectDialog from 'src/components/TheCitySelectDialog.vue'
 import FeedBackDialog from './FeedBackDialog.vue'
 import { computed, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { useCitiesStore } from 'src/stores/cities.store'
 import { useAuth } from 'src/stores/auth.store'
 import { useI18n } from 'vue-i18n'
@@ -117,6 +119,7 @@ const props = defineProps({
 })
 
 const router = useRouter()
+const route = useRoute()
 const citiesStore = useCitiesStore()
 const authStore = useAuth()
 const { locale, t } = useI18n()
@@ -159,19 +162,43 @@ function handleCityChange(newCityId) {
   })
 }
 
+const isGoBackButtonShown = computed(() => {
+  const whatRoutes = ['login', 'register', 'viewMenu']
+  const areWeThere = whatRoutes.find(el => el === route.name)
+  if (areWeThere){ return false }
+  return true
+})
+
+const isLogoutButtonShown = computed(() => {
+  const whatRoutes = ['login', 'register']
+  const areWeThere = whatRoutes.find(el => el === route.name)
+  if(areWeThere) { return false }
+  return true
+})
+
 function logout() {
   logoutDialogOpen.value = true
 }
 
-function confirmLogout() {
+async function confirmLogout() {
   logoutDialogOpen.value = false
-  authStore.logout()
-  router.push({ name: 'login' }).then(() => {
-    $q.notify({
-      message: t('auth.logoutSuccess'),
-      color: 'positive',
-      position: 'bottom'
+  try {
+    await authStore.logout()
+    router.push({ name: 'login' }).then(() => {
+      $q.notify({
+        message: t('auth.logoutSuccess'),
+        color: 'positive',
+        position: 'bottom'
+      })
     })
-  })
+  } catch(err) {
+    const messageText = 'errorOccured.' + err.statusCode
+    const key = t(messageText) ? messageText : 'errorOccured.else'
+    $q.notify({
+      message: t(key),
+      color: 'negative',
+      position: 'top'
+    })
+  }
 }
 </script>

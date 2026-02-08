@@ -6,6 +6,7 @@ import {
   createWebHashHistory,
 } from 'vue-router'
 import routes from './routes'
+import { checkUser } from 'src/services/auth'
 
 /*
  * If not building with SSR mode, you can
@@ -24,13 +25,34 @@ export default defineRouter(function (/* { store, ssrContext } */) {
       : createWebHashHistory
 
   const Router = createRouter({
-    scrollBehavior: () => ({ left: 0, top: 0 }),
+    scrollBehavior(to, from, savedPosition) {
+        return savedPosition || new Promise(
+            (resolve) => {
+            setTimeout(() => resolve({ top: 0, behavior: 'smooth' }), 300)
+        })
+    },
     routes,
 
     // Leave this as is and make changes in quasar.conf.js instead!
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
+  })
+
+  Router.beforeEach(async (to, from, next) => {
+    if (!to.meta?.requireAuth) return next()
+
+    const authenticatedCheck = await checkUser()
+
+    if (!authenticatedCheck.authenticated) {
+      return next({ name: 'login', query: { redirect: to.fullPath }})
+    }
+
+    return to.meta?.whoCanAccess.find(
+      role => role === authenticatedCheck.role
+    )
+    ? next()
+    : next({ name: from.name })
   })
 
   return Router

@@ -82,7 +82,8 @@ export default defineConfig((/* ctx */) => {
         '/v1': {
           target: 'https://track-occupancy.auditory.ru',
           changeOrigin: true
-        }
+        },
+        '/auth': 'https://track-occupancy.auditory.ru'
       }
     },
 
