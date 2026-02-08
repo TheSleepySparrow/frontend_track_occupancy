@@ -145,10 +145,14 @@ export default {
         'link': 'здесь'
     },
     'auth': {
+        'header': 'Вход в приложение',
+        'loading': 'Загрузка...',
         'title': 'Авторизация',
         'login': 'Логин',
         'password': 'Пароль',
         'loginButton': 'Войти',
+        'signWithKeycloak': 'Вход с помощью ЕЛК',
+        'registration': 'Зарегистрироваться',
         'logoutConfirm': 'Вы действительно хотите выйти?',
         'logoutSuccess': 'Вы успешно вышли из системы',
         'loginRequired': 'Логин обязателен',

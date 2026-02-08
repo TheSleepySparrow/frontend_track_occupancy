@@ -3,7 +3,6 @@ import { getResponse } from 'src/services/api.js'
 import { Notify } from 'quasar'
 import { Loading } from 'quasar'
 
-
 async function loadById(id, baseUrl, options = {}) {
     const {
         optionalUrl = null,

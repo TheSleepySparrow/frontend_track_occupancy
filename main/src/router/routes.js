@@ -1,15 +1,4 @@
 import { useCitiesStore } from 'src/stores/cities.store'
-//import { useAuth } from 'src/stores/auth.store'
-
-function requireAuth(to, from, next) {
-  next()
-  /* const authStore = useAuth()
-  if (authStore.isAuthenticated) {
-    next()
-  } else {
-    next({ name: 'login' })
-  } */
-}
 
 async function checkCityId (to, from, next) {
   const citiesStore = useCitiesStore()
@@ -44,16 +33,28 @@ async function checkCityId (to, from, next) {
 
 const routes = [
   {
-    path: '/login',
-    name: 'login',
-    component: () => import('src/pages/LoginPage.vue'),
+    path: '/auth',
+    name: 'authentication',
+    component: () => import('layouts/AuthLayout.vue'),
+    children: [
+      {
+        path: '',
+        name: 'login',
+        component: () => import('src/pages/ViewAuthLogin.vue'),
+      },
+      {
+        path: 'register',
+        name: 'register',
+        component: () => import('src/pages/ViewAuthRegister.vue')
+      }
+    ]
   },
   {
     path: '/',
     name: "mainMenu",
     alias: ['/mainMenu', '/home', '/index'],
     component: () => import('layouts/AppMenu.vue'),
-    beforeEnter: requireAuth,
+    meta: { requireAuth: true },
     children: [{
       path: '',
       name: 'viewMenu',
@@ -68,7 +69,8 @@ const routes = [
       cityId: parseInt(route.params.cityId),
       slug: route.params.slug || ''
     }),
-    beforeEnter : [requireAuth, checkCityId],
+    beforeEnter : checkCityId,
+    meta: { requireAuth: true },
     children: [
       {
         path: '',
@@ -99,7 +101,8 @@ const routes = [
       cityId: parseInt(route.params.cityId),
       slug: route.params.slug || ''
     }),
-    beforeEnter : [requireAuth, checkCityId],
+    beforeEnter : checkCityId,
+    meta: { requireAuth: true },
     children: [
       {
         path: '',
@@ -116,7 +119,7 @@ const routes = [
     path: '/attendance',
     name: 'showAttendance',
     component: () => import('src/layouts/AttendanceLayout.vue'),
-    beforeEnter: requireAuth,
+    meta: { requireAuth: true },
     children: [{
       path: '',
       name: 'viewAttendance',
@@ -127,7 +130,7 @@ const routes = [
     path: '/users',
     name: 'showUsers',
     component: () => import('src/layouts/UsersLayout.vue'),
-    beforeEnter: requireAuth,
+    meta: { requireAuth: true },
     children: [{
       path: '',
       name: 'viewUsers',
@@ -138,7 +141,7 @@ const routes = [
     path: '/settings',
     name: 'showSettings',
     component: () => import('src/layouts/SettingsLayout.vue'),
-    beforeEnter: requireAuth,
+    meta: { requireAuth: true },
     children: [
       {
         path: '',

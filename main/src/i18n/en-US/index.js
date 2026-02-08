@@ -145,10 +145,14 @@ export default {
         'link': 'here'
     },
     'auth': {
+        'header': 'Login to the app',
+        'loading': 'Loading...',
         'title': 'Authorization',
         'login': 'Login',
         'password': 'Password',
         'loginButton': 'Sign in',
+        'signWithKeycloak': 'Sign with ELK',
+        'registration': 'Registration',
         'logoutConfirm': 'Are you sure you want to logout?',
         'logoutSuccess': 'You have successfully logged out',
         'loginRequired': 'Login is required',
