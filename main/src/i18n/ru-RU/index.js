@@ -156,7 +156,16 @@ export default {
         'logoutConfirm': 'Вы действительно хотите выйти?',
         'logoutSuccess': 'Вы успешно вышли из системы',
         'loginRequired': 'Логин обязателен',
-        'passwordRequired': 'Пароль обязателен'
+        'passwordRequired': 'Пароль обязателен',
+        'registerTitle': 'Регистрация',
+        'email': 'Почта',
+        'passwordRepeat': 'Повторите пароль',
+        'registerButton': 'Зарегистрироваться',
+        'back': 'Назад',
+        'emailRequired': 'Почта обязательна',
+        'passwordRepeatRequired': 'Повторите пароль',
+        'passwordRepeatMismatch': 'Пароли не совпадают',
+        'registerSuccess': 'Вы успешно зарегистрированы в системе'
     },
     'nothingDone': 'Эта часть приложения еще не реализована. Следите за обновлениями...'
 }

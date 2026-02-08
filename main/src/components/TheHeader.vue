@@ -66,7 +66,7 @@
     </q-header>
 
     <q-dialog v-model="logoutDialogOpen">
-      <q-card style="min-width: 300px">
+      <q-card class="q-pa-md" style="min-width: 300px">
         <q-card-section>
           <div class="text-h6">{{ $t('auth.logoutConfirm') }}</div>
         </q-card-section>

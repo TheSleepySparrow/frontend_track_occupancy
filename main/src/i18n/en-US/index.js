@@ -156,7 +156,16 @@ export default {
         'logoutConfirm': 'Are you sure you want to logout?',
         'logoutSuccess': 'You have successfully logged out',
         'loginRequired': 'Login is required',
-        'passwordRequired': 'Password is required'
+        'passwordRequired': 'Password is required',
+        'registerTitle': 'Registration',
+        'email': 'Email',
+        'passwordRepeat': 'Repeat password',
+        'registerButton': 'Register',
+        'back': 'Back',
+        'emailRequired': 'Email is required',
+        'passwordRepeatRequired': 'Please repeat the password',
+        'passwordRepeatMismatch': 'Passwords do not match',
+        'registerSuccess': 'You have successfully registered in the system'
     },
     'nothingDone': 'This part of the application is not yet done. Check for updates...'
 }
