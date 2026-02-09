@@ -1,6 +1,6 @@
 import { useCitiesStore } from 'src/stores/cities.store'
 
-async function checkCityId (to, from, next) {
+async function checkCityId(to, from, next) {
   const citiesStore = useCitiesStore()
   if (!citiesStore.loaded) {
     try {
@@ -15,7 +15,7 @@ async function checkCityId (to, from, next) {
   const city = citiesStore.findCityById(to.params.cityId)
 
   if (!city) {
-    next( { name: 'Error' } )
+    next({ name: 'Error' })
     return
   }
 
@@ -24,7 +24,7 @@ async function checkCityId (to, from, next) {
     next({
       name: to.name,
       params: { cityId: parseInt(city.id), slug: expectedSlug },
-      query: to.query
+      query: to.query,
     })
   } else {
     next()
@@ -45,83 +45,86 @@ const routes = [
       {
         path: 'register',
         name: 'register',
-        component: () => import('src/pages/ViewAuthRegister.vue')
-      }
-    ]
+        component: () => import('src/pages/ViewAuthRegister.vue'),
+      },
+    ],
   },
   {
     path: '/',
-    name: "mainMenu",
+    name: 'mainMenu',
     alias: ['/mainMenu', '/home', '/index'],
     component: () => import('layouts/AppMenu.vue'),
     meta: {
       requireAuth: true,
-      whoCanAccess: ['admin']
+      whoCanAccess: ['admin'],
     },
-    children: [{
-      path: '',
-      name: 'viewMenu',
-      component: () => import('src/pages/MainMenu.vue')
-    }],
+    children: [
+      {
+        path: '',
+        name: 'viewMenu',
+        component: () => import('src/pages/MainMenu.vue'),
+      },
+    ],
   },
   {
     path: '/occupancy/:cityId(\\d+)/:slug?',
     name: 'showOccupancy',
     component: () => import('src/layouts/OccupancyLayout.vue'),
-    props: route => ({
+    props: (route) => ({
       cityId: parseInt(route.params.cityId),
-      slug: route.params.slug || ''
+      slug: route.params.slug || '',
     }),
-    beforeEnter : checkCityId,
+    beforeEnter: checkCityId,
     meta: {
       requireAuth: true,
-      whoCanAccess: ['admin', 'student']
+      whoCanAccess: ['admin', 'student'],
     },
     children: [
       {
         path: '',
         name: 'NoOccupancySelected',
-        component: () => import('pages/NoOccupancySelected.vue')
+        component: () => import('pages/NoOccupancySelected.vue'),
       },
       {
         path: ':buildingId(\\d+)',
         name: 'viewOccupancy',
         component: () => import('pages/ViewOccupancy.vue'),
-        props: route => ({
+        props: (route) => ({
           cityId: parseInt(route.params.cityId),
           slug: route.params.slug || '',
-          buildingId: parseInt(route.params.buildingId) })
+          buildingId: parseInt(route.params.buildingId),
+        }),
       },
       {
         path: 'error',
         name: 'viewOccupancyError',
-        component: () => import('pages/ViewOccupancyError.vue')
-      }
+        component: () => import('pages/ViewOccupancyError.vue'),
+      },
     ],
   },
   {
     path: '/statistics/:cityId(\\d+)/:slug?',
     name: 'showStatistics',
     component: () => import('src/layouts/StatisticsLayout.vue'),
-    props: route => ({
+    props: (route) => ({
       cityId: parseInt(route.params.cityId),
-      slug: route.params.slug || ''
+      slug: route.params.slug || '',
     }),
-    beforeEnter : checkCityId,
+    beforeEnter: checkCityId,
     meta: {
       requireAuth: true,
-      whoCanAccess: ['admin']
+      whoCanAccess: ['admin'],
     },
     children: [
       {
         path: '',
         name: 'viewStatistics',
         component: () => import('pages/ViewStatistics.vue'),
-        props: route => ({
+        props: (route) => ({
           cityId: parseInt(route.params.cityId),
-          slug: route.params.slug || ''
-        })
-      }
+          slug: route.params.slug || '',
+        }),
+      },
     ],
   },
   {
@@ -130,13 +133,15 @@ const routes = [
     component: () => import('src/layouts/AttendanceLayout.vue'),
     meta: {
       requireAuth: true,
-      whoCanAccess: ['admin']
+      whoCanAccess: ['admin'],
     },
-    children: [{
-      path: '',
-      name: 'viewAttendance',
-      component: () => import('src/pages/ViewAttendance.vue')
-    }],
+    children: [
+      {
+        path: '',
+        name: 'viewAttendance',
+        component: () => import('src/pages/ViewAttendance.vue'),
+      },
+    ],
   },
   {
     path: '/users',
@@ -144,13 +149,15 @@ const routes = [
     component: () => import('src/layouts/UsersLayout.vue'),
     meta: {
       requireAuth: true,
-      whoCanAccess: ['admin']
+      whoCanAccess: ['admin'],
     },
-    children: [{
-      path: '',
-      name: 'viewUsers',
-      component: () => import('src/pages/ViewUsers.vue')
-    }],
+    children: [
+      {
+        path: '',
+        name: 'viewUsers',
+        component: () => import('src/pages/ViewUsers.vue'),
+      },
+    ],
   },
   {
     path: '/settings',
@@ -158,34 +165,34 @@ const routes = [
     component: () => import('src/layouts/SettingsLayout.vue'),
     meta: {
       requireAuth: true,
-      whoCanAccess: ['admin']
+      whoCanAccess: ['admin'],
     },
     children: [
       {
         path: '',
         name: 'viewSettings',
-        component: () => import('src/pages/ViewSettingsEntities.vue')
+        component: () => import('src/pages/ViewSettingsEntities.vue'),
       },
       {
         path: 'cities&buildings',
         name: 'viewSettingsCitiesAndBuildings',
-        component: () => import('src/pages/ViewSettingsEntities.vue')
+        component: () => import('src/pages/ViewSettingsEntities.vue'),
       },
       {
         path: 'auditories',
         name: 'viewSettingsAuditories',
-        component: () => import('src/pages/ViewSettingsEntities.vue')
+        component: () => import('src/pages/ViewSettingsEntities.vue'),
       },
       {
         path: 'cameras',
         name: 'viewSettingsCameras',
-        component: () => import('src/pages/ViewSettingsEntities.vue')
+        component: () => import('src/pages/ViewSettingsEntities.vue'),
       },
       {
         path: 'theme',
         name: 'viewSettingsTheme',
-        component: () => import('src/pages/ViewSettingsTheme.vue')
-      }
+        component: () => import('src/pages/ViewSettingsTheme.vue'),
+      },
     ],
   },
   {

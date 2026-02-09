@@ -1,7 +1,12 @@
 <template>
   <q-page class="q-pa-md">
     <div class="column items-center justify-center q-pa-xl">
-      <q-card flat bordered class="q-pa-xl text-center" style="max-width: 600px">
+      <q-card
+        flat
+        bordered
+        class="q-pa-xl text-center"
+        style="max-width: 600px"
+      >
         <p class="text-h6 text-grey-8">
           {{ $t('nothingDone') }}
         </p>
@@ -10,6 +15,4 @@
   </q-page>
 </template>
 
-<script setup>
-
-</script>
+<script setup></script>

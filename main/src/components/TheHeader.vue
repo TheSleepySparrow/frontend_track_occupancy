@@ -1,96 +1,122 @@
 <template>
-    <q-header elevated>
-      <q-toolbar class="bg-primary text-white">
-        <q-btn flat dense round
-            v-if="isGoBackButtonShown"
-            color="secondary"
-            icon="arrow_back"
-            aria-label="Menu"
-            @click="$router.push({ name: 'viewMenu' })"
-        />
-        <div class="q-gutter-x-sm row items-center no-wrap" style="padding-left: 2%;">
-            <q-toolbar-title>{{ $t(props.HeaderName) }}</q-toolbar-title>
+  <q-header elevated>
+    <q-toolbar class="bg-primary text-white">
+      <q-btn
+        flat
+        dense
+        round
+        v-if="isGoBackButtonShown"
+        color="secondary"
+        icon="arrow_back"
+        aria-label="Menu"
+        @click="$router.push({ name: 'viewMenu' })"
+      />
+      <div
+        class="q-gutter-x-sm row items-center no-wrap"
+        style="padding-left: 2%"
+      >
+        <q-toolbar-title>{{ $t(props.HeaderName) }}</q-toolbar-title>
 
-            <q-breadcrumbs v-if="props.showBreadcrumbs" class="text-white">
-                <q-breadcrumbs-el>
-                    <q-btn
-                        flat
-                        dense
-                        :label="cityName"
-                        color="white"
-                        no-caps
-                        padding="xs sm"
-                        @click="cityDialogOpen = true"
-                    />
-                </q-breadcrumbs-el>
-                <q-breadcrumbs-el v-if="buildingName" :label="buildingName" />
-            </q-breadcrumbs>
-
-            <TheCitySelectDialog
-                v-model="cityDialogOpen"
-                @citySelected="handleCityChange"
+        <q-breadcrumbs
+          v-if="props.showBreadcrumbs"
+          class="text-white"
+        >
+          <q-breadcrumbs-el>
+            <q-btn
+              flat
+              dense
+              :label="cityName"
+              color="white"
+              no-caps
+              padding="xs sm"
+              @click="cityDialogOpen = true"
             />
-        </div>
-
-        <q-space/>
-
-        <div class="q-gutter-sm row items-center no-wrap">
-          <q-btn flat round icon="question_mark" color="accent" size="sm"
-          @click="infoDialogOpen = true">
-            <q-tooltip
-              transition-show="scale"
-              transition-hide="scale">
-                {{ $t('settings.infoTooltip') }}
-            </q-tooltip>
-          </q-btn>
-          <q-btn-dropdown
-                push flat dense
-                color="accent"
-                :label="$t(headerText.settings)"
-                padding="xs md"
-                content-style="background-color: accent"
-            >
-                <TheSettingsList
-                    :languageName="$t(headerText.language)"
-                    :themeName="$t(headerText.theme)"
-                />
-          </q-btn-dropdown>
-          <q-btn
-              flat dense
-              v-if="isLogoutButtonShown"
-              icon-right="logout"
-              @click="logout" padding="xs md"
+          </q-breadcrumbs-el>
+          <q-breadcrumbs-el
+            v-if="buildingName"
+            :label="buildingName"
           />
-        </div>
-      </q-toolbar>
-    </q-header>
+        </q-breadcrumbs>
 
-    <q-dialog v-model="logoutDialogOpen">
-      <q-card class="q-pa-md" style="min-width: 300px">
-        <q-card-section>
-          <div class="text-h6">{{ $t('auth.logoutConfirm') }}</div>
-        </q-card-section>
+        <TheCitySelectDialog
+          v-model="cityDialogOpen"
+          @citySelected="handleCityChange"
+        />
+      </div>
 
-        <q-card-actions align="right">
-          <q-btn
-            flat
-            :label="$t('popUps.no')"
-            color="primary"
-            @click="logoutDialogOpen = false"
+      <q-space />
+
+      <div class="q-gutter-sm row items-center no-wrap">
+        <q-btn
+          flat
+          round
+          icon="question_mark"
+          color="accent"
+          size="sm"
+          @click="infoDialogOpen = true"
+        >
+          <q-tooltip
+            transition-show="scale"
+            transition-hide="scale"
+          >
+            {{ $t('settings.infoTooltip') }}
+          </q-tooltip>
+        </q-btn>
+        <q-btn-dropdown
+          push
+          flat
+          dense
+          color="accent"
+          :label="$t(headerText.settings)"
+          padding="xs md"
+          content-style="background-color: accent"
+        >
+          <TheSettingsList
+            :languageName="$t(headerText.language)"
+            :themeName="$t(headerText.theme)"
           />
-          <q-btn
-            flat
-            :label="$t('popUps.yes')"
-            color="primary"
-            @click="confirmLogout"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog>
+        </q-btn-dropdown>
+        <q-btn
+          flat
+          dense
+          v-if="isLogoutButtonShown"
+          icon-right="logout"
+          @click="logout"
+          padding="xs md"
+        />
+      </div>
+    </q-toolbar>
+  </q-header>
 
-    <q-dialog v-model="infoDialogOpen">
-      <FeedBackDialog />
-    </q-dialog>
+  <q-dialog v-model="logoutDialogOpen">
+    <q-card
+      class="q-pa-md"
+      style="min-width: 300px"
+    >
+      <q-card-section>
+        <div class="text-h6">{{ $t('auth.logoutConfirm') }}</div>
+      </q-card-section>
+
+      <q-card-actions align="right">
+        <q-btn
+          flat
+          :label="$t('popUps.no')"
+          color="primary"
+          @click="logoutDialogOpen = false"
+        />
+        <q-btn
+          flat
+          :label="$t('popUps.yes')"
+          color="primary"
+          @click="confirmLogout"
+        />
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+
+  <q-dialog v-model="infoDialogOpen">
+    <FeedBackDialog />
+  </q-dialog>
 </template>
 
 <script setup>
@@ -108,14 +134,14 @@ const props = defineProps({
   HeaderName: String,
   showBreadcrumbs: {
     type: Boolean,
-    default: false
+    default: false,
   },
   city: Object,
   buildingName: String,
   defaultRouteName: {
     type: String,
-    default: null
-  }
+    default: null,
+  },
 })
 
 const router = useRouter()
@@ -131,12 +157,12 @@ const infoDialogOpen = ref(false)
 
 const text = 'settings'
 const headerText = computed(() => {
-    return {
-        settings: text + '.settings',
-        language: text + '.language',
-        theme: text + '.theme',
-        logout: text + '.logout'
-    }
+  return {
+    settings: text + '.settings',
+    language: text + '.language',
+    theme: text + '.theme',
+    logout: text + '.logout',
+  }
 })
 
 const cityName = computed(() => {
@@ -156,23 +182,27 @@ function handleCityChange(newCityId) {
     name: routeName,
     params: {
       cityId: newCityId,
-      slug: slug
+      slug: slug,
     },
-    query: currentRoute.query
+    query: currentRoute.query,
   })
 }
 
 const isGoBackButtonShown = computed(() => {
   const whatRoutes = ['login', 'register', 'viewMenu']
-  const areWeThere = whatRoutes.find(el => el === route.name)
-  if (areWeThere){ return false }
+  const areWeThere = whatRoutes.find((el) => el === route.name)
+  if (areWeThere) {
+    return false
+  }
   return true
 })
 
 const isLogoutButtonShown = computed(() => {
   const whatRoutes = ['login', 'register']
-  const areWeThere = whatRoutes.find(el => el === route.name)
-  if(areWeThere) { return false }
+  const areWeThere = whatRoutes.find((el) => el === route.name)
+  if (areWeThere) {
+    return false
+  }
   return true
 })
 
@@ -188,16 +218,16 @@ async function confirmLogout() {
       $q.notify({
         message: t('auth.logoutSuccess'),
         color: 'positive',
-        position: 'bottom'
+        position: 'bottom',
       })
     })
-  } catch(err) {
+  } catch (err) {
     const messageText = 'errorOccured.' + err.statusCode
     const key = t(messageText) ? messageText : 'errorOccured.else'
     $q.notify({
       message: t(key),
       color: 'negative',
-      position: 'top'
+      position: 'top',
     })
   }
 }

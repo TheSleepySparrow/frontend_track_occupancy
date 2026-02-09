@@ -20,47 +20,47 @@ const files = {
     id: 1,
     text: 'statisticsPage.saveCsv',
     color: 'teal-6',
-    whatClickIsDoing: () => saveToCSV()
+    whatClickIsDoing: () => saveToCSV(),
   },
   txt: {
     id: 2,
     text: 'statisticsPage.saveTxt',
     color: 'green-6',
-    whatClickIsDoing: () => saveToTxt()
+    whatClickIsDoing: () => saveToTxt(),
   },
   tsv: {
     id: 3,
     text: 'statisticsPage.saveTsv',
     color: 'light-green-6',
-    whatClickIsDoing: () => saveToTsv()
-  }
+    whatClickIsDoing: () => saveToTsv(),
+  },
 }
 
-function saveToCSV(){
+function saveToCSV() {
   const csvConfig = mkConfig({
     useKeysAsHeaders: true,
-    filename: 'statistics'
+    filename: 'statistics',
   })
   const csv = generateCsv(csvConfig)(props.data)
   download(csvConfig)(csv)
 }
 
-function saveToTxt(){
+function saveToTxt() {
   const txtConfig = mkConfig({
     useKeysAsHeaders: true,
     filename: 'statistics',
-    useTextFile: true
+    useTextFile: true,
   })
   const txt = generateCsv(txtConfig)(props.data)
   download(txtConfig)(txt)
 }
 
-function saveToTsv(){
+function saveToTsv() {
   const tsvConfig = mkConfig({
     useKeysAsHeaders: true,
     fileExtension: 'tsv',
     filename: 'statistics',
-    delimiter: '\t'
+    delimiter: '\t',
   })
   const tsv = generateCsv(tsvConfig)(props.data)
   download(tsvConfig)(tsv)

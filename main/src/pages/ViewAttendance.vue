@@ -1,10 +1,7 @@
 <template>
-    <div>
-        <p>
-            attendance
-        </p>
-    </div>
+  <div>
+    <p> attendance </p>
+  </div>
 </template>
 
-<script setup>
-</script>
+<script setup></script>

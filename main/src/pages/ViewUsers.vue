@@ -1,10 +1,7 @@
 <template>
-    <div>
-        <p>
-            users            
-        </p>
-    </div>
+  <div>
+    <p> users </p>
+  </div>
 </template>
 
-<script setup>
-</script>
+<script setup></script>

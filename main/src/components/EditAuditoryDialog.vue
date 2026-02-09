@@ -1,15 +1,31 @@
 <template>
-  <q-dialog v-model="localModelValue" @update:model-value="updateModelValue">
-    <q-card class="q-pa-md" style="min-width: 50vw; max-width: 50vw; min-height: 80vh;">
+  <q-dialog
+    v-model="localModelValue"
+    @update:model-value="updateModelValue"
+  >
+    <q-card
+      class="q-pa-md"
+      style="min-width: 50vw; max-width: 50vw; min-height: 80vh"
+    >
       <q-card-section class="row items-center">
         <div class="text-h6">{{ $t('editAuditory.title') }}</div>
         <q-space />
-        <q-btn icon="close" flat round dense v-close-popup />
+        <q-btn
+          icon="close"
+          flat
+          round
+          dense
+          v-close-popup
+        />
       </q-card-section>
 
       <q-card-section class="q-pa-md">
         <div class="q-gutter-y-md">
-          <q-card flat bordered class="q-px-xl">
+          <q-card
+            flat
+            bordered
+            class="q-px-xl"
+          >
             <q-img
               :src="imageUrl"
               :alt="localItem[selectedLocale]?.title"
@@ -20,20 +36,34 @@
           </q-card>
           <div class="text-center text-h6">{{ localItem[selectedLocale]?.title }}</div>
 
-          <q-tabs v-model="activeTab"
-          dense
-          class="text-center text-grey"
-          active-color="primary"
-          indicator-color="primary"
-          align="justify">
-            <q-tab name="info" :label="$t('editAuditory.tabInfo')" />
-            <q-tab name="cameras" :label="$t('editAuditory.tabCameras')" />
+          <q-tabs
+            v-model="activeTab"
+            dense
+            class="text-center text-grey"
+            active-color="primary"
+            indicator-color="primary"
+            align="justify"
+          >
+            <q-tab
+              name="info"
+              :label="$t('editAuditory.tabInfo')"
+            />
+            <q-tab
+              name="cameras"
+              :label="$t('editAuditory.tabCameras')"
+            />
           </q-tabs>
 
           <q-separator />
 
-          <q-tab-panels v-model="activeTab" animated>
-            <q-tab-panel name="info" class="q-pa-none">
+          <q-tab-panels
+            v-model="activeTab"
+            animated
+          >
+            <q-tab-panel
+              name="info"
+              class="q-pa-none"
+            >
               <div class="q-gutter-y-md">
                 <div class="row q-gutter-x-xs">
                   <q-select
@@ -54,7 +84,7 @@
                     :label="$t('editAuditory.titleInput')"
                     filled
                     readonly
-                    :rules="[val => !!val || $t('editAuditory.titleRequired')]"
+                    :rules="[(val) => !!val || $t('editAuditory.titleRequired')]"
                   />
                 </div>
 
@@ -76,7 +106,7 @@
                   :label="$t('editAuditory.capacity')"
                   filled
                   readonly
-                  :rules="[val => val > 0 || $t('editAuditory.capacityError')]"
+                  :rules="[(val) => val > 0 || $t('editAuditory.capacityError')]"
                 />
                 <q-input
                   v-model="localItem.floor"
@@ -94,19 +124,37 @@
               </div>
             </q-tab-panel>
 
-            <q-tab-panel name="cameras" class="q-pa-none">
-              <div v-if="camerasError" class="text-negative">
+            <q-tab-panel
+              name="cameras"
+              class="q-pa-none"
+            >
+              <div
+                v-if="camerasError"
+                class="text-negative"
+              >
                 {{ camerasError.message }}
               </div>
-              <q-list v-else-if="camerasInfo.length > 0" bordered separator>
-                <q-item v-for="camera in camerasInfo" :key="camera.id">
+              <q-list
+                v-else-if="camerasInfo.length > 0"
+                bordered
+                separator
+              >
+                <q-item
+                  v-for="camera in camerasInfo"
+                  :key="camera.id"
+                >
                   <q-item-section>
                     <q-item-label>{{ $t('editAuditory.cameraId') }}: {{ camera.id }}</q-item-label>
-                    <q-item-label caption>{{ $t('editAuditory.cameraMac') }}: {{ camera.mac }}</q-item-label>
+                    <q-item-label caption
+                      >{{ $t('editAuditory.cameraMac') }}: {{ camera.mac }}</q-item-label
+                    >
                   </q-item-section>
                 </q-item>
               </q-list>
-              <div v-else class="text-grey">
+              <div
+                v-else
+                class="text-grey"
+              >
                 {{ $t('editAuditory.noCameras') }}
               </div>
             </q-tab-panel>
@@ -115,25 +163,25 @@
       </q-card-section>
 
       <q-card-actions align="right">
-          <div class="q-gutter-x-md q-mt-lg">
-            <q-btn
-              :label="$t('popUps.cancel')"
-              color="grey"
-              flat
-              @click="onCancel"
-            />
-            <q-btn
-              :label="$t('popUps.save')"
-              color="primary"
-              type="submit"
-              disable
-              @click="onSave"
-              :loading="saving"
-            >
+        <div class="q-gutter-x-md q-mt-lg">
+          <q-btn
+            :label="$t('popUps.cancel')"
+            color="grey"
+            flat
+            @click="onCancel"
+          />
+          <q-btn
+            :label="$t('popUps.save')"
+            color="primary"
+            type="submit"
+            disable
+            @click="onSave"
+            :loading="saving"
+          >
             <q-tooltip>{{ $t('popUps.saveTooltip') }}</q-tooltip>
-            </q-btn>
-          </div>
-        </q-card-actions>
+          </q-btn>
+        </div>
+      </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
@@ -149,18 +197,18 @@ import { Notify, Loading } from 'quasar'
 const props = defineProps({
   modelValue: {
     type: Boolean,
-    required: true
+    required: true,
   },
   item: {
     type: Object,
-    required: true
+    required: true,
   },
   cityId: {
-    required: true
+    required: true,
   },
   buildingId: {
-    required: true
-  }
+    required: true,
+  },
 })
 
 const imageUrl = computed(() => `src/assets/images/${props.item.id}.jpg`)
@@ -170,29 +218,37 @@ const { locale, t } = useI18n()
 
 const localModelValue = computed({
   get: () => props.modelValue,
-  set: (value) => emit('update:modelValue', value)
+  set: (value) => emit('update:modelValue', value),
 })
 
 // Create a deep copy of the item for local editing
 const localItem = ref(JSON.parse(JSON.stringify(props.item)))
 
 // Watch for prop changes to update local copy
-watch(() => props.item, (newItem) => {
-  localItem.value = JSON.parse(JSON.stringify(newItem))
-}, { deep: true })
+watch(
+  () => props.item,
+  (newItem) => {
+    localItem.value = JSON.parse(JSON.stringify(newItem))
+  },
+  { deep: true },
+)
 
 const selectedLocale = ref(locale.value || 'ru-RU')
 const saving = ref(false)
 const activeTab = ref('info')
 
 const propsForFetch = computed(() => ({ id: props.item?.id }))
-const baseUrl = computed(() => `/v1/cities/${props.cityId}/buildings/${props.buildingId}/auditories`)
-const { camerasInfo, error: camerasError } = useCamerasInfo(propsForFetch, baseUrl, { loading: false })
+const baseUrl = computed(
+  () => `/v1/cities/${props.cityId}/buildings/${props.buildingId}/auditories`,
+)
+const { camerasInfo, error: camerasError } = useCamerasInfo(propsForFetch, baseUrl, {
+  loading: false,
+})
 
 // Locale options
 const localeOptions = [
   { label: 'Русский (ru-RU)', value: 'ru-RU' },
-  { label: 'English (en-US)', value: 'en-US' }
+  { label: 'English (en-US)', value: 'en-US' },
 ]
 
 // Locale-specific type options
@@ -216,7 +272,7 @@ async function onSave() {
     Notify.create({
       message: t('editAuditory.capacityError'),
       color: 'negative',
-      icon: 'error'
+      icon: 'error',
     })
     return
   }
@@ -233,12 +289,12 @@ async function onSave() {
       floor_number: localItem.value.floor,
       ru: {
         title: localItem.value['ru-RU'].title,
-        type: localItem.value['ru-RU'].type // Localized label
+        type: localItem.value['ru-RU'].type, // Localized label
       },
       en: {
         title: localItem.value['en-US'].title,
-        type: localItem.value['en-US'].type // Localized label
-      }
+        type: localItem.value['en-US'].type, // Localized label
+      },
     }
 
     const apiUrl = `/v1/cities/${props.cityId}/buildings/${props.buildingId}/auditories/${localItem.value.id}`
@@ -247,7 +303,7 @@ async function onSave() {
     Notify.create({
       message: t('editAuditory.saveSuccess'),
       color: 'positive',
-      icon: 'check'
+      icon: 'check',
     })
     console.log(result)
     // Emit save event with updated item
@@ -258,7 +314,7 @@ async function onSave() {
     Notify.create({
       message: t('editAuditory.saveError') + ': ' + (error.message || 'Unknown error'),
       color: 'negative',
-      icon: 'error'
+      icon: 'error',
     })
   } finally {
     saving.value = false

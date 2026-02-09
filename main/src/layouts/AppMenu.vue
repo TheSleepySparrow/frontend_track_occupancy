@@ -1,16 +1,14 @@
 <template>
-    <q-layout view="hHh Lpr lFf">
-        <TheHeader HeaderName="menu.headerName" />
-        <q-page-container>
-            <router-view />
-        </q-page-container>
-    </q-layout>
+  <q-layout view="hHh Lpr lFf">
+    <TheHeader HeaderName="menu.headerName" />
+    <q-page-container>
+      <router-view />
+    </q-page-container>
+  </q-layout>
 </template>
 
 <script setup>
 import TheHeader from 'src/components/TheHeader.vue'
 </script>
 
-<style>
-    
-</style>
+<style></style>

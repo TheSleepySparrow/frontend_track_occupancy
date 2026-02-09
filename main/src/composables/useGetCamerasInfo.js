@@ -1,11 +1,15 @@
 import { useFetchList } from './useFetch.js'
 import { computed } from 'vue'
 
-export function useCamerasInfo(propsForFetch, baseUrl, options = { optionalUrl: null, loading: null, notify: null }) {
+export function useCamerasInfo(
+  propsForFetch,
+  baseUrl,
+  options = { optionalUrl: null, loading: null, notify: null },
+) {
   const { data, error } = useFetchList(propsForFetch, baseUrl, {
     optionalUrl: 'cameras',
     loading: false,
-    ...options
+    ...options,
   })
 
   const camerasInfo = computed(() => {
@@ -15,10 +19,10 @@ export function useCamerasInfo(propsForFetch, baseUrl, options = { optionalUrl: 
     if (!data.value) {
       return []
     }
-    return data.value?.map(item => ({
+    return data.value?.map((item) => ({
       id: item.id,
       mac: item.mac,
-      auditorium_id: item.auditorium_id
+      auditorium_id: item.auditorium_id,
     }))
   })
 

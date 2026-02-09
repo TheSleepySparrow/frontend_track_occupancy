@@ -1,9 +1,12 @@
 <template>
   <q-page class="q-pa-md bg-secondary">
     <div class="column justify-center q-py-xl q-px-xs">
-      <q-card flat bordered
+      <q-card
+        flat
+        bordered
         class="col self-center q-py-xl q-px-md"
-        style="border-radius: 2rem; min-width: 30vw">
+        style="border-radius: 2rem; min-width: 30vw"
+      >
         <q-card-section>
           <q-form
             @submit.prevent="handleRegister"
@@ -11,8 +14,8 @@
             autocorrect="off"
             autocapitalize="off"
             autocomplete="off"
-            spellcheck="false">
-
+            spellcheck="false"
+          >
             <div class="text-h4 text-center q-py-sm">
               {{ $t('auth.registerTitle') }}
             </div>
@@ -24,7 +27,7 @@
                 outlined
                 dense
                 type="email"
-                :rules="[val => !!val || $t('auth.emailRequired')]"
+                :rules="[(val) => !!val || $t('auth.emailRequired')]"
               />
 
               <q-input
@@ -33,7 +36,7 @@
                 :type="isPasswordVisible ? 'text' : 'password'"
                 outlined
                 dense
-                :rules="[val => !!val || $t('auth.passwordRequired')]"
+                :rules="[(val) => !!val || $t('auth.passwordRequired')]"
               >
                 <template v-slot:append>
                   <q-icon
@@ -72,7 +75,10 @@
     </div>
 
     <q-dialog v-model="successDialogOpen">
-      <q-card class="q-pa-md" style="min-width: 300px">
+      <q-card
+        class="q-pa-md"
+        style="min-width: 300px"
+      >
         <q-card-section>
           <div class="text-h6">{{ $t('auth.registerSuccess') }}</div>
         </q-card-section>
@@ -111,7 +117,7 @@ async function handleRegister() {
   try {
     await postResponseWithoutAuth('/auth/register', {
       login: email.value,
-      password: password.value
+      password: password.value,
     })
     successDialogOpen.value = true
   } catch (err) {
@@ -119,7 +125,7 @@ async function handleRegister() {
     $q.notify({
       message: t(messageText) ? t(messageText) : t('errorOccured.else'),
       color: 'negative',
-      position: 'top'
+      position: 'top',
     })
     password.value = ''
   } finally {

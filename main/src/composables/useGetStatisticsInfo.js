@@ -1,41 +1,86 @@
-import { useFetchList } from './useFetch.js'
-import { computed } from 'vue'
+import { loadFromUrl } from './useFetch.js'
+import { computed, ref, watch } from 'vue'
 
+function returnNeededDateFormat(date) {
+  const str = date.split('/')
+  return `${str[0]}-${str[1]}-${str[2]}`
+}
 
-export function useStatisticsByDay(props, baseUrl, date,
-    options = { optionalUrl: null, loading: null, notify: null }) {
-    const dateRef = computed(() => {
-        return typeof date === 'object' && 'value' in date ? date.value : date
-    })
-    const queryParams = computed(() => {
-        if (!dateRef.value) return ''
+function whatUrlParamsBasedOnType(type, date, detail) {
+  let queryParams = 'type=' + type
+  if (type === 2) {
+    queryParams =
+      queryParams +
+      '&start=' +
+      returnNeededDateFormat(date.from) +
+      '&end=' +
+      returnNeededDateFormat(date.to)
+  } else {
+    queryParams = queryParams + '&day=' + returnNeededDateFormat(date)
+  }
 
-        let str = dateRef.value.slice(-4, ) + '-' + dateRef.value.slice(-7, -5) + '-' + dateRef.value.slice(-10, -8)
-        str = 'day=' + str + '&type=1'
-        return new URLSearchParams(str).toString()
-    })
+  if (detail) {
+    queryParams = queryParams + '&detail=true'
+  }
 
-    const url = computed(() => {
-        const params = queryParams.value
-        return options.optionalUrl ? `${options.optionalUrl}?${params}` : params
-    })
-    const { data, error, refetch } = useFetchList(props, baseUrl, { optionalUrl: url.value, loading: options.loading, notify: options.notify})
+  return queryParams
+}
 
-    const statisticsByDay = computed(() => {
-        if (error.value) {
-            return []
-        }
-        if (!data.value) {
-            return []
-        }
-        return data.value?.map(item => ({
-            time: item.hour + ':00 - ' + (item.hour + 1) + ':00',
-            average: item.avg_person_count,
-            min: item.min_people_count ? item.min_people_count : '',
-            min_time: item.min_time ? item.min_time : '',
-            max: item.max_people_count ? item.max_people_count : '',
-            max_time: item.max_time ? item.max_time : ''
-        }))
-    })
-    return { statisticsByDay, error, refetch }
+/**
+ * @param {import('vue').Ref<{cityId: number|string, buildingId: number|string, auditoryId: number|string, date: string} | null>} requestParams - ref с параметрами запроса (cityId, buildingId, auditoryId, date) или null
+ * @param {object} options - { loading, notify }
+ */
+export function useStatisticsByDay(requestParams, options = { loading: null, notify: null }) {
+  const data = ref([])
+  const error = ref(null)
+
+  const url = computed(() => {
+    const params =
+      typeof requestParams === 'object' && 'value' in requestParams
+        ? requestParams.value
+        : requestParams
+
+    if (!params?.cityId || !params?.buildingId || !params?.auditoryId || !params?.date) {
+      return null
+    }
+
+    const queryParams = whatUrlParamsBasedOnType(params.type, params.date, false)
+
+    return `/v1/cities/${params.cityId}/buildings/${params.buildingId}/auditories/${params.auditoryId}/statistics/${params.statisticsType}?${queryParams}`
+  })
+
+  const load = async () => {
+    const targetUrl = url.value
+    if (!targetUrl) return
+
+    try {
+      error.value = null
+      const result = await loadFromUrl(targetUrl, options)
+      data.value = Array.isArray(result) ? result : []
+    } catch (err) {
+      error.value = err
+      data.value = []
+    }
+  }
+
+  watch(
+    url,
+    (newUrl) => {
+      if (newUrl) load()
+    },
+    { immediate: true },
+  )
+
+  const statisticsByDay = computed(() => {
+    if (error.value) return []
+    if (!data.value) return []
+    return data.value.map((item) => ({
+      time: item.hour ? item.hour + ':00 - ' + (item.hour + 1) + ':00' : item.pair_number,
+      average: item.avg_person_count,
+      min: item.min_person_count ? item.min_person_count : '',
+      max: item.max_person_count ? item.max_person_count : '',
+    }))
+  })
+
+  return { statisticsByDay, error, refetch: load }
 }

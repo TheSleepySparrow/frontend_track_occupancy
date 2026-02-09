@@ -12,21 +12,21 @@ export function useGetAllCamerasInfo(options = { loading: true, notify: true }) 
     const free = Array.isArray(freeData.value) ? freeData.value : []
 
     const byId = new Map()
-    attached.forEach(item => {
+    attached.forEach((item) => {
       byId.set(item.id, {
         id: item.id,
         mac: item.mac,
         auditorium_id: item.auditorium_id,
-        isAttached: true
+        isAttached: true,
       })
     })
-    free.forEach(item => {
+    free.forEach((item) => {
       if (!byId.has(item.id)) {
         byId.set(item.id, {
           id: item.id,
           mac: item.mac,
           auditorium_id: item.auditorium_id || null,
-          isAttached: false
+          isAttached: false,
         })
       }
     })
@@ -39,10 +39,10 @@ export function useGetAllCamerasInfo(options = { loading: true, notify: true }) 
     try {
       const [attachedResult, freeResult] = await Promise.all([
         loadFromUrl('/v1/cameras/attached', { ...options, loading: false }),
-        loadFromUrl('/v1/cameras', { ...options, loading: false })
+        loadFromUrl('/v1/cameras', { ...options, loading: false }),
       ])
       attachedData.value = Array.isArray(attachedResult) ? attachedResult : []
-      freeData.value = Array.isArray(freeResult) ? freeResult : (freeResult ? [freeResult] : [])
+      freeData.value = Array.isArray(freeResult) ? freeResult : freeResult ? [freeResult] : []
     } catch (err) {
       error.value = err
       attachedData.value = []

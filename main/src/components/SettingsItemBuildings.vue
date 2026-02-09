@@ -57,18 +57,23 @@ import { computed } from 'vue'
 const props = defineProps({
   item: {
     type: Object,
-    required: true
+    required: true,
   },
   locale: {
     type: String,
-    default: 'ru-RU'
-  }
+    default: 'ru-RU',
+  },
 })
 
 const emit = defineEmits(['edit', 'delete'])
 
 const buildingTitle = computed(() => {
   if (!props.item) return ''
-  return props.item[props.locale]?.title || props.item['ru-RU']?.title || props.item['en-US']?.title || ''
+  return (
+    props.item[props.locale]?.title ||
+    props.item['ru-RU']?.title ||
+    props.item['en-US']?.title ||
+    ''
+  )
 })
 </script>
