@@ -317,34 +317,23 @@ const reportTypes = getReportTypes()
 
 // Data for filters
 const filters = ref({
-  reportType: '',
+  reportType: null,
   dateModel: '',
   showMax: false,
   showMin: false,
 })
 
-const url = computed(() => {
-  if (
-    !chosenCity.value?.value ||
-    !chosenBuildingId.value?.value ||
-    !chosenAuditoryId.value?.value
-  ) {
-    return ''
-  }
-  return (
-    '/v1/cities/' +
-    chosenCity.value.value +
-    '/buildings/' +
-    chosenBuildingId.value.value +
-    '/auditories'
-  )
-})
-const auditoryProps = computed(() => {
-  if (!chosenAuditoryId.value?.value) return { id: null }
-  return { id: chosenAuditoryId.value.value }
+const chartRequest = ref(null)
+const { statisticsByDay } = useStatisticsByDay(chartRequest, {
+  loading: true,
+  notify: true,
 })
 
 const chartData = ref([])
+
+watch(statisticsByDay, (newVal) => {
+  chartData.value = newVal
+})
 
 function buildChart() {
   if (
@@ -360,21 +349,12 @@ function buildChart() {
     })
     return
   }
-  if (filters.value.reportType.value !== 'day') {
-    $q.notify({
-      message: t('statistics.weAreSorry'),
-      color: 'primary',
-    })
-    return
+  chartRequest.value = {
+    cityId: chosenCity.value.value,
+    buildingId: chosenBuildingId.value.value,
+    auditoryId: chosenAuditoryId.value.value,
+    date: filters.value.dateModel,
+    type: filters.value.reportType.value,
   }
-  const { statisticsByDay } = useStatisticsByDay(auditoryProps, url, filters.value.dateModel, {
-    optionalUrl: 'statistics',
-    loading: true,
-    notify: true,
-  })
-  watch(statisticsByDay, (newVal) => {
-    chartData.value = newVal
-    console.log('chartData', chartData.value)
-  })
 }
 </script>

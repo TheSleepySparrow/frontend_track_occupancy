@@ -20,7 +20,7 @@
     <div class="col-12 col-md-4">
       <DatePicker
         v-model="localFilters.dateModel"
-        :report-type="localFilters.reportType?.value || 'day'"
+        :report-type="localFilters.reportType?.value || 1"
       />
     </div>
 

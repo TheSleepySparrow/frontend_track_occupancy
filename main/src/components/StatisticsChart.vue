@@ -4,7 +4,7 @@
     class="q-pa-xs column items-center"
   >
     <div class="col-2">
-      <h5>{{ $t('statisticsPage.title', { period: props.time }) }}</h5>
+      <h5>{{ $t('statisticsPage.title', { period: timeDisplay }) }}</h5>
     </div>
     <div
       ref="chartWrapperRef"
@@ -55,12 +55,23 @@ const props = defineProps({
   filtersMaxShow: { type: Boolean, default: false },
   filtersMinShow: { type: Boolean, default: false },
   reportType: { type: String, default: '' },
-  time: { type: String, default: '' },
+  time: {},
   auditoryInfo: { require: true },
 })
 
 const theme = computed(() => {
   return $q.dark.isActive ? 'dark' : 'light'
+})
+
+const timeDisplay = computed(() => {
+  function returnNeededDateFormat(date) {
+    const str = date.split('/')
+    return `${str[0]}-${str[1]}-${str[2]}`
+  }
+  if (typeof props.time === 'object') {
+    return returnNeededDateFormat(props.time.from) + '  -  ' + returnNeededDateFormat(props.time.to)
+  }
+  return returnNeededDateFormat(props.time)
 })
 
 const chartRef = useTemplateRef('chartRef')
@@ -182,16 +193,6 @@ function calculateMaxValue(data) {
 
   return Math.max(data)
 }
-
-/* function setDataColorMin(data) {
-  if (data > 10) { return '#EB1400' }
-  return '#0054F0'
-}
-
-function setDataColorMax(data) {
-  if (data > 10) { return '#EB6600' }
-  return '#00A0F0'
-} */
 
 function setChartOption(data) {
   if (!instance.value) {

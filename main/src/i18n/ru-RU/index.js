@@ -59,7 +59,7 @@ export default {
   },
   statisticsFilters: {
     day: 'За день',
-    week: 'За неделю',
+    period: 'За период',
     month: 'За месяц',
     year: 'За год',
     download: 'Загрузить',
@@ -71,9 +71,9 @@ export default {
     showMinLabel: 'Показывать минимальное значение',
     formatValue: {
       default: 'Не выбрано',
-      day: 'ДД/ММ/ГГГГ',
-      week: 'ДД/ММ/ГГГГ - ДД/ММ/ГГГГ',
-      month: 'ММ/ГГГГ',
+      day: 'ГГГГ/ММ/ДД',
+      period: 'ГГГГ/ММ/ДД - ГГГГ/ММ/ДД',
+      month: 'ГГГГ/ММ',
       year: 'ГГГГ',
     },
     calendarTooltip: 'Пожалуйста, выберите тип отчета сначала',

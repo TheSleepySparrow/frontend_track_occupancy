@@ -58,7 +58,7 @@ export default {
   },
   statisticsFilters: {
     day: 'Day',
-    week: 'Week',
+    period: 'Period',
     month: 'Month',
     year: 'Year',
     download: 'Download',
@@ -70,9 +70,9 @@ export default {
     showMinLabel: 'Show minimum value',
     formatValue: {
       default: 'Not selected',
-      day: 'DD/MM/YYYY',
-      week: 'DD/MM/YYYY - DD/MM/YYYY',
-      month: 'MM/YYYY',
+      day: 'YYYY/MM/DD',
+      period: 'YYYY/MM/DD - YYYY/MM/DD',
+      month: 'YYYY/MM',
       year: 'YYYY',
     },
     calendarTooltip: 'Please select the type first',

@@ -1,6 +1,7 @@
 <template>
   <q-input
-    v-model="model"
+    :model-value="inputValue"
+    readonly
     :label="$t('statisticsFilters.periodLabel')"
     :hint="$t('statisticsFilters.format') + ': ' + hintLabel"
     :mask="inputMask"
@@ -22,7 +23,6 @@
         >
           <q-date
             v-model="model"
-            :mask="qDateMask"
             :range="isRangeMode"
             :default-view="defaultView"
             :default-year-month="defaultYearMonth"
@@ -60,24 +60,36 @@ const calendarConfigLocale = computed(() => {
 })
 
 const props = defineProps({
-  reportType: { type: String, default: 'day' },
+  reportType: { type: Number, default: 1 },
 })
 
 const model = defineModel()
 
+const inputValue = computed({
+  get() {
+    if (props.reportType === 2 && model.value && typeof model.value === 'object') {
+      const from = model.value.from
+      const to = model.value.to
+      if (!from || !to) return ''
+      return from + '-' + to
+    }
+    return typeof model.value === 'string' ? model.value : (model.value ?? '')
+  },
+  set(val) {
+    if (props.reportType === 2) return
+    model.value = val
+  },
+})
+
 const inputMask = computed(() => {
-  const maskMap = {
-    day: '##/##/####',
-    week: '##/##/#### - ##/##/####',
-    month: '##/####',
-    year: '####',
-  }
-  return maskMap[props.reportType] || '##/##/####'
+  const maskMap = ['####/##/##', '####/##/## - ####/##/##', '####/##', '####']
+  return maskMap[props.reportType - 1] || '####/##/##'
 })
 
 const hintLabel = computed(() => {
   if (props.reportType) {
-    return t('statisticsFilters.formatValue.' + props.reportType)
+    const hint = ['day', 'period', 'month', 'year']
+    return t('statisticsFilters.formatValue.' + hint[props.reportType - 1])
   }
   return t('statisticsFilters.formatValue.default')
 })
@@ -86,26 +98,13 @@ const isCalendarEnabled = computed(() => {
   return !props.reportType
 })
 
-const qDateMask = computed(() => {
-  if (props.reportType === 'month') {
-    return 'MM/YYYY'
-  }
-  if (props.reportType === 'week') {
-    return 'DD/MM/YYYY - DD/MM/YYYY'
-  }
-  if (props.reportType === 'year') {
-    return 'YYYY'
-  }
-  return 'DD/MM/YYYY'
-})
-
 const isRangeMode = computed(() => {
-  return props.reportType === 'week'
+  return props.reportType === 2
 })
 
 const defaultView = computed(() => {
-  if (props.reportType === 'month') return 'Months'
-  if (props.reportType === 'year') return 'Years'
+  if (props.reportType === 3) return 'Months'
+  if (props.reportType === 4) return 'Years'
   return 'Calendar'
 })
 
