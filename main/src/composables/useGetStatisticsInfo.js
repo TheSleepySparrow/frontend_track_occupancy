@@ -46,7 +46,7 @@ export function useStatisticsByDay(requestParams, options = { loading: null, not
 
     const queryParams = whatUrlParamsBasedOnType(params.type, params.date, false)
 
-    return `/v1/cities/${params.cityId}/buildings/${params.buildingId}/auditories/${params.auditoryId}/statistics/hourly?${queryParams}`
+    return `/v1/cities/${params.cityId}/buildings/${params.buildingId}/auditories/${params.auditoryId}/statistics/${params.statisticsType}?${queryParams}`
   })
 
   const load = async () => {
@@ -75,7 +75,7 @@ export function useStatisticsByDay(requestParams, options = { loading: null, not
     if (error.value) return []
     if (!data.value) return []
     return data.value.map((item) => ({
-      time: item.hour + ':00 - ' + (item.hour + 1) + ':00',
+      time: item.hour ? item.hour + ':00 - ' + (item.hour + 1) + ':00' : item.pair_number,
       average: item.avg_person_count,
       min: item.min_person_count ? item.min_person_count : '',
       max: item.max_person_count ? item.max_person_count : '',

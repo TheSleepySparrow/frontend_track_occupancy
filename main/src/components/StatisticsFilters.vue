@@ -24,6 +24,19 @@
       />
     </div>
 
+    <div class="col-12 col-md-4">
+      <q-select
+        v-model="localFilters.statisticsType"
+        :options="statOptions"
+        :label="$t('statisticsFilters.typeLabel')"
+        dense
+        outlined
+        behavior="menu"
+        option-value="value"
+        option-label="label"
+      />
+    </div>
+
     <div class="col-12">
       <q-checkbox
         v-model="localFilters.showMax"
@@ -68,6 +81,7 @@ const { t, locale } = useI18n({ useScope: 'global' })
 
 const props = defineProps({
   reportTypes: { type: Array, required: true },
+  statisticsTypes: { type: Array, required: true },
 })
 
 const localFilters = defineModel()
@@ -75,6 +89,12 @@ const emit = defineEmits(['build-chart'])
 
 const typeOptions = computed(() => {
   return props.reportTypes.map((type) => {
+    return { label: t(type.labelName), value: type.value }
+  })
+})
+
+const statOptions = computed(() => {
+  return props.statisticsTypes.map((type) => {
     return { label: t(type.labelName), value: type.value }
   })
 })
@@ -104,6 +124,14 @@ watch(locale, () => {
     )
     if (matchingOption) {
       localFilters.value.reportType = matchingOption
+    }
+  }
+  if (localFilters.value.statisticsType?.value) {
+    const matchingStatOption = statOptions.value.find(
+      (option) => option.value === localFilters.value.statisticsType.value,
+    )
+    if (matchingStatOption) {
+      localFilters.value.statisticsType = matchingStatOption
     }
   }
 })

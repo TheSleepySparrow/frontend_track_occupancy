@@ -83,6 +83,7 @@
           <StatisticsFilters
             v-model="filters"
             :report-types="reportTypes"
+            :statistics-types="statisticsTypes"
             @build-chart="buildChart"
           />
         </q-card>
@@ -124,7 +125,7 @@ import StatisticsFilters from 'src/components/StatisticsFilters.vue'
 import { useBuildingsInfo } from 'src/composables/useGetBuildingsInfo.js'
 import { useAuditoriesInfo } from 'src/composables/useGetAuditoriesInfo.js'
 import { useStatisticsByDay } from 'src/composables/useGetStatisticsInfo.js'
-import { getReportTypes } from 'src/services/getStatisticsInfo.js'
+import { getReportTypes, getStatisticsTypes } from 'src/services/getStatisticsInfo.js'
 import { useCitiesStore } from 'src/stores/cities.store'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
@@ -314,11 +315,13 @@ watch(
 
 // Data for report types
 const reportTypes = getReportTypes()
+const statisticsTypes = getStatisticsTypes()
 
 // Data for filters
 const filters = ref({
   reportType: null,
   dateModel: '',
+  statisticsType: { label: t(statisticsTypes[0].labelName), value: statisticsTypes[0].value },
   showMax: false,
   showMin: false,
 })
@@ -355,6 +358,7 @@ function buildChart() {
     auditoryId: chosenAuditoryId.value.value,
     date: filters.value.dateModel,
     type: filters.value.reportType.value,
+    statisticsType: filters.value.statisticsType.value,
   }
 }
 </script>

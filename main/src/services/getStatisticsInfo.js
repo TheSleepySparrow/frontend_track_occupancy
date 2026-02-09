@@ -18,3 +18,16 @@ export function getReportTypes() {
     },
   ]
 }
+
+export function getStatisticsTypes() {
+  return [
+    {
+      labelName: 'statisticsFilters.hourly',
+      value: 'hourly',
+    },
+    {
+      labelName: 'statisticsFilters.pairs',
+      value: 'pairs',
+    },
+  ]
+}
