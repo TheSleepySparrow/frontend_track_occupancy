@@ -103,7 +103,7 @@ const occupancyItem = computed(() => {
 
 const imageUrl = computed(() =>
   props.item.id
-    ? `src/assets/images/${props.item.id}.jpg`
+    ? `/images/${props.item.id}.jpg`
     : 'https://cdn.quasar.dev/img/parallax2.jpg',
 )
 

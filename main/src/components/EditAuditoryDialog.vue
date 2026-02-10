@@ -211,7 +211,7 @@ const props = defineProps({
   },
 })
 
-const imageUrl = computed(() => `src/assets/images/${props.item.id}.jpg`)
+const imageUrl = computed(() => `/images/${props.item.id}.jpg`)
 const emit = defineEmits(['update:modelValue', 'save'])
 
 const { locale, t } = useI18n()
