@@ -70,8 +70,10 @@ export default {
     pairs: 'За пару',
     periodLabel: 'Период',
     format: 'Формат',
+    showMaxPeople: 'Показать максимальное кол-во людей в аудитории на графике',
     showMaxLabel: 'Показывать максимальное значение',
     showMinLabel: 'Показывать минимальное значение',
+    detailLabel: 'Агрегация данных',
     formatValue: {
       default: 'Не выбрано',
       day: 'ГГГГ/ММ/ДД',

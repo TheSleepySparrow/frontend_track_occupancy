@@ -37,7 +37,21 @@
       />
     </div>
 
+    <div class="col-12 col-md-4">
+      <q-toggle
+        v-model="localFilters.detail"
+        :disable="localFilters.reportType?.value === 1"
+        :label="$t('statisticsFilters.detailLabel')"
+        class="q-mr-md"
+      />
+    </div>
+
     <div class="col-12">
+      <q-checkbox
+        v-model="localFilters.maxNumberShow"
+        :label="$t('statisticsFilters.showMaxPeople')"
+        class="q-mr-md"
+      />
       <q-checkbox
         v-model="localFilters.showMax"
         disable
