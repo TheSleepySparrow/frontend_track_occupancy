@@ -100,6 +100,8 @@
             :data="chartData"
             :filters-max-show="filters.showMax"
             :filters-min-show="filters.showMin"
+            :is-detail-mode="!filters.detail"
+            :show-max-people="filters.maxNumberShow"
             :report-type="filters.reportType?.label || ''"
             :time="filters.dateModel"
             :auditoryInfo="chosenAuditory"
@@ -134,6 +136,15 @@ import { useQuasar } from 'quasar'
 const { t, locale } = useI18n()
 const route = useRoute()
 const $q = useQuasar()
+
+const chartData = ref([])
+
+function clearChartData() {
+  if (chartData.value && chartData.value.length > 0) {
+    chartData.value = []
+    chartRequest.value = null
+  }
+}
 
 // Data for city
 const cityId = computed(() => parseInt(route.params.cityId))
@@ -263,6 +274,7 @@ function onCityChange(selected) {
   if (!city) return
   chosenBuildingId.value = null
   chosenAuditoryId.value = null
+  clearChartData()
 }
 
 // Watch building - reset auditories
@@ -285,14 +297,16 @@ watch(
 )
 
 watch(chosenBuildingId, (newBuildingId) => {
-  if (newBuildingId) {
-    chosenAuditoryId.value = null
-    filteredAuditories.value = []
-  } else {
-    chosenAuditoryId.value = null
+  if (!newBuildingId) {
     auditoriesList.value = []
-    filteredAuditories.value = []
   }
+  chosenAuditoryId.value = null
+  filteredAuditories.value = []
+  clearChartData()
+})
+
+watch(chosenAuditoryId, () => {
+  clearChartData()
 })
 
 // Watch auditories - filter auditories
@@ -324,6 +338,8 @@ const filters = ref({
   statisticsType: { label: t(statisticsTypes[0].labelName), value: statisticsTypes[0].value },
   showMax: false,
   showMin: false,
+  detail: true,
+  maxNumberShow: false,
 })
 
 const chartRequest = ref(null)
@@ -332,10 +348,12 @@ const { statisticsByDay } = useStatisticsByDay(chartRequest, {
   notify: true,
 })
 
-const chartData = ref([])
-
 watch(statisticsByDay, (newVal) => {
   chartData.value = newVal
+})
+
+watch(filters.value, () => {
+  clearChartData()
 })
 
 function buildChart() {
@@ -359,6 +377,7 @@ function buildChart() {
     date: filters.value.dateModel,
     type: filters.value.reportType.value,
     statisticsType: filters.value.statisticsType.value,
+    detail: !filters.value.detail,
   }
 }
 </script>

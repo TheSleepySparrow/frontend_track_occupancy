@@ -69,8 +69,10 @@ export default {
     pairs: 'Lectures',
     periodLabel: 'Period',
     format: 'Format',
+    showMaxPeople: 'Show max number of people in auditory on graph',
     showMaxLabel: 'Show maximum value',
     showMinLabel: 'Show minimum value',
+    detailLabel: 'Data aggregation',
     formatValue: {
       default: 'Not selected',
       day: 'YYYY/MM/DD',

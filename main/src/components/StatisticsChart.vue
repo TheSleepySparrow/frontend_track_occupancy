@@ -18,7 +18,7 @@
     </div>
 
     <div class="col-2 q-mt-md column items-center">
-      <div>{{ $t('statisticsPage.Average') }}: {{ avgValue }} </div>
+      <div v-if="!props.isDetailMode">{{ $t('statisticsPage.Average') }}: {{ avgValue }} </div>
       <div>{{ $t('statisticsPage.MaxPeopleMarkline') }}: {{ maxNumberOfPeopleInAuditory }}</div>
     </div>
     <div class="col-2 q-mt-md">
@@ -54,9 +54,11 @@ const props = defineProps({
   data: { required: true },
   filtersMaxShow: { type: Boolean, default: false },
   filtersMinShow: { type: Boolean, default: false },
+  isDetailMode: { type: Boolean, default: false },
   reportType: { type: String, default: '' },
   time: {},
   auditoryInfo: { require: true },
+  showMaxPeople: { type: Boolean },
 })
 
 const theme = computed(() => {
@@ -107,20 +109,20 @@ function initChart() {
         show: false,
       },
       tooltip: {
-        trigger: 'item',
-        formatter: '{a} <br/>{b} : {c}',
-      },
-      grid: {
-        left: '15%',
-        right: '4%',
-        bottom: '3%',
-        top: '3%',
+        trigger: 'axis',
+        axisPointer: {
+          type: 'shadow',
+        },
+        position: function (pt) {
+          return [pt[0], '10%']
+        },
       },
       xAxis: {
         type: 'category',
         name: t('statisticsPage.xAxis'),
         nameLocation: 'middle',
         nameGap: 30,
+        axisLine: { show: false },
         data: [],
       },
       yAxis: {
@@ -129,6 +131,8 @@ function initChart() {
         nameLocation: 'middle',
         nameGap: 50,
         max: 30,
+        axisLine: { show: false },
+        axisTick: { show: false },
       },
       series: [
         {
@@ -137,12 +141,21 @@ function initChart() {
           data: [],
           showBackground: true,
           backgroundStyle: { color: 'rgba(180, 180, 180, 0.2)' },
+          barGap: 0,
+          emphasis: {
+            focus: 'series',
+          },
         },
       ],
       toolbox: {
         show: true,
+        orient: 'vertical',
+        left: 'right',
+        top: 'center',
         feature: {
-          dataView: { show: true, readOnly: true },
+          mark: { show: true },
+          dataView: { show: true, readOnly: false },
+          magicType: { show: true, type: ['line', 'bar', 'stack'] },
           saveAsImage: { show: true },
         },
       },
@@ -180,18 +193,22 @@ function calculateAvgValue(data) {
   if (!data || data.length === 0) {
     return 0
   }
-
+  if (props.isDetailMode && data[0]?.days) {
+    const values = data.flatMap((d) => d.days.map((x) => x.average))
+    if (values.length === 0) return 0
+    const sum = values.reduce((acc, v) => acc + v, 0)
+    return Math.ceil(sum / values.length)
+  }
   const sum = data.reduce((acc, d) => acc + d.average, 0)
   return Math.ceil(sum / data.length)
 }
-// calculate maximum in data
+// calculate maximum in data (valuesArray = array of numbers)
 const maxValue = ref(0)
-function calculateMaxValue(data) {
-  if (!data || data.length === 0) {
+function calculateMaxValue(valuesArray) {
+  if (!valuesArray || valuesArray.length === 0) {
     return 0
   }
-
-  return Math.max(data)
+  return Math.max(...valuesArray)
 }
 
 function setChartOption(data) {
@@ -203,6 +220,48 @@ function setChartOption(data) {
     maxValue.value > maxNumberOfPeopleInAuditory.value
       ? Math.ceil(maxValue.value * 1.1)
       : Math.ceil(maxNumberOfPeopleInAuditory.value * 1.1)
+
+  const xAxisData = data.map((d) => d.time)
+
+  if (props.isDetailMode && data[0]?.days) {
+    const dayEntries = data[0].days
+    const series = dayEntries.map((dayEntry, dayIndex) => ({
+      type: 'bar',
+      barGap: 0,
+      emphasis: {
+        focus: 'series',
+      },
+      showBackground: true,
+      backgroundStyle: { color: 'rgba(180, 180, 180, 0.2)' },
+      name: dayEntry.dayLabel,
+      data: data.map((d) => Math.ceil(d.days[dayIndex]?.average ?? 0)),
+    }))
+    instance.value.setOption({
+      legend: {
+        show: true,
+        type: 'scroll',
+        data: dayEntries.map((d) => d.dayLabel),
+        top: 'top',
+        width: '40%',
+        height: '20%',
+        //orient: 'vertical'
+      },
+      dataZoom: [
+        {
+          type: 'inside',
+        },
+      ],
+      brush: {
+        toolbox: ['rect', 'polygon', 'lineX', 'lineY', 'keep', 'clear'],
+        xAxisIndex: 0,
+      },
+      colorBy: 'series',
+      xAxis: { data: xAxisData },
+      yAxis: { max: props.showMaxPeople ? maxYAxisValue : null },
+      series,
+    })
+    return
+  }
 
   // get gradient colors for bar based on its data
   function getGradientColors(average) {
@@ -222,13 +281,12 @@ function setChartOption(data) {
     }
     return { start: '#8CA6C2', end: '#80B9F4' }
   }
-
-  instance.value.setOption({
+  const option = {
     xAxis: {
-      data: data.map((d) => d.time),
+      data: xAxisData,
     },
     yAxis: {
-      max: maxYAxisValue,
+      max: props.showMaxPeople ? maxYAxisValue : null,
     },
     series: [
       {
@@ -260,7 +318,8 @@ function setChartOption(data) {
         }),
       },
     ],
-  })
+  }
+  instance.value.setOption(option)
 }
 
 // set up for horizontal lines (max number of people in auditory and average number)
@@ -274,7 +333,7 @@ function setSeriesMarkLine() {
     { name: t('statisticsPage.MaxPeopleMarkline'), yAxis: maxNumberOfPeopleInAuditory.value },
   ]
   // if average is not tooo small show it
-  if (avgValue.value > 1) {
+  if (avgValue.value > 1 && !props.isDetailMode) {
     whatIsShownInMarkLine.push({ name: t('statisticsPage.Average'), type: 'average' })
   }
 
@@ -288,7 +347,34 @@ function setSeriesMarkLine() {
       },
     ],
   })
-}
+} /*
+function setMaxAndMinLine(data) {
+  if (!instance.value) {
+    return
+  }
+
+  if (props.filtersMinShow) {
+    instance.value.setOption({
+      series: [
+        {
+        type: 'line',
+        data: data.map((d) => d.min),
+        }
+      ]
+    })
+  }
+
+  if (props.filtersMaxShow) {
+    instance.value.setOption({
+      series: [
+          {
+        type: 'line',
+        data: data.map((d) => d.max),
+      }
+      ]
+    })
+  }
+} */
 
 function createChart(data) {
   if (!instance.value) {
@@ -296,9 +382,14 @@ function createChart(data) {
   }
   isChartInitialized.value = true
   avgValue.value = calculateAvgValue(data)
-  maxValue.value = calculateMaxValue(data.map((d) => d.average))
+  const valuesForMax =
+    props.isDetailMode && data[0]?.days
+      ? data.flatMap((d) => d.days.map((x) => x.average))
+      : data.map((d) => d.average)
+  maxValue.value = calculateMaxValue(valuesForMax)
   setChartOption(data)
   setSeriesMarkLine()
+  //setMaxAndMinLine(data)
 }
 
 watch(
@@ -307,24 +398,25 @@ watch(
     if (newData && newData.length > 0) {
       await nextTick()
       createChart(newData)
-    } else {
+    } else if (isChartInitialized.value) {
       isChartInitialized.value = false
+      instance.value.dispose()
+      instance.value = null
     }
   },
 )
 
 watch(locale, () => {
   if (instance.value) {
-    instance.value.setOption({
+    const option = {
       title: { text: t('statisticsPage.titleChart') },
       xAxis: { name: t('statisticsPage.xAxis') },
       yAxis: { name: t('statisticsPage.yAxis') },
-      series: [
-        {
-          name: t('statisticsPage.seriesName'),
-        },
-      ],
-    })
+    }
+    if (!props.isDetailMode) {
+      option.series = [{ name: t('statisticsPage.seriesName') }]
+    }
+    instance.value.setOption(option)
     setSeriesMarkLine() // need to reset horizontal lines because of locale in names
   }
 })
