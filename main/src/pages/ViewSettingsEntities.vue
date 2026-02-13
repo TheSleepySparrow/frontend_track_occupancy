@@ -337,4 +337,18 @@ function onEdit(item) {
 function onDelete(item) {
   console.log(item)
 }
+
+watch(
+  () => route.name,
+  async (routeName) => {
+    if (entityByRoute[routeName] === 'auditories' && !citiesStore.loaded) {
+      try {
+        await citiesStore.fetchCities()
+      } catch (err) {
+        console.error('Cities load failed', err)
+      }
+    }
+  },
+  { immediate: true }
+)
 </script>

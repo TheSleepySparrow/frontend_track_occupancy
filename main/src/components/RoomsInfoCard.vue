@@ -103,7 +103,7 @@ const occupancyItem = computed(() => {
 
 const imageUrl = computed(() =>
   props.item.id
-    ? `/v1/cities/${props.cityId}/buildings/${props.buildingId}/auditories/${props.item.id}/images/`
+    ? `/images/${props.item.img_url}`
     : 'https://cdn.quasar.dev/img/parallax2.jpg',
 )
 
@@ -121,7 +121,7 @@ const progressColor = computed(() => {
   if (percent <= 90) return 'orange' // Оранжевый — много
   return 'red' // Красный — переполнено
 })
-const differenceIntime = ref(occupancyItem.value?.differenceIntime ?? 0)
+//const differenceIntime = ref(occupancyItem.value?.differenceIntime ?? 0)
 
 // Ref to trigger useAuditoryOccupancy when refresh is needed
 const refreshTrigger = ref({ id: props.item?.id })
@@ -153,11 +153,11 @@ function refreshOccupancy() {
 }
 
 const interval = setInterval(() => {
-  differenceIntime.value = differenceIntime.value + 0.1
-  if (differenceIntime.value >= 2) {
-    refreshOccupancy()
-  }
-}, 10 * 1000)
+  //differenceIntime.value = differenceIntime.value + 0.1
+  //if (differenceIntime.value >= 2) {
+  refreshOccupancy()
+  //}
+}, 120 * 1000)
 
 onUnmounted(() => clearInterval(interval))
 

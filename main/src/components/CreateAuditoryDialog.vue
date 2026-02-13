@@ -78,11 +78,30 @@
                 :label="$t('occupationPage.floor')"
                 filled
               />
-              <q-input
-                v-model="form.image_url"
-                :label="$t('editAuditory.imageUrl')"
-                filled
-              />
+              <div class="q-gutter-y-sm">
+                <div class="text-caption text-grey">{{ $t('editAuditory.choosePhotoFromDevice') }}</div>
+                <div class="column q-gutter-y-sm items-center">
+                    <q-uploader
+                    v-model="uploaderFiles"
+                    class="col-5 full-width"
+                    :max-files="1"
+                    accept="image/*"
+                    :label="$t('editAuditory.imagesOnly')"
+                    batch
+                    flat
+                    bordered
+                    @added="onFileAdded"
+                    @removed="onFileRemoved"
+                  />
+                <q-input
+                  v-model="form.image_url"
+                  class="col full-width"
+                  :label="$t('editAuditory.imageUrl')"
+                  filled
+                  dense
+                />
+              </div>
+              </div>
             </div>
           </q-tab-panel>
           <q-tab-panel
@@ -217,6 +236,26 @@ const form = ref({
   type: null,
   image_url: '',
 })
+const uploaderFiles = ref([])
+const previewObjectUrl = ref(null)
+
+function onFileAdded(info) {
+  const files = Array.isArray(info) ? info : info?.files || []
+  const file = files[0]
+  if (file) {
+    if (previewObjectUrl.value) URL.revokeObjectURL(previewObjectUrl.value)
+    previewObjectUrl.value = URL.createObjectURL(file)
+    form.value.image_url = file.name
+  }
+}
+
+function onFileRemoved() {
+  if (previewObjectUrl.value) {
+    URL.revokeObjectURL(previewObjectUrl.value)
+    previewObjectUrl.value = null
+  }
+  form.value.image_url = ''
+}
 
 const localeTypeOptions = computed(() => {
   const roomTypes = getRoomTypesInfo()
@@ -237,6 +276,11 @@ function resetState() {
   activeTab.value = 'info'
   stepDone.value = false
   createdAuditoryId.value = null
+  uploaderFiles.value = []
+  if (previewObjectUrl.value) {
+    URL.revokeObjectURL(previewObjectUrl.value)
+    previewObjectUrl.value = null
+  }
   form.value = {
     auditorium_number: '',
     floor_number: 0,
@@ -269,6 +313,9 @@ async function onNext() {
       floor_number: Number(form.value.floor_number) || 0,
       capacity: Number(form.value.capacity) || 0,
       type: form.value.type,
+      type_ru:  form.value.type === 'lecture_hall'
+      ? 'лекционная'
+      : form.value.type === 'coworking' ? 'коворкинг' : 'учебная',
       image_url: form.value.image_url || '',
     }
     const result = await createAuditory(props.cityId, props.buildingId, body)

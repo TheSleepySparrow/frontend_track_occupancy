@@ -98,11 +98,30 @@
                   :label="$t('occupationPage.floor')"
                   filled
                 />
-                <q-input
-                  v-model="localItem.img_url"
-                  :label="$t('editAuditory.imageUrl')"
-                  filled
-                />
+                <div class="q-gutter-y-sm">
+                  <div class="text-caption text-grey">{{ $t('editAuditory.choosePhotoFromDevice') }}</div>
+                  <div class="column q-gutter-y-sm items-center">
+                    <q-uploader
+                    v-model="uploaderFiles"
+                    class="col-5 full-width"
+                    :max-files="1"
+                    accept="image/*"
+                    :label="$t('editAuditory.imagesOnly')"
+                    batch
+                    flat
+                    bordered
+                    @added="onFileAdded"
+                    @removed="onFileRemoved"
+                  />
+                  <q-input
+                    v-model="localItem.img_url"
+                    class="col full-width"
+                    :label="$t('editAuditory.imageUrl')"
+                    filled
+                    dense
+                  />
+                  </div>
+                </div>
               </div>
             </q-tab-panel>
 
@@ -295,6 +314,39 @@ const { attachCamera: attachCameraApi } = useAttachCameraToAuditory()
 
 const freeCamerasList = computed(() => freeCamerasInfo.value || [])
 const attachingCameraId = ref(null)
+const uploaderFiles = ref([])
+const previewObjectUrl = ref(null)
+
+function onFileAdded(info) {
+  const files = Array.isArray(info) ? info : info?.files || []
+  const file = files[0]
+  if (file) {
+    if (previewObjectUrl.value) URL.revokeObjectURL(previewObjectUrl.value)
+    previewObjectUrl.value = URL.createObjectURL(file)
+    localItem.value.img_url = file.name
+  }
+}
+
+function onFileRemoved() {
+  if (previewObjectUrl.value) {
+    URL.revokeObjectURL(previewObjectUrl.value)
+    previewObjectUrl.value = null
+  }
+  localItem.value.img_url = localItem.value.img_url || ''
+}
+
+watch(
+  () => props.modelValue,
+  (open) => {
+    if (!open) {
+      uploaderFiles.value = []
+      if (previewObjectUrl.value) {
+        URL.revokeObjectURL(previewObjectUrl.value)
+        previewObjectUrl.value = null
+      }
+    }
+  },
+)
 
 // Locale options
 const localeOptions = [
@@ -337,6 +389,9 @@ async function onSave() {
       auditorium_number:
         localItem.value[selectedLocale.value]?.title ?? localItem.value['ru-RU']?.title ?? '',
       type: localItem.value.type,
+      type_ru:  localItem.value.type === 'lecture_hall'
+      ? 'лекционная'
+      : localItem.value.type === 'coworking' ? 'коворкинг' : 'учебная',
       image_url: localItem.value.img_url || '',
     }
     await updateAuditory(props.cityId, props.buildingId, localItem.value.id, requestBody)
