@@ -95,6 +95,9 @@ export default {
     saveTsv: 'save to tsv',
     Average: 'Average number of people in total',
     MaxPeopleMarkline: 'Max number of people in auditory',
+    minLabel: 'Minimum',
+    maxLabel: 'Maximum',
+    restore: 'Restore configuration'
   },
   editAuditory: {
     title: 'Edit Auditory',
@@ -108,6 +111,8 @@ export default {
     capacity: 'Capacity',
     capacityError: 'Capacity must be greater than 0',
     imageUrl: 'Image URL',
+    choosePhotoFromDevice: 'Choose photo from device',
+    imagesOnly: 'Images only',
     locale: 'Locale',
     titleInput: 'Title',
     titleRequired: 'Title is required',

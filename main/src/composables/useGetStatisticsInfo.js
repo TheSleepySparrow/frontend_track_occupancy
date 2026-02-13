@@ -92,16 +92,16 @@ export function useStatisticsByDay(requestParams, options = { loading: null, not
           day: d.day,
           dayLabel: formatDayLabel(d.day),
           average: d.avg_person_count,
-          min: d.min_person_count ?? '',
-          max: d.max_person_count ?? '',
+          min: d.min_person_count ?? 0,
+          max: d.max_person_count ?? 0,
         })),
       }))
     }
     return data.value.map((item) => ({
       time: item.hour ? item.hour + ':00 - ' + (item.hour + 1) + ':00' : item.pair_number,
       average: item.avg_person_count,
-      min: item.min_person_count ? item.min_person_count : '',
-      max: item.max_person_count ? item.max_person_count : '',
+      min: item.min_person_count ? item.min_person_count : 0,
+      max: item.max_person_count ? item.max_person_count : 0,
     }))
   })
 

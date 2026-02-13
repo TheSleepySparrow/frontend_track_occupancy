@@ -54,13 +54,13 @@
       />
       <q-checkbox
         v-model="localFilters.showMax"
-        disable
+        :disable="!localFilters.detail"
         :label="$t('statisticsFilters.showMaxLabel')"
         class="q-mr-md"
       />
       <q-checkbox
         v-model="localFilters.showMin"
-        disable
+        :disable="!localFilters.detail"
         :label="$t('statisticsFilters.showMinLabel')"
         class="q-mr-md"
       />
@@ -127,6 +127,14 @@ watch(
     localFilters.value.dateModel = ''
   },
 )
+
+watch(() => localFilters.value.detail,
+() => {
+  if (!localFilters.value.detail) {
+    localFilters.value.showMax = false
+    localFilters.value.showMin = false
+  }
+})
 
 watch(locale, () => {
   if (localFilters.value.dateModel) {

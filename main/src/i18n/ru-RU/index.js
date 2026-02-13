@@ -96,6 +96,9 @@ export default {
     saveTsv: 'Экспорт tsv',
     Average: 'Итоговое среднее количество людей',
     MaxPeopleMarkline: 'Максимальное количество людей в аудитории',
+    minLabel: 'Минимум',
+    maxLabel: 'Максимум',
+    restore: 'Вернуть изначальную конфигурацию'
   },
   editAuditory: {
     title: 'Редактировать аудиторию',
@@ -109,6 +112,8 @@ export default {
     capacity: 'Вместимость',
     capacityError: 'Вместимость должна быть больше 0',
     imageUrl: 'URL изображения',
+    choosePhotoFromDevice: 'Выберите фото с устройства',
+    imagesOnly: 'Только изображения',
     locale: 'Язык',
     titleInput: 'Название',
     titleRequired: 'Название обязательно',
