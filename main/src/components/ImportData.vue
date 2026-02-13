@@ -36,33 +36,52 @@ const files = {
   },
 }
 
+function flattenForExport(data) {
+  if (!data?.length) return data
+  const first = data[0]
+  if (!first.days || !Array.isArray(first.days)) {
+    return data
+  }
+  return data.map((d) => {
+    const row = { time: d.time }
+    ;(d.days || []).forEach((day, i) => {
+      const key = day.dayLabel !== null ? day.dayLabel : `day_${i}`
+      row[key] = day.average ?? ''
+    })
+    return row
+  })
+}
+
 function saveToCSV() {
+  const toExport = flattenForExport(props.data)
   const csvConfig = mkConfig({
     useKeysAsHeaders: true,
     filename: 'statistics',
   })
-  const csv = generateCsv(csvConfig)(props.data)
+  const csv = generateCsv(csvConfig)(toExport)
   download(csvConfig)(csv)
 }
 
 function saveToTxt() {
+  const toExport = flattenForExport(props.data)
   const txtConfig = mkConfig({
     useKeysAsHeaders: true,
     filename: 'statistics',
     useTextFile: true,
   })
-  const txt = generateCsv(txtConfig)(props.data)
+  const txt = generateCsv(txtConfig)(toExport)
   download(txtConfig)(txt)
 }
 
 function saveToTsv() {
+  const toExport = flattenForExport(props.data)
   const tsvConfig = mkConfig({
     useKeysAsHeaders: true,
     fileExtension: 'tsv',
     filename: 'statistics',
     delimiter: '\t',
   })
-  const tsv = generateCsv(tsvConfig)(props.data)
+  const tsv = generateCsv(tsvConfig)(toExport)
   download(tsvConfig)(tsv)
 }
 </script>
