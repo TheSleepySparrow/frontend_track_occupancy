@@ -21,19 +21,6 @@
 
       <q-card-section class="q-pa-md">
         <div class="q-gutter-y-md">
-          <q-card
-            flat
-            bordered
-            class="q-px-xl"
-          >
-            <q-img
-              :src="imageUrl"
-              :alt="localItem[selectedLocale]?.title"
-              height="30%"
-              initial-ratio
-            >
-            </q-img>
-          </q-card>
           <div class="text-center text-h6">{{ localItem[selectedLocale]?.title }}</div>
 
           <q-tabs
@@ -83,43 +70,38 @@
                     class="col"
                     :label="$t('editAuditory.titleInput')"
                     filled
-                    readonly
                     :rules="[(val) => !!val || $t('editAuditory.titleRequired')]"
                   />
                 </div>
 
                 <q-select
-                  v-model="localItem[selectedLocale].type"
+                  v-model="localItem.type"
                   :options="localeTypeOptions"
                   :label="$t('editAuditory.localeType')"
                   filled
-                  readonly
-                  option-value="label"
+                  option-value="value"
                   option-label="label"
                   emit-value
                   map-options
                 />
 
                 <q-input
-                  v-model="localItem.capacity"
+                  v-model.number="localItem.capacity"
                   type="number"
                   :label="$t('editAuditory.capacity')"
                   filled
-                  readonly
                   :rules="[(val) => val > 0 || $t('editAuditory.capacityError')]"
                 />
                 <q-input
-                  v-model="localItem.floor"
+                  v-model.number="localItem.floor"
                   type="number"
                   :label="$t('occupationPage.floor')"
                   filled
-                  readonly
                 />
                 <q-input
                   v-model="localItem.img_url"
                   :label="$t('editAuditory.imageUrl')"
                   filled
-                  readonly
                 />
               </div>
             </q-tab-panel>
@@ -134,29 +116,85 @@
               >
                 {{ camerasError.message }}
               </div>
-              <q-list
-                v-else-if="camerasInfo.length > 0"
-                bordered
-                separator
-              >
-                <q-item
-                  v-for="camera in camerasInfo"
-                  :key="camera.id"
+              <template v-else>
+                <div class="text-subtitle2 q-mb-sm">{{ $t('editAuditory.attachedCameras') }}</div>
+                <q-list
+                  v-if="camerasInfo.length > 0"
+                  bordered
+                  separator
+                  class="q-mb-md"
                 >
-                  <q-item-section>
-                    <q-item-label>{{ $t('editAuditory.cameraId') }}: {{ camera.id }}</q-item-label>
-                    <q-item-label caption
-                      >{{ $t('editAuditory.cameraMac') }}: {{ camera.mac }}</q-item-label
-                    >
-                  </q-item-section>
-                </q-item>
-              </q-list>
-              <div
-                v-else
-                class="text-grey"
-              >
-                {{ $t('editAuditory.noCameras') }}
-              </div>
+                  <q-item
+                    v-for="camera in camerasInfo"
+                    :key="camera.id"
+                  >
+                    <q-item-section>
+                      <q-item-label
+                        >{{ $t('editAuditory.cameraId') }}: {{ camera.id }}</q-item-label
+                      >
+                      <q-item-label caption
+                        >{{ $t('editAuditory.cameraMac') }}: {{ camera.mac }}</q-item-label
+                      >
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+                <div
+                  v-else
+                  class="text-grey q-mb-md"
+                >
+                  {{ $t('editAuditory.noCameras') }}
+                </div>
+                <div class="text-subtitle2 q-mb-sm">{{ $t('settingsPage.attachCamera') }}</div>
+                <div
+                  v-if="freeCamerasError"
+                  class="text-negative q-mb-sm"
+                >
+                  {{ freeCamerasError.message }}
+                </div>
+                <q-list
+                  v-else-if="freeCamerasList.length > 0"
+                  bordered
+                  separator
+                >
+                  <q-item
+                    v-for="camera in freeCamerasList"
+                    :key="camera.id"
+                  >
+                    <q-item-section>
+                      <q-item-label
+                        >{{ $t('editAuditory.cameraId') }}: {{ camera.id }}</q-item-label
+                      >
+                      <q-item-label caption
+                        >{{ $t('editAuditory.cameraMac') }}: {{ camera.mac }}</q-item-label
+                      >
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-btn
+                        :label="$t('settingsPage.attach')"
+                        color="primary"
+                        size="sm"
+                        :loading="attachingCameraId === camera.id"
+                        @click="attachCamera(camera)"
+                      />
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+                <div
+                  v-else-if="!freeCamerasLoading"
+                  class="text-grey"
+                >
+                  {{ $t('settingsPage.noFreeCameras') }}
+                </div>
+                <div
+                  v-else
+                  class="text-center q-pa-sm"
+                >
+                  <q-spinner-dots
+                    color="primary"
+                    size="24px"
+                  />
+                </div>
+              </template>
             </q-tab-panel>
           </q-tab-panels>
         </div>
@@ -174,12 +212,9 @@
             :label="$t('popUps.save')"
             color="primary"
             type="submit"
-            disable
             @click="onSave"
             :loading="saving"
-          >
-            <q-tooltip>{{ $t('popUps.saveTooltip') }}</q-tooltip>
-          </q-btn>
+          />
         </div>
       </q-card-actions>
     </q-card>
@@ -189,9 +224,12 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { putResponse } from 'src/services/api.js'
 import { getRoomTypesInfo } from 'src/composables/GetMainInfo.js'
-import { useCamerasInfo } from 'src/composables/useGetCamerasInfo.js'
+import { useCamerasInfo, useFreeCamerasInfo } from 'src/composables/useGetCamerasInfo.js'
+import {
+  useUpdateAuditory,
+  useAttachCameraToAuditory,
+} from 'src/composables/useGetAuditoriesInfo.js'
 import { Notify, Loading } from 'quasar'
 
 const props = defineProps({
@@ -211,7 +249,7 @@ const props = defineProps({
   },
 })
 
-const imageUrl = computed(() => `/images/${props.item.id}.jpg`)
+// const imageUrl = computed(() => `/images/${props.item.id}.jpg`)
 const emit = defineEmits(['update:modelValue', 'save'])
 
 const { locale, t } = useI18n()
@@ -241,9 +279,22 @@ const propsForFetch = computed(() => ({ id: props.item?.id }))
 const baseUrl = computed(
   () => `/v1/cities/${props.cityId}/buildings/${props.buildingId}/auditories`,
 )
-const { camerasInfo, error: camerasError } = useCamerasInfo(propsForFetch, baseUrl, {
-  loading: false,
-})
+const {
+  camerasInfo,
+  error: camerasError,
+  refetch: refetchAttachedCameras,
+} = useCamerasInfo(propsForFetch, baseUrl, { loading: false })
+const {
+  camerasInfo: freeCamerasInfo,
+  error: freeCamerasError,
+  loading: freeCamerasLoading,
+  reload: reloadFreeCameras,
+} = useFreeCamerasInfo({ loading: false, notify: false })
+const { updateAuditory } = useUpdateAuditory()
+const { attachCamera: attachCameraApi } = useAttachCameraToAuditory()
+
+const freeCamerasList = computed(() => freeCamerasInfo.value || [])
+const attachingCameraId = ref(null)
 
 // Locale options
 const localeOptions = [
@@ -262,7 +313,6 @@ function updateModelValue(value) {
 }
 
 function onCancel() {
-  // Reset to original item
   localItem.value = JSON.parse(JSON.stringify(props.item))
   emit('update:modelValue', false)
 }
@@ -281,44 +331,54 @@ async function onSave() {
   Loading.show()
 
   try {
-    // Prepare the request body according to API structure
     const requestBody = {
-      type: localItem.value.type, // English value (lecture_hall, classroom, coworking)
-      capacity: localItem.value.capacity,
-      image_url: localItem.value.img_url || '',
       floor_number: localItem.value.floor,
-      ru: {
-        title: localItem.value['ru-RU'].title,
-        type: localItem.value['ru-RU'].type, // Localized label
-      },
-      en: {
-        title: localItem.value['en-US'].title,
-        type: localItem.value['en-US'].type, // Localized label
-      },
+      capacity: localItem.value.capacity,
+      auditorium_number:
+        localItem.value[selectedLocale.value]?.title ?? localItem.value['ru-RU']?.title ?? '',
+      type: localItem.value.type,
+      image_url: localItem.value.img_url || '',
     }
-
-    const apiUrl = `/v1/cities/${props.cityId}/buildings/${props.buildingId}/auditories/${localItem.value.id}`
-    const result = await putResponse(apiUrl, requestBody)
-
+    await updateAuditory(props.cityId, props.buildingId, localItem.value.id, requestBody)
     Notify.create({
       message: t('editAuditory.saveSuccess'),
       color: 'positive',
       icon: 'check',
     })
-    console.log(result)
-    // Emit save event with updated item
     emit('save', localItem.value)
     emit('update:modelValue', false)
-  } catch (error) {
-    console.error('Error saving auditory:', error)
+  } catch (err) {
     Notify.create({
-      message: t('editAuditory.saveError') + ': ' + (error.message || 'Unknown error'),
+      message: t('editAuditory.saveError') + ': ' + (err?.message || ''),
       color: 'negative',
       icon: 'error',
     })
   } finally {
     saving.value = false
     Loading.hide()
+  }
+}
+
+async function attachCamera(camera) {
+  if (props.cityId === null || props.buildingId === null || !props.item?.id) return
+  attachingCameraId.value = camera.id
+  try {
+    await attachCameraApi(props.cityId, props.buildingId, props.item.id, camera.id)
+    Notify.create({
+      message: t('settingsPage.cameraAttachedSuccess'),
+      color: 'positive',
+      icon: 'check',
+    })
+    await refetchAttachedCameras()
+    await reloadFreeCameras()
+  } catch (err) {
+    Notify.create({
+      message: err?.message || t('settingsPage.attachError'),
+      color: 'negative',
+      icon: 'error',
+    })
+  } finally {
+    attachingCameraId.value = null
   }
 }
 </script>

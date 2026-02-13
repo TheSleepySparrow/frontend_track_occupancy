@@ -69,10 +69,12 @@ export function useFetchList(
 ) {
   const data = ref([])
   const error = ref(null)
+  const loading = ref(false)
 
   const load = async () => {
     const id = typeof props === 'object' && 'value' in props ? props.value?.id : props?.id
     if (!id) return
+    loading.value = true
     try {
       error.value = null
       const url = typeof baseUrl === 'object' && 'value' in baseUrl ? baseUrl.value : baseUrl
@@ -81,6 +83,8 @@ export function useFetchList(
     } catch (err) {
       error.value = err
       data.value = []
+    } finally {
+      loading.value = false
     }
   }
 
@@ -97,7 +101,7 @@ export function useFetchList(
     watch(baseUrl, load, { immediate: false })
   }
 
-  return { data, error, refetch: load }
+  return { data, error, loading, refetch: load }
 }
 
 export function useFetchObject(
