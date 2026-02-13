@@ -22,7 +22,55 @@
       v-else
       class="column q-col-gutter-xl"
     >
-      <!-- Filter section: only for auditories and cameras -->
+      <!-- City + building filter: only for auditories -->
+      <div
+        v-if="currentEntity === 'auditories'"
+        class="col-12"
+      >
+        <q-card
+          flat
+          bordered
+          class="q-pa-sm"
+        >
+          <div class="row q-col-gutter-md">
+            <div class="col-12 col-md-4">
+              <q-select
+                v-model="chosenCity"
+                :options="cities"
+                dense
+                behavior="menu"
+                outlined
+                :label="$t('statistics.city')"
+                @update:model-value="onCityChange"
+              />
+            </div>
+            <div class="col-12 col-md-4">
+              <q-select
+                v-model="chosenBuildingId"
+                :options="filteredBuildings"
+                dense
+                outlined
+                :label="$t('statistics.building')"
+                use-input
+                behavior="menu"
+                hide-selected
+                fill-input
+                input-debounce="200"
+                @filter="filterFn"
+              >
+                <template v-slot:no-option>
+                  <q-item>
+                    <q-item-section class="text-grey">
+                      {{ $t('statistics.noBuildingsFound') }}
+                    </q-item-section>
+                  </q-item>
+                </template>
+              </q-select>
+            </div>
+          </div>
+        </q-card>
+      </div>
+      <!-- Search: only for auditories and cameras -->
       <div
         v-if="currentEntity && currentEntity !== 'cities'"
         class="col-12 col-md-4"
@@ -75,6 +123,12 @@
               :route-params="{}"
             />
             <div
+              v-else-if="currentEntity === 'auditories' && (!chosenCity || !chosenBuildingId)"
+              class="q-pa-lg text-center text-grey"
+            >
+              {{ $t('settingsPage.selectCityAndBuilding') }}
+            </div>
+            <div
               v-else-if="filteredItems.length === 0"
               class="q-pa-lg text-center text-grey"
             >
@@ -85,6 +139,9 @@
               :filtered-items="filteredItems"
               :is="entityComponent"
               :locale="locale"
+              :chosen-city-id="auditoriesChosenCityId"
+              :chosen-building-id="auditoriesChosenBuildingId"
+              :refetch-auditories="refetchAuditories"
               @edit="onEdit"
               @delete="onDelete"
             />
@@ -96,7 +153,7 @@
 </template>
 
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import TheErrorPopUp from 'src/components/TheErrorPopUp.vue'
@@ -104,10 +161,13 @@ import SettingsItemCities from 'src/components/SettingsItemCities.vue'
 import SettingsItemAuditories from 'src/components/SettingsItemAuditories.vue'
 import SettingsItemCameras from 'src/components/SettingsItemCameras.vue'
 import { useAuditoriesInfo } from 'src/composables/useGetAuditoriesInfo.js'
+import { useBuildingsInfo } from 'src/composables/useGetBuildingsInfo.js'
 import { useGetAllCamerasInfo } from 'src/composables/useGetAllCamerasInfo.js'
+import { useCitiesStore } from 'src/stores/cities.store'
 
 const route = useRoute()
 const { locale } = useI18n()
+const citiesStore = useCitiesStore()
 
 const searchQuery = ref('')
 
@@ -134,14 +194,94 @@ const entityComponent = computed(() =>
   currentEntity.value ? entityConfig[currentEntity.value]?.component : null,
 )
 
-// Auditories: buildingId=1, cityId=1
-const auditoriesProps = computed(() => ({ id: 1 }))
-const auditoriesBaseUrl = '/v1/cities/1/buildings'
-const { auditoriesInfo: auditoriesList, error: auditoriesError } = useAuditoriesInfo(
-  auditoriesProps,
-  auditoriesBaseUrl,
-  { optionalUrl: 'auditories', loading: true, notify: true },
+// Auditories: city + building filter
+const chosenCity = ref(null)
+const chosenBuildingId = ref(null)
+const cities = computed(() =>
+  citiesStore.cities.map((city) => ({
+    label: city[`name_${locale.value}`],
+    value: city.id,
+  })),
 )
+const cityIdRef = computed(() => {
+  if (!chosenCity.value?.value) return { id: null }
+  return { id: chosenCity.value.value }
+})
+const { buildingsInfo: buildingsList } = useBuildingsInfo(cityIdRef, '/v1/cities', {
+  optionalUrl: 'buildings',
+  loading: true,
+  notify: true,
+})
+const buildings = computed(() => {
+  return buildingsList.value.map((building) => {
+    return { label: building[locale.value].title, value: building.id }
+  })
+})
+
+const filteredBuildings = ref([])
+function filterFn(val, update) {
+  update(() => {
+    if (val === '') {
+      filteredBuildings.value = buildings.value
+      return
+    } else {
+      const needle = val.toLowerCase()
+      filteredBuildings.value = buildings.value.filter(
+        (v) => v.label.toLowerCase().indexOf(needle) > -1,
+      )
+    }
+  })
+}
+function onCityChange(selected) {
+  if (!selected?.value) {
+    return
+  }
+  const cityId = selected.value
+  const city = citiesStore.findCityById(cityId)
+  if (!city) return
+  chosenBuildingId.value = null
+}
+
+const auditoriesUrl = computed(() => {
+  if (!chosenCity.value?.value) return '/v1/cities'
+  return '/v1/cities/' + chosenCity.value.value + '/buildings'
+})
+const buildingIdRef = computed(() => {
+  if (!chosenBuildingId.value?.value) return { id: null }
+  return { id: chosenBuildingId.value.value }
+})
+
+const {
+  auditoriesInfo: auditoriesData,
+  error: auditoriesError,
+  loading: auditoriesLoading,
+  refetch: refetchAuditories,
+} = useAuditoriesInfo(buildingIdRef, auditoriesUrl, {
+  optionalUrl: 'auditories',
+  loading: true,
+  notify: true,
+})
+const auditoriesList = ref([])
+watch(
+  auditoriesData,
+  (newData) => {
+    if (newData && Array.isArray(newData)) {
+      auditoriesList.value = newData
+    } else {
+      auditoriesList.value = []
+    }
+  },
+  { immediate: true },
+)
+
+watch(chosenBuildingId, (newBuildingId) => {
+  if (!newBuildingId) {
+    auditoriesList.value = []
+  }
+})
+
+const auditoriesChosenCityId = computed(() => chosenCity.value?.value ?? null)
+const auditoriesChosenBuildingId = computed(() => chosenBuildingId.value?.value ?? null)
 
 // Cameras: both endpoints
 const {
@@ -152,6 +292,9 @@ const {
 
 const rawItems = computed(() => {
   if (currentEntity.value === 'auditories') {
+    if (auditoriesChosenCityId.value === null || auditoriesChosenBuildingId.value === null) {
+      return []
+    }
     return auditoriesList.value || []
   }
   if (currentEntity.value === 'cameras') {
@@ -176,6 +319,7 @@ const filteredItems = computed(() => {
 })
 
 const loading = computed(() => {
+  if (currentEntity.value === 'auditories') return auditoriesLoading.value
   if (currentEntity.value === 'cameras') return camerasLoading.value
   return false
 })
@@ -188,11 +332,23 @@ const error = computed(() => {
 
 function onEdit(item) {
   console.log(item)
-  // Placeholder - no logic yet
 }
 
 function onDelete(item) {
   console.log(item)
-  // Placeholder - no logic yet
 }
+
+watch(
+  () => route.name,
+  async (routeName) => {
+    if (entityByRoute[routeName] === 'auditories' && !citiesStore.loaded) {
+      try {
+        await citiesStore.fetchCities()
+      } catch (err) {
+        console.error('Cities load failed', err)
+      }
+    }
+  },
+  { immediate: true },
+)
 </script>

@@ -130,22 +130,83 @@ export async function postResponseWithoutAuth(apiUrl, apiBody = {}) {
   }
 }
 
-export async function putResponse(apiUrl, apiBody = {}) {
+export async function postResponse(apiUrl, apiBody = {}) {
   try {
-    const response = await fetch(apiUrl, {
-      method: 'PUT',
+    const response = await fetchWithAuth(apiUrl, {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        //'X-CSRF-Token': Cookies.get('csrf_token')
       },
       body: JSON.stringify(apiBody),
       credentials: 'include',
     })
-
+    if (!response.ok) {
+      const error = new Error(response.statusText)
+      error.statusCode = response.status
+      throw error
+    }
     const data = await response.json()
     return data
   } catch (error) {
-    console.error('Ошибка при получении данных:', error)
-    throw new Error(error)
+    console.error('Ошибка при отправке данных:', error)
+    const err = new Error(error.message)
+    err.statusCode = error.statusCode
+    throw err
+  }
+}
+
+export async function putResponse(apiUrl, apiBody = {}) {
+  try {
+    const response = await fetchWithAuth(apiUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(apiBody),
+      credentials: 'include',
+    })
+    if (!response.ok) {
+      const error = new Error(response.statusText)
+      error.statusCode = response.status
+      throw error
+    }
+    const data = await response.json()
+    return data
+  } catch (error) {
+    console.error('Ошибка при обновлении данных:', error)
+    const err = new Error(error.message)
+    err.statusCode = error.statusCode
+    throw err
+  }
+}
+
+export async function deleteResponse(apiUrl) {
+  try {
+    const response = await fetchWithAuth(apiUrl, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+    })
+    if (!response.ok) {
+      const error = new Error(response.statusText)
+      error.statusCode = response.status
+      throw error
+    }
+    const text = await response.text()
+    if (text) {
+      try {
+        return JSON.parse(text)
+      } catch {
+        return {}
+      }
+    }
+    return {}
+  } catch (error) {
+    console.error('Ошибка при удалении:', error)
+    const err = new Error(error.message)
+    err.statusCode = error.statusCode
+    throw err
   }
 }

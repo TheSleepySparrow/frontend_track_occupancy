@@ -16,7 +16,15 @@
         :style="chartStyle"
       ></div>
     </div>
-
+    <div class="col-2 q-mt-md column items-center">
+      <q-btn
+        flat
+        unelevated
+        v-if="!props.isDetailMode"
+        @click="restoreChartConfig"
+        >{{ $t('statisticsPage.restore') }}</q-btn
+      >
+    </div>
     <div class="col-2 q-mt-md column items-center">
       <div v-if="!props.isDetailMode">{{ $t('statisticsPage.Average') }}: {{ avgValue }} </div>
       <div>{{ $t('statisticsPage.MaxPeopleMarkline') }}: {{ maxNumberOfPeopleInAuditory }}</div>
@@ -108,7 +116,7 @@ function initChart() {
         top: 'top',
         show: false,
       },
-      tooltip: {
+      /* tooltip: {
         trigger: 'axis',
         axisPointer: {
           type: 'shadow',
@@ -116,7 +124,7 @@ function initChart() {
         position: function (pt) {
           return [pt[0], '10%']
         },
-      },
+      }, */
       xAxis: {
         type: 'category',
         name: t('statisticsPage.xAxis'),
@@ -211,6 +219,31 @@ function calculateMaxValue(valuesArray) {
   return Math.max(...valuesArray)
 }
 
+// set up for horizontal lines (max number of people in auditory and average number)
+function setSeriesMarkLine(option) {
+  if (!instance.value) {
+    return
+  }
+
+  const whatIsShownInMarkLine = []
+  if (props.showMaxPeople) {
+    whatIsShownInMarkLine.push({
+      name: t('statisticsPage.MaxPeopleMarkline'),
+      yAxis: maxNumberOfPeopleInAuditory.value,
+    })
+  }
+  if (avgValue.value > 1 && !props.isDetailMode) {
+    whatIsShownInMarkLine.push({ name: t('statisticsPage.Average'), type: 'average' })
+  }
+  if (whatIsShownInMarkLine.length > 0) {
+    option.series[0].markLine = {
+      lineStyle: { color: '#EB1400' },
+      data: whatIsShownInMarkLine,
+    }
+  }
+  return option
+}
+
 function setChartOption(data) {
   if (!instance.value) {
     return
@@ -236,7 +269,7 @@ function setChartOption(data) {
       name: dayEntry.dayLabel,
       data: data.map((d) => Math.ceil(d.days[dayIndex]?.average ?? 0)),
     }))
-    instance.value.setOption({
+    const detailModeOption = {
       legend: {
         show: true,
         type: 'scroll',
@@ -251,6 +284,13 @@ function setChartOption(data) {
           type: 'inside',
         },
       ],
+      tooltip: {
+        trigger: 'axis',
+        confine: true,
+        axisPointer: {
+          type: 'shadow',
+        },
+      },
       brush: {
         toolbox: ['rect', 'polygon', 'lineX', 'lineY', 'keep', 'clear'],
         xAxisIndex: 0,
@@ -259,7 +299,8 @@ function setChartOption(data) {
       xAxis: { data: xAxisData },
       yAxis: { max: props.showMaxPeople ? maxYAxisValue : null },
       series,
-    })
+    }
+    instance.value.setOption(setSeriesMarkLine(detailModeOption))
     return
   }
 
@@ -288,8 +329,16 @@ function setChartOption(data) {
     yAxis: {
       max: props.showMaxPeople ? maxYAxisValue : null,
     },
+    tooltip: {
+      trigger: 'axis',
+      confine: true,
+      axisPointer: {
+        type: 'shadow',
+      },
+    },
     series: [
       {
+        name: t('statisticsPage.Average'),
         data: data.map((d) => {
           const colorsForColorStops = getGradientColors(d.average)
           return {
@@ -319,62 +368,37 @@ function setChartOption(data) {
       },
     ],
   }
-  instance.value.setOption(option)
-}
-
-// set up for horizontal lines (max number of people in auditory and average number)
-function setSeriesMarkLine() {
-  if (!instance.value) {
-    return
-  }
-
-  // always show max number of people in auditory
-  const whatIsShownInMarkLine = [
-    { name: t('statisticsPage.MaxPeopleMarkline'), yAxis: maxNumberOfPeopleInAuditory.value },
-  ]
-  // if average is not tooo small show it
-  if (avgValue.value > 1 && !props.isDetailMode) {
-    whatIsShownInMarkLine.push({ name: t('statisticsPage.Average'), type: 'average' })
-  }
-
-  instance.value.setOption({
-    series: [
-      {
-        markLine: {
-          lineStyle: { color: '#EB1400' },
-          data: whatIsShownInMarkLine,
-        },
-      },
-    ],
-  })
-} /*
-function setMaxAndMinLine(data) {
-  if (!instance.value) {
-    return
-  }
-
-  if (props.filtersMinShow) {
-    instance.value.setOption({
-      series: [
-        {
-        type: 'line',
-        data: data.map((d) => d.min),
-        }
-      ]
-    })
-  }
-
   if (props.filtersMaxShow) {
-    instance.value.setOption({
-      series: [
-          {
-        type: 'line',
-        data: data.map((d) => d.max),
-      }
-      ]
+    option.series.push({
+      name: t('statisticsPage.maxLabel'), // или просто 'Max', если ключа нет
+      type: 'line',
+      data: data.map((d) => d.max),
     })
   }
-} */
+  if (props.filtersMinShow) {
+    option.series.push({
+      name: t('statisticsPage.minLabel'), // или 'Min'
+      type: 'line',
+      data: data.map((d) => d.min),
+    })
+  }
+  if (props.filtersMinShow || props.filtersMaxShow) {
+    option.legend = {
+      show: true,
+      top: 'top',
+      data: [
+        t('statisticsPage.Average'),
+        t('statisticsPage.maxLabel'),
+        t('statisticsPage.minLabel'),
+      ].filter((_, i) => {
+        if (i === 0) return true
+        if (i === 1) return props.filtersMaxShow
+        return props.filtersMinShow
+      }),
+    }
+  }
+  instance.value.setOption(setSeriesMarkLine(option))
+}
 
 function createChart(data) {
   if (!instance.value) {
@@ -388,7 +412,6 @@ function createChart(data) {
       : data.map((d) => d.average)
   maxValue.value = calculateMaxValue(valuesForMax)
   setChartOption(data)
-  setSeriesMarkLine()
   //setMaxAndMinLine(data)
 }
 
@@ -417,7 +440,7 @@ watch(locale, () => {
       option.series = [{ name: t('statisticsPage.seriesName') }]
     }
     instance.value.setOption(option)
-    setSeriesMarkLine() // need to reset horizontal lines because of locale in names
+    // setSeriesMarkLine() // need to reset horizontal lines because of locale in names
   }
 })
 
@@ -433,6 +456,17 @@ watch(theme, () => {
     createChart(props.data)
   }
 })
+
+function restoreChartConfig() {
+  if (!instance.value) {
+    return
+  }
+  instance.value.dispatchAction({
+    type: 'restore',
+  })
+  setChartOption(props.data)
+  setSeriesMarkLine()
+}
 
 onBeforeUnmount(() => {
   if (instance.value) {

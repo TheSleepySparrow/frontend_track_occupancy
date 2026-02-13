@@ -1,13 +1,14 @@
 import { useFetchList, useFetchObject } from './useFetch.js'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { getLocalizedTypeLabel } from './GetMainInfo.js'
+import { postResponse, putResponse, deleteResponse } from 'src/services/api.js'
 
 export function useAuditoriesInfo(
   props,
   baseUrl,
   options = { optionalUrl: null, loading: null, notify: null },
 ) {
-  const { data, error } = useFetchList(props, baseUrl, options)
+  const { data, error, loading, refetch } = useFetchList(props, baseUrl, options)
 
   const auditoriesInfo = computed(() => {
     if (error.value) {
@@ -36,7 +37,7 @@ export function useAuditoriesInfo(
       }
     })
   })
-  return { auditoriesInfo, error }
+  return { auditoriesInfo, error, loading, refetch }
 }
 
 export function useAuditoriesOccupancyInfo(
@@ -106,4 +107,64 @@ export function useAuditoryOccupancy(
     }
   })
   return { auditoryOccupancy, error }
+}
+
+export function useCreateAuditory() {
+  const error = ref(null)
+  async function createAuditory(cityId, buildingId, body) {
+    error.value = null
+    try {
+      const url = `/v1/cities/${cityId}/buildings/${buildingId}/auditories`
+      return await postResponse(url, body)
+    } catch (err) {
+      error.value = err
+      throw err
+    }
+  }
+  return { createAuditory, error }
+}
+
+export function useUpdateAuditory() {
+  const error = ref(null)
+  async function updateAuditory(cityId, buildingId, auditoryId, body) {
+    error.value = null
+    try {
+      const url = `/v1/cities/${cityId}/buildings/${buildingId}/auditories/${auditoryId}`
+      return await putResponse(url, body)
+    } catch (err) {
+      error.value = err
+      throw err
+    }
+  }
+  return { updateAuditory, error }
+}
+
+export function useDeleteAuditory() {
+  const error = ref(null)
+  async function deleteAuditory(cityId, buildingId, auditoryId) {
+    error.value = null
+    try {
+      const url = `/v1/cities/${cityId}/buildings/${buildingId}/auditories/${auditoryId}`
+      return await deleteResponse(url)
+    } catch (err) {
+      error.value = err
+      throw err
+    }
+  }
+  return { deleteAuditory, error }
+}
+
+export function useAttachCameraToAuditory() {
+  const error = ref(null)
+  async function attachCamera(cityId, buildingId, auditoryId, cameraId) {
+    error.value = null
+    try {
+      const url = `/v1/cities/${cityId}/buildings/${buildingId}/auditories/${auditoryId}/cameras`
+      return await postResponse(url, { camera_id: cameraId })
+    } catch (err) {
+      error.value = err
+      throw err
+    }
+  }
+  return { attachCamera, error }
 }
