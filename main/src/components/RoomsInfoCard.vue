@@ -102,9 +102,7 @@ const occupancyItem = computed(() => {
 })
 
 const imageUrl = computed(() =>
-  props.item.id
-    ? `/images/${props.item.img_url}`
-    : 'https://cdn.quasar.dev/img/parallax2.jpg',
+  props.item.id ? `/images/${props.item.img_url}` : 'https://cdn.quasar.dev/img/parallax2.jpg',
 )
 
 const occupancyPercent = computed(() => {

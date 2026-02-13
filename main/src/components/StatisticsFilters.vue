@@ -128,13 +128,15 @@ watch(
   },
 )
 
-watch(() => localFilters.value.detail,
-() => {
-  if (!localFilters.value.detail) {
-    localFilters.value.showMax = false
-    localFilters.value.showMin = false
-  }
-})
+watch(
+  () => localFilters.value.detail,
+  () => {
+    if (!localFilters.value.detail) {
+      localFilters.value.showMax = false
+      localFilters.value.showMin = false
+    }
+  },
+)
 
 watch(locale, () => {
   if (localFilters.value.dateModel) {

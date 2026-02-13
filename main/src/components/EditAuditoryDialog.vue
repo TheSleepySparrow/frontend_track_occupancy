@@ -99,27 +99,29 @@
                   filled
                 />
                 <div class="q-gutter-y-sm">
-                  <div class="text-caption text-grey">{{ $t('editAuditory.choosePhotoFromDevice') }}</div>
+                  <div class="text-caption text-grey">{{
+                    $t('editAuditory.choosePhotoFromDevice')
+                  }}</div>
                   <div class="column q-gutter-y-sm items-center">
                     <q-uploader
-                    v-model="uploaderFiles"
-                    class="col-5 full-width"
-                    :max-files="1"
-                    accept="image/*"
-                    :label="$t('editAuditory.imagesOnly')"
-                    batch
-                    flat
-                    bordered
-                    @added="onFileAdded"
-                    @removed="onFileRemoved"
-                  />
-                  <q-input
-                    v-model="localItem.img_url"
-                    class="col full-width"
-                    :label="$t('editAuditory.imageUrl')"
-                    filled
-                    dense
-                  />
+                      v-model="uploaderFiles"
+                      class="col-5 full-width"
+                      :max-files="1"
+                      accept="image/*"
+                      :label="$t('editAuditory.imagesOnly')"
+                      batch
+                      flat
+                      bordered
+                      @added="onFileAdded"
+                      @removed="onFileRemoved"
+                    />
+                    <q-input
+                      v-model="localItem.img_url"
+                      class="col full-width"
+                      :label="$t('editAuditory.imageUrl')"
+                      filled
+                      dense
+                    />
                   </div>
                 </div>
               </div>
@@ -389,9 +391,12 @@ async function onSave() {
       auditorium_number:
         localItem.value[selectedLocale.value]?.title ?? localItem.value['ru-RU']?.title ?? '',
       type: localItem.value.type,
-      type_ru:  localItem.value.type === 'lecture_hall'
-      ? 'лекционная'
-      : localItem.value.type === 'coworking' ? 'коворкинг' : 'учебная',
+      type_ru:
+        localItem.value.type === 'lecture_hall'
+          ? 'лекционная'
+          : localItem.value.type === 'coworking'
+            ? 'коворкинг'
+            : 'учебная',
       image_url: localItem.value.img_url || '',
     }
     await updateAuditory(props.cityId, props.buildingId, localItem.value.id, requestBody)

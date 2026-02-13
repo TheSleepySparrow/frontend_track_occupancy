@@ -79,9 +79,11 @@
                 filled
               />
               <div class="q-gutter-y-sm">
-                <div class="text-caption text-grey">{{ $t('editAuditory.choosePhotoFromDevice') }}</div>
+                <div class="text-caption text-grey">{{
+                  $t('editAuditory.choosePhotoFromDevice')
+                }}</div>
                 <div class="column q-gutter-y-sm items-center">
-                    <q-uploader
+                  <q-uploader
                     v-model="uploaderFiles"
                     class="col-5 full-width"
                     :max-files="1"
@@ -93,14 +95,14 @@
                     @added="onFileAdded"
                     @removed="onFileRemoved"
                   />
-                <q-input
-                  v-model="form.image_url"
-                  class="col full-width"
-                  :label="$t('editAuditory.imageUrl')"
-                  filled
-                  dense
-                />
-              </div>
+                  <q-input
+                    v-model="form.image_url"
+                    class="col full-width"
+                    :label="$t('editAuditory.imageUrl')"
+                    filled
+                    dense
+                  />
+                </div>
               </div>
             </div>
           </q-tab-panel>
@@ -313,9 +315,12 @@ async function onNext() {
       floor_number: Number(form.value.floor_number) || 0,
       capacity: Number(form.value.capacity) || 0,
       type: form.value.type,
-      type_ru:  form.value.type === 'lecture_hall'
-      ? 'лекционная'
-      : form.value.type === 'coworking' ? 'коворкинг' : 'учебная',
+      type_ru:
+        form.value.type === 'lecture_hall'
+          ? 'лекционная'
+          : form.value.type === 'coworking'
+            ? 'коворкинг'
+            : 'учебная',
       image_url: form.value.image_url || '',
     }
     const result = await createAuditory(props.cityId, props.buildingId, body)

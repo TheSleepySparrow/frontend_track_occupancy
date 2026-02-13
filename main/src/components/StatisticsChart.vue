@@ -18,11 +18,12 @@
     </div>
     <div class="col-2 q-mt-md column items-center">
       <q-btn
-      flat
-      unelevated
-      v-if="!props.isDetailMode"
-      @click="restoreChartConfig"
-      >{{ $t('statisticsPage.restore') }}</q-btn>
+        flat
+        unelevated
+        v-if="!props.isDetailMode"
+        @click="restoreChartConfig"
+        >{{ $t('statisticsPage.restore') }}</q-btn
+      >
     </div>
     <div class="col-2 q-mt-md column items-center">
       <div v-if="!props.isDetailMode">{{ $t('statisticsPage.Average') }}: {{ avgValue }} </div>
@@ -226,9 +227,10 @@ function setSeriesMarkLine(option) {
 
   const whatIsShownInMarkLine = []
   if (props.showMaxPeople) {
-    whatIsShownInMarkLine.push(
-      { name: t('statisticsPage.MaxPeopleMarkline'), yAxis: maxNumberOfPeopleInAuditory.value },
-    )
+    whatIsShownInMarkLine.push({
+      name: t('statisticsPage.MaxPeopleMarkline'),
+      yAxis: maxNumberOfPeopleInAuditory.value,
+    })
   }
   if (avgValue.value > 1 && !props.isDetailMode) {
     whatIsShownInMarkLine.push({ name: t('statisticsPage.Average'), type: 'average' })
@@ -460,7 +462,7 @@ function restoreChartConfig() {
     return
   }
   instance.value.dispatchAction({
-    type: 'restore'
+    type: 'restore',
   })
   setChartOption(props.data)
   setSeriesMarkLine()

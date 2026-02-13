@@ -97,7 +97,7 @@ export default {
     MaxPeopleMarkline: 'Max number of people in auditory',
     minLabel: 'Minimum',
     maxLabel: 'Maximum',
-    restore: 'Restore configuration'
+    restore: 'Restore configuration',
   },
   editAuditory: {
     title: 'Edit Auditory',

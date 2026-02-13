@@ -98,7 +98,7 @@ export default {
     MaxPeopleMarkline: 'Максимальное количество людей в аудитории',
     minLabel: 'Минимум',
     maxLabel: 'Максимум',
-    restore: 'Вернуть изначальную конфигурацию'
+    restore: 'Вернуть изначальную конфигурацию',
   },
   editAuditory: {
     title: 'Редактировать аудиторию',
