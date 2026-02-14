@@ -154,6 +154,51 @@ export function useDeleteAuditory() {
   return { deleteAuditory, error }
 }
 
+export function useCreateCity() {
+  const error = ref(null)
+  async function createCity(body) {
+    error.value = null
+    try {
+      const url = '/v1/cities'
+      return await postResponse(url, body)
+    } catch (err) {
+      error.value = err
+      throw err
+    }
+  }
+  return { createCity, error }
+}
+
+export function useUpdateCity() {
+  const error = ref(null)
+  async function updateCity(cityId, body) {
+    error.value = null
+    try {
+      const url = `/v1/cities/${cityId}`
+      return await putResponse(url, body)
+    } catch (err) {
+      error.value = err
+      throw err
+    }
+  }
+  return { updateCity, error }
+}
+
+export function useDeleteCity() {
+  const error = ref(null)
+  async function deleteCity(cityId) {
+    error.value = null
+    try {
+      const url = `/v1/cities/${cityId}`
+      return await deleteResponse(url)
+    } catch (err) {
+      error.value = err
+      throw err
+    }
+  }
+  return { deleteCity, error }
+}
+
 export function useAttachCameraToAuditory() {
   const error = ref(null)
   async function attachCamera(cityId, buildingId, auditoryId, cameraId) {
