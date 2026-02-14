@@ -20,7 +20,6 @@
       <q-btn
         flat
         unelevated
-        v-if="!props.isDetailMode"
         @click="restoreChartConfig"
         >{{ $t('statisticsPage.restore') }}</q-btn
       >
@@ -116,7 +115,7 @@ function initChart() {
         top: 'top',
         show: false,
       },
-      /* tooltip: {
+      tooltip: {
         trigger: 'axis',
         axisPointer: {
           type: 'shadow',
@@ -124,7 +123,7 @@ function initChart() {
         position: function (pt) {
           return [pt[0], '10%']
         },
-      }, */
+      },
       xAxis: {
         type: 'category',
         name: t('statisticsPage.xAxis'),
@@ -167,6 +166,15 @@ function initChart() {
           saveAsImage: { show: true },
         },
       },
+      // Инициализация dataZoom с явным диапазоном предотвращает ошибку
+      // "this._percentWindow is undefined" при переключении magicType (line/bar/stack).
+      dataZoom: [
+        {
+          type: 'inside',
+          start: 0,
+          end: 100,
+        },
+      ],
     })
     const { width, height } = useElementSize(chartWrapperRef)
     chartStyle.value = {
@@ -236,10 +244,12 @@ function setSeriesMarkLine(option) {
     whatIsShownInMarkLine.push({ name: t('statisticsPage.Average'), type: 'average' })
   }
   if (whatIsShownInMarkLine.length > 0) {
-    option.series[0].markLine = {
-      lineStyle: { color: '#EB1400' },
-      data: whatIsShownInMarkLine,
-    }
+    option.series.push({
+      markLine: {
+        lineStyle: { color: '#EB1400' },
+        data: whatIsShownInMarkLine,
+      },
+    })
   }
   return option
 }
@@ -282,15 +292,10 @@ function setChartOption(data) {
       dataZoom: [
         {
           type: 'inside',
+          start: 0,
+          end: 100,
         },
       ],
-      tooltip: {
-        trigger: 'axis',
-        confine: true,
-        axisPointer: {
-          type: 'shadow',
-        },
-      },
       brush: {
         toolbox: ['rect', 'polygon', 'lineX', 'lineY', 'keep', 'clear'],
         xAxisIndex: 0,
@@ -328,13 +333,6 @@ function setChartOption(data) {
     },
     yAxis: {
       max: props.showMaxPeople ? maxYAxisValue : null,
-    },
-    tooltip: {
-      trigger: 'axis',
-      confine: true,
-      axisPointer: {
-        type: 'shadow',
-      },
     },
     series: [
       {

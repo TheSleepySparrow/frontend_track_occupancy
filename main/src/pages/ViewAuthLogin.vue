@@ -67,7 +67,7 @@
               color="primary"
             />
 
-            <!-- <q-separator />
+            <q-separator />
 
             <q-btn
               flat
@@ -78,7 +78,7 @@
                   name: 'register',
                 })
               "
-            /> -->
+            />
           </q-form>
         </q-card-section>
       </q-card>
