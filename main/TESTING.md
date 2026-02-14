@@ -26,18 +26,19 @@ npm run test:run
 
 ## Структура тестов
 
-| Файл теста                                     | Модуль                  | Что тестируется                                                                               | Зачем                                                            |
-| ---------------------------------------------- | ----------------------- | --------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `src/services/api.spec.js`                     | api.js                  | clearAuthState, getResponse (успех/ошибка), postResponseWithoutAuth, deleteResponse           | Проверка базовых HTTP-методов, обработки ошибок и auth-состояния |
-| `src/services/auth.spec.js`                    | auth.js                 | checkUser (успех и ошибка)                                                                    | Проверка проверки пользователя и обработки сбоев                 |
-| `src/services/getStatisticsInfo.spec.js`       | getStatisticsInfo.js    | getReportTypes, getStatisticsTypes                                                            | Чистые функции — конфигурация типов отчётов и статистики         |
-| `src/stores/cities.store.spec.js`              | cities.store.js         | findCityById, getSlugByCityId, fetchCities (успех/ошибка/идемпотентность)                     | Геттеры и загрузка городов                                       |
-| `src/stores/auth.store.spec.js`                | auth.store.js           | isAuthenticated, login, logout                                                                | Аутентификация и выход                                           |
-| `src/composables/GetMainInfo.spec.js`          | GetMainInfo.js          | getRoomTypesInfo, getLocalizedTypeLabel                                                       | Типы помещений и локализация                                     |
-| `src/composables/GlobalState.spec.js`          | GlobalState.js          | useGlobalState, getTheme, setTheme, getLastBuildingId, setLastBuildingId, clearLastBuildingId | Глобальное состояние и предпочтения                              |
-| `src/composables/useFetch.spec.js`             | useFetch.js             | loadFromUrl, useFetchList, useFetchListOnMounted                                              | Загрузка данных по URL и реактивные списки                       |
-| `src/composables/useGetStatisticsInfo.spec.js` | useGetStatisticsInfo.js | useStatisticsByDay (URL, загрузка, маппинг)                                                   | Статистика по дням и форматам                                    |
-| `src/composables/useGetAuditoriesInfo.spec.js` | useGetAuditoriesInfo.js | useCreateAuditory, useUpdateAuditory, useDeleteAuditory                                       | CRUD для аудиторий                                               |
+| Файл теста                                     | Модуль                  | Что тестируется                                                                                      | Зачем                                                            |
+| ---------------------------------------------- | ----------------------- | ---------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| `src/services/api.spec.js`                     | api.js                  | clearAuthState, getResponse (успех/ошибка), postResponseWithoutAuth, deleteResponse                  | Проверка базовых HTTP-методов, обработки ошибок и auth-состояния |
+| `src/services/auth.spec.js`                    | auth.js                 | checkUser (успех и ошибка)                                                                           | Проверка проверки пользователя и обработки сбоев                 |
+| `src/services/getStatisticsInfo.spec.js`       | getStatisticsInfo.js    | getReportTypes, getStatisticsTypes                                                                   | Чистые функции — конфигурация типов отчётов и статистики         |
+| `src/stores/cities.store.spec.js`              | cities.store.js         | findCityById, getSlugByCityId, fetchCities (успех/ошибка/идемпотентность), refetchCities             | Геттеры и загрузка городов                                       |
+| `src/stores/auth.store.spec.js`                | auth.store.js           | isAuthenticated, login, logout                                                                       | Аутентификация и выход                                           |
+| `src/composables/GetMainInfo.spec.js`          | GetMainInfo.js          | getRoomTypesInfo, getLocalizedTypeLabel                                                              | Типы помещений и локализация                                     |
+| `src/composables/GlobalState.spec.js`          | GlobalState.js          | useGlobalState, getTheme, setTheme, getLastBuildingId, setLastBuildingId, clearLastBuildingId        | Глобальное состояние и предпочтения                              |
+| `src/composables/useFetch.spec.js`             | useFetch.js             | loadFromUrl, useFetchList, useFetchListOnMounted                                                     | Загрузка данных по URL и реактивные списки                       |
+| `src/composables/useGetStatisticsInfo.spec.js` | useGetStatisticsInfo.js | useStatisticsByDay (URL, загрузка, маппинг)                                                          | Статистика по дням и форматам                                    |
+| `src/composables/useGetAuditoriesInfo.spec.js` | useGetAuditoriesInfo.js | useCreateAuditory, useUpdateAuditory, useDeleteAuditory, useCreateCity, useUpdateCity, useDeleteCity | CRUD для аудиторий и городов                                     |
+| `src/composables/useGetBuildingsInfo.spec.js`  | useGetBuildingsInfo.js  | useCreateBuilding, useUpdateBuilding, useDeleteBuilding, getBuildingAuditories                       | CRUD для зданий                                                  |
 
 ## Диаграмма зависимостей и покрытия
 
@@ -77,10 +78,10 @@ flowchart TB
     useGetAuditoriesInfo --> GetMainInfo
 ```
 
-Все модули на диаграмме покрыты тестами, кроме useGetCamerasInfo, useGetBuildingsInfo и useGetAllCamerasInfo (тонкие обёртки над useFetch).
+Все модули на диаграмме покрыты тестами, кроме useGetCamerasInfo и useGetAllCamerasInfo (тонкие обёртки над useFetch).
 
 ## Краткая статистика
 
-- **Всего тестов:** 49
-- **Файлов с тестами:** 10
-- **Модулей без явных тестов:** useGetCamerasInfo, useGetBuildingsInfo, useGetAllCamerasInfo (обёртки над useFetch, покрываются косвенно)
+- **Всего тестов:** 60
+- **Файлов с тестами:** 11
+- **Модулей без явных тестов:** useGetCamerasInfo, useGetAllCamerasInfo (обёртки над useFetch, покрываются косвенно)

@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { useCreateAuditory, useUpdateAuditory, useDeleteAuditory } from './useGetAuditoriesInfo.js'
+import {
+  useCreateAuditory,
+  useUpdateAuditory,
+  useDeleteAuditory,
+  useCreateCity,
+  useUpdateCity,
+  useDeleteCity,
+} from './useGetAuditoriesInfo.js'
 
 vi.mock('src/services/api.js', () => ({
   postResponse: vi.fn(),
@@ -64,6 +71,59 @@ describe('useGetAuditoriesInfo', () => {
       await deleteAuditory(1, 2, 10)
 
       expect(deleteResponse).toHaveBeenCalledWith('/v1/cities/1/buildings/2/auditories/10')
+    })
+  })
+
+  describe('useCreateCity', () => {
+    it('calls postResponse with correct URL and body', async () => {
+      const mockResult = { id: 5 }
+      postResponse.mockResolvedValue(mockResult)
+
+      const { createCity, error } = useCreateCity()
+      const body = { name_ru: 'Москва', name_en: 'Moscow' }
+
+      const result = await createCity(body)
+
+      expect(postResponse).toHaveBeenCalledWith('/v1/cities', body)
+      expect(result).toEqual(mockResult)
+      expect(error.value).toBeNull()
+    })
+
+    it('sets error and rethrows on failure', async () => {
+      const err = new Error('Conflict')
+      postResponse.mockRejectedValue(err)
+
+      const { createCity, error } = useCreateCity()
+
+      await expect(createCity({ name_ru: 'A', name_en: 'B' })).rejects.toThrow('Conflict')
+      expect(error.value).toBe(err)
+    })
+  })
+
+  describe('useUpdateCity', () => {
+    it('calls putResponse with correct URL and body', async () => {
+      const mockResult = { id: 5 }
+      putResponse.mockResolvedValue(mockResult)
+
+      const { updateCity } = useUpdateCity()
+      const body = { name_ru: 'Москва', name_en: 'Moscow' }
+
+      const result = await updateCity(5, body)
+
+      expect(putResponse).toHaveBeenCalledWith('/v1/cities/5', body)
+      expect(result).toEqual(mockResult)
+    })
+  })
+
+  describe('useDeleteCity', () => {
+    it('calls deleteResponse with correct URL', async () => {
+      deleteResponse.mockResolvedValue({})
+
+      const { deleteCity } = useDeleteCity()
+
+      await deleteCity(5)
+
+      expect(deleteResponse).toHaveBeenCalledWith('/v1/cities/5')
     })
   })
 })

@@ -55,5 +55,10 @@ export const useCitiesStore = defineStore('cities', {
         this.loading = false
       }
     },
+
+    async refetchCities() {
+      this.loaded = false
+      await this.fetchCities()
+    },
   },
 })

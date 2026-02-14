@@ -21,18 +21,6 @@
           <div class="text-caption text-grey">
             {{ $t('occupationPage.floor') }} {{ props.item.floor }}
           </div>
-          <div
-            v-if="authStore.role !== 'student'"
-            style="padding-top: 5%"
-          >
-            <q-btn
-              outline
-              :color="$q.dark.isActive ? 'blue-grey-4' : 'primary'"
-              :label="$t('editAuditory.title')"
-              size="sm"
-              @click="showEditDialog = true"
-            />
-          </div>
         </q-card-section>
         <q-card-section class="row items-center justify-center">
           <q-circular-progress
@@ -65,27 +53,14 @@
         </q-card-section>
       </q-card-section>
     </q-card>
-
-    <!-- Edit Dialog -->
-    <EditAuditoryDialog
-      v-model="showEditDialog"
-      :item="props.item"
-      :city-id="props.cityId"
-      :building-id="props.buildingId"
-      @save="onSave"
-    />
   </div>
 </template>
 
 <script setup>
 import { computed, watch, onUnmounted, ref } from 'vue'
-import { useAuth } from 'src/stores/auth.store'
 import { useAuditoryOccupancy } from 'src/composables/useGetAuditoriesInfo'
-import EditAuditoryDialog from './EditAuditoryDialog.vue'
 
-const authStore = useAuth()
 const props = defineProps(['item', 'occupancy', 'url', 'cityId', 'buildingId'])
-const showEditDialog = ref(false)
 // Local updates to merge with props.occupancy
 const localOccupancyUpdate = ref(null)
 
@@ -158,8 +133,4 @@ const interval = setInterval(() => {
 }, 120 * 1000)
 
 onUnmounted(() => clearInterval(interval))
-
-function onSave(updatedItem) {
-  console.log(updatedItem)
-}
 </script>

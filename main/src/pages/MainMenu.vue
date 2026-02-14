@@ -76,12 +76,12 @@ const menuList = {
     whatToDo: () => pushRoute('viewAttendance', {}),
     isClickable: false,
   },
-  users: {
+  /* users: {
     id: 4,
     text: text + '.users',
     whatToDo: () => pushRoute('viewUsers', {}),
     isClickable: false,
-  },
+  }, */
   settings: {
     id: 5,
     text: text + '.settings',

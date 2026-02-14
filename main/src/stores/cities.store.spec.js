@@ -80,4 +80,23 @@ describe('cities store', () => {
       expect(loadFromUrl).not.toHaveBeenCalled()
     })
   })
+
+  describe('refetchCities', () => {
+    it('resets loaded and calls fetchCities', async () => {
+      const mockData = [{ id: 1, name: { ru: 'Москва', en: 'Moscow' } }]
+      loadFromUrl.mockResolvedValue(mockData)
+
+      const store = useCitiesStore()
+      store.loaded = true
+
+      await store.refetchCities()
+
+      expect(loadFromUrl).toHaveBeenCalledWith('/v1/cities/', {
+        loading: true,
+        notify: true,
+      })
+      expect(store.cities).toHaveLength(1)
+      expect(store.loaded).toBe(true)
+    })
+  })
 })
