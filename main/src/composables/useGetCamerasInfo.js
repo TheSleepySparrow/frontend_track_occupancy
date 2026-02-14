@@ -1,5 +1,6 @@
 import { useFetchList, loadFromUrl } from './useFetch.js'
 import { ref, computed, onMounted } from 'vue'
+import { postResponse, putResponse, deleteResponse } from 'src/services/api.js'
 
 export function useCamerasInfo(
   propsForFetch,
@@ -61,4 +62,49 @@ export function useFreeCamerasInfo(options = { loading: true, notify: true }) {
   onMounted(load)
 
   return { camerasInfo, error, loading, reload: load }
+}
+
+export function useCreateCamera() {
+  const error = ref(null)
+  async function createCamera(body) {
+    error.value = null
+    try {
+      const url = '/v1/cameras'
+      return await postResponse(url, body)
+    } catch (err) {
+      error.value = err
+      throw err
+    }
+  }
+  return { createCamera, error }
+}
+
+export function useUpdateCamera() {
+  const error = ref(null)
+  async function updateCamera(cameraId, body) {
+    error.value = null
+    try {
+      const url = `/v1/cameras/${cameraId}`
+      return await putResponse(url, body)
+    } catch (err) {
+      error.value = err
+      throw err
+    }
+  }
+  return { updateCamera, error }
+}
+
+export function useDeleteCamera() {
+  const error = ref(null)
+  async function deleteCamera(cameraId) {
+    error.value = null
+    try {
+      const url = `/v1/cameras/${cameraId}?confirm=true`
+      return await deleteResponse(url)
+    } catch (err) {
+      error.value = err
+      throw err
+    }
+  }
+  return { deleteCamera, error }
 }

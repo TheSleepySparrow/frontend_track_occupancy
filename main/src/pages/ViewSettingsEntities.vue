@@ -129,11 +129,26 @@
               {{ $t('settingsPage.selectCityAndBuilding') }}
             </div>
             <div
-              v-else-if="filteredItems.length === 0"
+              v-else-if="currentEntity === 'auditories' && filteredItems.length === 0"
               class="q-pa-lg text-center text-grey"
             >
               {{ $t('settingsPage.noItems') }}
             </div>
+            <div
+              v-else-if="camerasEmpty"
+              class="q-pa-lg text-center text-grey"
+            >
+              {{ $t('settingsPage.noItems') }}
+            </div>
+            <SettingsItemCameras
+              v-else-if="currentEntity === 'cameras'"
+              :attached-items="filteredAttachedCameras"
+              :free-items="filteredFreeCameras"
+              :locale="locale"
+              @created="reloadCameras"
+              @saved="reloadCameras"
+              @deleted="reloadCameras"
+            />
             <component
               v-else
               :filtered-items="filteredItems"
@@ -285,10 +300,29 @@ const auditoriesChosenBuildingId = computed(() => chosenBuildingId.value?.value 
 
 // Cameras: both endpoints
 const {
-  camerasInfo: camerasList,
+  attachedCamerasInfo,
+  freeCamerasInfo,
   error: camerasError,
   loading: camerasLoading,
+  reload: reloadCameras,
 } = useGetAllCamerasInfo({ loading: true, notify: true })
+
+const filterCamerasByQuery = (items, query) => {
+  if (!query) return items
+  const q = query.toLowerCase()
+  const getTitle = (item) => `ID: ${item.id} | ${item.mac}`
+  return items.filter((item) => getTitle(item).toLowerCase().includes(q))
+}
+
+const filteredAttachedCameras = computed(() => {
+  const items = attachedCamerasInfo.value || []
+  return filterCamerasByQuery(items, searchQuery.value)
+})
+
+const filteredFreeCameras = computed(() => {
+  const items = freeCamerasInfo.value || []
+  return filterCamerasByQuery(items, searchQuery.value)
+})
 
 const rawItems = computed(() => {
   if (currentEntity.value === 'auditories') {
@@ -298,7 +332,7 @@ const rawItems = computed(() => {
     return auditoriesList.value || []
   }
   if (currentEntity.value === 'cameras') {
-    return camerasList.value || []
+    return [...(attachedCamerasInfo.value || []), ...(freeCamerasInfo.value || [])]
   }
   return []
 })
@@ -317,6 +351,13 @@ const filteredItems = computed(() => {
     return title.includes(query)
   })
 })
+
+const camerasEmpty = computed(
+  () =>
+    currentEntity.value === 'cameras' &&
+    (filteredAttachedCameras.value || []).length === 0 &&
+    (filteredFreeCameras.value || []).length === 0,
+)
 
 const loading = computed(() => {
   if (currentEntity.value === 'auditories') return auditoriesLoading.value

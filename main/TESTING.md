@@ -39,6 +39,7 @@ npm run test:run
 | `src/composables/useGetStatisticsInfo.spec.js` | useGetStatisticsInfo.js | useStatisticsByDay (URL, загрузка, маппинг)                                                          | Статистика по дням и форматам                                    |
 | `src/composables/useGetAuditoriesInfo.spec.js` | useGetAuditoriesInfo.js | useCreateAuditory, useUpdateAuditory, useDeleteAuditory, useCreateCity, useUpdateCity, useDeleteCity | CRUD для аудиторий и городов                                     |
 | `src/composables/useGetBuildingsInfo.spec.js`  | useGetBuildingsInfo.js  | useCreateBuilding, useUpdateBuilding, useDeleteBuilding, getBuildingAuditories                       | CRUD для зданий                                                  |
+| `src/composables/useGetCamerasInfo.spec.js`    | useGetCamerasInfo.js    | useCreateCamera, useUpdateCamera, useDeleteCamera                                                    | CRUD для камер                                                   |
 
 ## Диаграмма зависимостей и покрытия
 
@@ -78,10 +79,10 @@ flowchart TB
     useGetAuditoriesInfo --> GetMainInfo
 ```
 
-Все модули на диаграмме покрыты тестами, кроме useGetCamerasInfo и useGetAllCamerasInfo (тонкие обёртки над useFetch).
+Все модули на диаграмме покрыты тестами, кроме useGetAllCamerasInfo (тонкая обёртка над useFetch).
 
 ## Краткая статистика
 
-- **Всего тестов:** 60
-- **Файлов с тестами:** 11
+- **Всего тестов:** 64
+- **Файлов с тестами:** 12
 - **Модулей без явных тестов:** useGetCamerasInfo, useGetAllCamerasInfo (обёртки над useFetch, покрываются косвенно)

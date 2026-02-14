@@ -7,30 +7,27 @@ export function useGetAllCamerasInfo(options = { loading: true, notify: true }) 
   const error = ref(null)
   const loading = ref(false)
 
-  const camerasInfo = computed(() => {
-    const attached = Array.isArray(attachedData.value) ? attachedData.value : []
-    const free = Array.isArray(freeData.value) ? freeData.value : []
+  const mapItem = (item, isAttached) => ({
+    id: item.id,
+    mac: item.mac,
+    ip: item.ip ?? null,
+    auditorium_id: item.auditorium_id ?? null,
+    isAttached,
+  })
 
-    const byId = new Map()
-    attached.forEach((item) => {
-      byId.set(item.id, {
-        id: item.id,
-        mac: item.mac,
-        auditorium_id: item.auditorium_id,
-        isAttached: true,
-      })
-    })
-    free.forEach((item) => {
-      if (!byId.has(item.id)) {
-        byId.set(item.id, {
-          id: item.id,
-          mac: item.mac,
-          auditorium_id: item.auditorium_id || null,
-          isAttached: false,
-        })
-      }
-    })
-    return Array.from(byId.values())
+  const attachedCamerasInfo = computed(() => {
+    const attached = Array.isArray(attachedData.value) ? attachedData.value : []
+    return attached.map((item) => mapItem(item, true))
+  })
+
+  const freeCamerasInfo = computed(() => {
+    const free = Array.isArray(freeData.value) ? freeData.value : []
+    const attachedIds = new Set(attachedCamerasInfo.value.map((c) => c.id))
+    return free.filter((item) => !attachedIds.has(item.id)).map((item) => mapItem(item, false))
+  })
+
+  const camerasInfo = computed(() => {
+    return [...attachedCamerasInfo.value, ...freeCamerasInfo.value]
   })
 
   const load = async () => {
@@ -54,5 +51,5 @@ export function useGetAllCamerasInfo(options = { loading: true, notify: true }) 
 
   onMounted(load)
 
-  return { camerasInfo, error, loading, reload: load }
+  return { camerasInfo, attachedCamerasInfo, freeCamerasInfo, error, loading, reload: load }
 }
